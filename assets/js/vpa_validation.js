@@ -30,9 +30,6 @@ function createSampleData() {
 
     // Save the sample data to localStorage
     saveFormData();
-
-    // Show success message
-    showModal('success', 'Sample Data Loaded', 'Sample VPA validation data has been loaded. You can now test the validation.');
 }
 
 function clearCache() {
@@ -185,9 +182,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Client-ID': clientId,
-                    'X-Client-Secret': authKey,
-                    'X-Merchant-ID': merchantId
+                    'X-Client-ID': getConfigValue('CLIENT_ID'),
+                    'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                    ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                 },
                 body: JSON.stringify({
                     vpa: vpa

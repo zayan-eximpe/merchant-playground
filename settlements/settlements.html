@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../assets/css/settlements_settlements.css">
     <script src="../assets/js/config.js"></script>
 </head>
+
 <body>
     <!-- Modal for error/success -->
     <div class="modal-overlay" id="modalOverlay">
@@ -28,7 +29,7 @@
                 <i class="fas fa-bolt"></i>
                 Quick Actions
             </div>
-            <a href="#" class="header-button">
+            <a href="../index.html" class="header-button">
                 <i class="fas fa-home"></i>
                 Back to Home
             </a>
@@ -42,7 +43,9 @@
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
             </svg>
         </div>
         <h1>Settlements</h1>
@@ -57,7 +60,8 @@
                 <div class="form-section">
                     <div class="section-title"><i class="fas fa-search"></i> Search Single Settlement</div>
                     <div style="display: flex; gap: 12px; align-items: center;">
-                        <input type="text" id="settlementId" name="settlement_id" placeholder="Enter Settlement ID" style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                        <input type="text" id="settlementId" name="settlement_id" placeholder="Enter Settlement ID"
+                            style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
                         <button type="submit" class="header-button" style="margin: 0;">
                             <i class="fas fa-search"></i>
                             Search
@@ -71,14 +75,17 @@
             <div class="form-section">
                 <div class="section-title"><i class="fas fa-list"></i> List All Settlements</div>
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
-                    <input type="date" id="startDate" placeholder="Start Date" style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
-                    <input type="date" id="endDate" placeholder="End Date" style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                    <input type="date" id="startDate" placeholder="Start Date"
+                        style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                    <input type="date" id="endDate" placeholder="End Date"
+                        style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
                     <button type="button" id="listSettlementsBtn" class="header-button" style="margin: 0;">
                         <i class="fas fa-list"></i>
                         List Settlements
                     </button>
                 </div>
-                <div class="helper-text">Optional: Select date range to filter settlements, or leave empty to see all</div>
+                <div class="helper-text">Optional: Select date range to filter settlements, or leave empty to see all
+                </div>
             </div>
         </div>
 
@@ -89,26 +96,35 @@
                 <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
                     <div id="settlementCount" style="color: #4a5568; font-weight: 600;"></div>
                     <div style="display: flex; gap: 8px;">
-                        <button id="prevPageBtn" class="header-button" style="margin: 0; padding: 8px 16px; font-size: 14px;" disabled>
+                        <button id="prevPageBtn" class="header-button"
+                            style="margin: 0; padding: 8px 16px; font-size: 14px;" disabled>
                             <i class="fas fa-chevron-left"></i>
                             Previous
                         </button>
-                        <span id="pageInfo" style="display: flex; align-items: center; padding: 0 12px; color: #4a5568; font-weight: 600;"></span>
-                        <button id="nextPageBtn" class="header-button" style="margin: 0; padding: 8px 16px; font-size: 14px;" disabled>
+                        <span id="pageInfo"
+                            style="display: flex; align-items: center; padding: 0 12px; color: #4a5568; font-weight: 600;"></span>
+                        <button id="nextPageBtn" class="header-button"
+                            style="margin: 0; padding: 8px 16px; font-size: 14px;" disabled>
                             <i class="fas fa-chevron-right"></i>
                             Next
                         </button>
                     </div>
                 </div>
                 <div style="overflow-x: auto;">
-                    <table id="settlementsTable" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(44,62,80,0.07);">
+                    <table id="settlementsTable"
+                        style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(44,62,80,0.07);">
                         <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
                             <tr>
-                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2d3748;">Settlement ID</th>
-                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2d3748;">UTR Number</th>
-                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2d3748;">Settlement Date</th>
-                                <th style="padding: 16px; text-align: right; font-weight: 600; color: #2d3748;">Settlement Amount</th>
-                                <th style="padding: 16px; text-align: center; font-weight: 600; color: #2d3748;">Actions</th>
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2d3748;">
+                                    Settlement ID</th>
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2d3748;">UTR
+                                    Number</th>
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2d3748;">
+                                    Settlement Date</th>
+                                <th style="padding: 16px; text-align: right; font-weight: 600; color: #2d3748;">
+                                    Settlement Amount</th>
+                                <th style="padding: 16px; text-align: center; font-weight: 600; color: #2d3748;">Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="settlementsTableBody">
@@ -141,6 +157,7 @@
     <script src="../assets/js/settlements.js"></script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
-    
+
 </body>
+
 </html>

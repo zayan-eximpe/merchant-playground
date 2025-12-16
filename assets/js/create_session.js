@@ -389,8 +389,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'X-Client-Secret': getConfigValue('CLIENT_ID'),
-                    'X-Client-ID': getConfigValue('AUTH_KEY'),
+                    'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                    'X-Client-ID': getConfigValue('CLIENT_ID'),
                     ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                 },
                 body: JSON.stringify(cleanPayload)
