@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Payment Status</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/checkout_payment_callback.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+
+<body>
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="../index.html" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Mobile Quick Actions -->
+    <div class="mobile-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-quick-actions">
+        <button class="mobile-fab" id="mobileFab">
+            <i class="fas fa-bolt"></i>
+        </button>
+        <div class="mobile-actions-menu" id="mobileActionsMenu">
+            <button type="button" data-action="navigate-home" class="mobile-action-item">
+                <i class="fas fa-home"></i>
+                <span>Back to Home</span>
+            </button>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Static placeholder content for callback -->
+        <div class="status-icon success">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 class="status-title success">Payment Successful</h2>
+        <p class="status-message">
+            Your payment has been processed successfully.
+        </p>
+
+        <!-- 
+        Note: In a real integration, you would handle these states via JavaScript 
+        based on URL parameters or API responses.
+        -->
+    </div>
+
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script src="../assets/js/common-utils.js"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/payment_callback.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

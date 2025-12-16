@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <title>EximPe Integrations</title>
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <script src="assets/js/config.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">EximPe Integrations</h1>
+        <div class="subtitle">
+            Select an integration below to explore and test its features.
+        </div>
+
+        <div class="description-section"
+            style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #e2e8f0;">
+            <h3
+                style="color: #2d3748; font-size: 18px; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-info-circle" style="color: rgb(38, 168, 135);"></i>
+                About EximPe Integrations
+            </h3>
+            <p style="color: #4a5568; font-size: 14px; line-height: 1.6; margin: 0;">
+                Welcome to EximPe's Integration Platform. This comprehensive suite of APIs enables you to seamlessly
+                integrate payment processing, order management, refund handling, and settlement tracking into your
+                applications. Our platform provides secure, reliable, and scalable solutions for businesses of all
+                sizes. Each integration is designed with developer-friendly documentation and testing tools to ensure
+                smooth implementation.
+            </p>
+        </div>
+
+        <div class="header-actions">
+            <select id="env-switcher" class="header-button"
+                style="cursor: pointer; outline: none; background-color: white; border: 1px solid #e2e8f0;">
+                <option value="production">Production</option>
+                <option value="staging">Staging</option>
+                <option value="uat" selected>UAT</option>
+            </select>
+            <a href="https://docs.eximpe.com" target="_blank" rel="noopener" class="header-button">
+                <i class="fas fa-book"></i>
+                Integration Docs
+            </a>
+            <a href="https://merchant.eximpe.com" target="_blank" rel="noopener" class="header-button">
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </a>
+        </div>
+
+        <div class="api-sections">
+            <!-- EximPe Hosted Payment Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">EximPe Hosted Payment Solutions</h2>
+                        <div class="section-description">Secure, hosted payment processing managed by EximPe</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="checkout/create_session.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-lock"></i>
+                            Hosted Payment Page
+                        </div>
+                        <div class="integration-description">
+                            Redirect customers to EximPe's secure payment gateway. Supports UPI, cards, net banking, and
+                            wallets. Zero PCI compliance burden on your side with built-in fraud protection and 3D
+                            Secure authentication.
+                        </div>
+                    </a>
+                    <a href="payment_link/create_payment_link.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-lock"></i>
+                            Payment Link
+                        </div>
+                        <div class="integration-description">
+                            Create a payment link for customers to complete their payment. Supports UPI, cards, net
+                            banking, and wallets. Zero PCI compliance burden on your side with built-in fraud protection
+                            and 3D Secure authentication.
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- S2S Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Server-to-Server (S2S) Payment APIs</h2>
+                        <div class="section-description">Direct backend payment processing with complete control over
+                            the payment flow</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="s2s/upi_intent.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-exchange-alt"></i>
+                            S2S UPI Intent
+                        </div>
+                        <div class="integration-description">
+                            Generate UPI Intent URLs that open UPI apps directly (GPay, PhonePe, Paytm). Best for mobile
+                            apps and websites targeting UPI-savvy users. Faster checkout with seamless app-to-app
+                            payments.
+                        </div>
+                    </a>
+                    <a href="s2s/upi_collection.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-code"></i>
+                            S2S UPI Collection
+                        </div>
+                        <div class="integration-description">
+                            Collect UPI payments by displaying QR codes or UPI IDs on your interface. Customers scan QR
+                            or enter UPI ID manually. Ideal for web platforms and kiosk payments with real-time status
+                            updates.
+                        </div>
+                    </a>
+                    <a href="s2s/vpa_validation.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-search"></i>
+                            VPA Validation
+                        </div>
+                        <div class="integration-description">
+                            Validate UPI Virtual Payment Addresses (VPA) before processing payments. Check if a VPA is
+                            active and ready for transactions. Essential for preventing failed payments and improving
+                            user experience.
+                        </div>
+                    </a>
+                    <a href="s2s/card_payment.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-credit-card"></i>
+                            S2S Card Payment
+                        </div>
+                        <div class="integration-description">
+                            Process card payments directly through server-to-server integration. Supports credit and
+                            debit cards with 3D Secure authentication. Complete control over payment flow with enhanced
+                            security and fraud protection.
+                        </div>
+                    </a>
+                    <a href="s2s/qr_payment.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-exchange-alt"></i>
+                            S2S QR Payment
+                        </div>
+                        <div class="integration-description">
+                            Generate QR codes for QR payment. Best for mobile apps and websites targeting QR-savvy
+                            users. Faster checkout with seamless app-to-app payments.
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Order Management Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Order Management APIs</h2>
+                        <div class="section-description">Comprehensive order management and tracking</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="order/order_details.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-info-circle"></i>
+                            Order Details
+                        </div>
+                        <div class="integration-description">
+                            Retrieve comprehensive order information including payment status, customer details,
+                            transaction timeline, and settlement data. Essential for order tracking and customer support
+                            operations.
+                        </div>
+                    </a>
+                    <a href="order/edit_order.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-edit"></i>
+                            Edit Order
+                        </div>
+                        <div class="integration-description">
+                            Update order information with shipping details, invoice data, and compliance documents
+                            required for settlement processing. Helps expedite fund disbursement and regulatory
+                            compliance.
+                        </div>
+                    </a>
+                    <a href="order/order_verification.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-shield-check"></i>
+                            Upload Invoice/AWB
+                        </div>
+                        <div class="integration-description">
+                            Submit proof of delivery, shipping confirmations, and compliance documents to verify
+                            legitimate transactions. Reduces chargeback risk and ensures faster settlement approval.
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Subscription Management Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Subscription Management APIs</h2>
+                        <div class="section-description">Manage recurring subscriptions and billing cycles</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="subscription/subscriptions.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-calendar-check"></i>
+                            Subscriptions
+                        </div>
+                        <div class="integration-description">
+                            Create, manage, and track recurring subscriptions with automated billing cycles. Handle
+                            subscription lifecycle events including activation, renewal, cancellation, and payment
+                            failures.
+                        </div>
+                    </a>
+                    <a href="subscription/subscription_management.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-sync"></i>
+                            Subscription Management
+                        </div>
+                        <div class="integration-description">
+                            Look up existing subscriptions by Subscription ID using the Partner API subscription details
+                            endpoint.
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Refund Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-undo-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Refund APIs</h2>
+                        <div class="section-description">Manage refunds and track refund status for transactions</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="refund/refund.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-undo"></i>
+                            Refund Transaction
+                        </div>
+                        <div class="integration-description">
+                            Initiate full or partial refunds for successful payments. Supports instant UPI refunds and
+                            card refunds with real-time status tracking. Automatic webhook notifications for refund
+                            status updates.
+                        </div>
+                    </a>
+
+                    <a href="refund/refund_details.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-search"></i>
+                            Refund Details
+                        </div>
+                        <div class="integration-description">
+                            Query refund status with complete transaction details including bank reference numbers,
+                            processing timeline, and failure reasons. Essential for refund reconciliation and customer
+                            inquiries.
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Settlement Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Settlement APIs</h2>
+                        <div class="section-description">Manage and track your payment settlements</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="settlements/settlements.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-university"></i>
+                            Settlements
+                        </div>
+                        <div class="integration-description">
+                            Access comprehensive settlement reports with transaction-level breakdowns, fee calculations,
+                            and disbursement schedules. Includes tax deductions and regulatory compliance data.
+                        </div>
+                    </a>
+
+                    <a href="settlements/payment_settlements.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-money-check-alt"></i>
+                            Payment Settlements
+                        </div>
+                        <div class="integration-description">
+                            Track payment-specific settlement data including successful transaction amounts, merchant
+                            fees, and net settlement values. Real-time updates on settlement status and bank transfer
+                            details.
+                        </div>
+                    </a>
+                    <a href="settlements/refund_settlements.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-receipt"></i>
+                            Refund Settlements
+                        </div>
+                        <div class="integration-description">
+                            Monitor refund settlement reconciliation including deducted amounts from merchant
+                            settlements, refund processing fees, and net adjustment calculations. Essential for
+                            financial reconciliation.
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Merchant Management Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Merchant Management APIs</h2>
+                        <div class="section-description">Comprehensive merchant account management</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="merchant/create_merchant.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-plus-circle"></i>
+                            Add Merchant
+                        </div>
+                        <div class="integration-description">
+                            Onboard new merchants with comprehensive business details, KYC documents, banking
+                            information, and payment method configurations. Automated compliance checks and instant
+                            merchant ID generation.
+                        </div>
+                    </a>
+
+                    <a href="merchant/merchant_details.html" class="integration-card">
+                        <div class="integration-title">
+                            <i class="fas fa-user-tie"></i>
+                            View Merchant
+                        </div>
+                        <div class="integration-description">
+                            Access complete merchant profile including verification status, transaction limits, fee
+                            structures, and settlement configurations. Update merchant settings and view approval
+                            workflows.
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Webhooks Section -->
+            <div class="api-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Webhooks</h2>
+                        <div class="section-description">Real-time event notifications for payments and merchant
+                            activities</div>
+                    </div>
+                </div>
+                <div class="integrations-grid">
+                    <a href="" class="integration-card">
+                        <div class="coming-soon-badge">
+                            <i class="fas fa-clock"></i>
+                            Coming Soon
+                        </div>
+                        <div class="integration-title">
+                            <i class="fas fa-bell-concierge"></i>
+                            Payment/Merchant Webhooks
+                        </div>
+                        <div class="integration-description">
+                            Receive real-time notifications for payment status changes, refund updates, settlement
+                            events, and merchant verification milestones. Secure webhook endpoints with signature
+                            verification and retry mechanisms.
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const envSwitcher = document.getElementById('env-switcher');
+            if (envSwitcher && window.Config && window.Config.CURRENT_ENV) {
+                envSwitcher.value = window.Config.CURRENT_ENV;
+
+                envSwitcher.addEventListener('change', (e) => {
+                    const newEnv = e.target.value;
+                    localStorage.setItem('selected_env', newEnv);
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

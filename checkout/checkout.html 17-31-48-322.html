@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Eximpe Payment Integration</title>
+    <link rel="stylesheet" href="../assets/css/inter-font.css">
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/checkout_checkout.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+
+<body>
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="../index.html" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="create_session.html" class="header-button">
+                <i class="fas fa-edit"></i>
+                Back to Checkout
+            </a>
+        </div>
+    </div>
+
+    <!-- Mobile Quick Actions -->
+    <div class="mobile-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-quick-actions">
+        <button class="mobile-fab" id="mobileFab">
+            <i class="fas fa-bolt"></i>
+        </button>
+        <div class="mobile-actions-menu" id="mobileActionsMenu">
+            <button type="button" data-action="navigate-home" class="mobile-action-item">
+                <i class="fas fa-home"></i>
+                <span>Back to Home</span>
+            </button>
+            <button type="button" data-action="navigate-create-session" class="mobile-action-item">
+                <i class="fas fa-edit"></i>
+                <span>Back to Checkout</span>
+            </button>
+        </div>
+    </div>
+    <div class="container">
+        <h2 style="color: rgb(38, 168, 135);">Initiate Payment</h2>
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modalBox">
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+                <div class="modal-icon" id="modalIcon"></div>
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-message" id="modalMessage"></div>
+            </div>
+        </div>
+        <div id="amount-display" class="amount-display" style="display: none;">
+            <div class="amount">₹0.00</div>
+            <div class="currency">INR</div>
+        </div>
+        <button id="renderBtn">Pay Now</button>
+        <div id="payment-container"></div>
+        <div id="loading" class="loading-overlay" style="display: none;">
+            <div class="loader-container">
+                <div class="brand-loader">
+                    <div class="spinner-track"></div>
+                    <div class="spinner-active"></div>
+                    <svg class="logo" width="28" height="32" viewBox="0 0 28 32" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                            fill="#26A887" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Include the Eximpe SDK from local static files (served via STATICFILES_DIRS -> sdk/) -->
+    <script src="../assets/js/versions/1.0.0/eximpe-sdk.min.js"
+        integrity="sha384-qdh+Nx5ZnVyo4n6LOLYPySpx2UDRduvTJ22+vVxzL+K6Df3tGgd96P925G0+6tpz"></script>
+    <!-- Checkout payment logic -->
+    <script src="../assets/js/checkout-payment.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

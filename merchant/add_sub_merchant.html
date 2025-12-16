@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Add Sub Merchant</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/merchant_add_sub_merchant.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">Add Sub Merchant</h1>
+        <div class="subtitle">Register a new sub merchant with detailed business and settlement information</div>
+        <form id="subMerchantForm" autocomplete="off">
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-user"></i> Sub Merchant Basic Info</div>
+                <div class="form-grid">
+                    <div class="form-group"><input type="text" name="id" placeholder="Sub Merchant ID (optional)"></div>
+                    <div class="form-group"><input type="text" name="legal_name" placeholder="Legal Name" required></div>
+                    <div class="form-group"><input type="text" name="trade_name" placeholder="Trade Name" required></div>
+                    <div class="form-group"><input type="text" name="country_code" placeholder="Country Code (e.g. US)" required></div>
+                    <div class="form-group"><input type="text" name="country_name" placeholder="Country Name" required></div>
+                    <div class="form-group"><input type="email" name="email" placeholder="Email" required></div>
+                    <div class="form-group"><input type="text" name="phone_number" placeholder="Phone Number (with country code)" required></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-building"></i> Global Company Details</div>
+                <div class="form-grid">
+                    <div class="form-group"><input type="text" name="global_company.legal_name" placeholder="Legal Name" required></div>
+                    <div class="form-group"><input type="text" name="global_company.brand_name" placeholder="Brand Name" required></div>
+                    <div class="form-group"><input type="text" name="global_company.registration_number" placeholder="Registration Number" required></div>
+                    <div class="form-group"><input type="text" name="global_company.international_org_type" placeholder="International Org Type" required></div>
+                    <div class="form-group"><input type="text" name="global_company.tax_id" placeholder="Tax ID" required></div>
+                    <div class="form-group"><input type="url" name="global_company.website" placeholder="Website" required></div>
+                    <div class="form-group"><input type="text" name="global_company.monthly_avg_transaction_value" placeholder="Monthly Avg Transaction Value" required></div>
+                    <div class="form-group"><input type="text" name="global_company.monthly_avg_transaction_volume" placeholder="Monthly Avg Transaction Volume" required></div>
+                    <div class="form-group"><input type="text" name="global_company.communication_address" placeholder="Communication Address" required></div>
+                    <div class="form-group"><input type="text" name="global_company.communication_city" placeholder="Communication City" required></div>
+                    <div class="form-group"><input type="text" name="global_company.communication_state" placeholder="Communication State" required></div>
+                    <div class="form-group"><input type="text" name="global_company.communication_country" placeholder="Communication Country" required></div>
+                    <div class="form-group"><input type="text" name="global_company.communication_pincode" placeholder="Communication Pincode" required></div>
+                    <div class="form-group"><select name="global_company.same_as_registered_address" required><option value="">Same as Registered Address?</option><option value="true">Yes</option><option value="false">No</option></select></div>
+                    <div class="form-group"><input type="text" name="global_company.registered_address" placeholder="Registered Address" required></div>
+                    <div class="form-group"><input type="text" name="global_company.registered_city" placeholder="Registered City" required></div>
+                    <div class="form-group"><input type="text" name="global_company.registered_state" placeholder="Registered State" required></div>
+                    <div class="form-group"><input type="text" name="global_company.registered_country" placeholder="Registered Country" required></div>
+                    <div class="form-group"><input type="text" name="global_company.registered_pincode" placeholder="Registered Pincode" required></div>
+                    <div class="form-group"><input type="text" name="global_company.business_category" placeholder="Business Category" required></div>
+                    <div class="form-group"><input type="text" name="global_company.business_mode" placeholder="Business Mode" required></div>
+                    <div class="form-group"><input type="text" name="global_company.commodity" placeholder="Commodity" required></div>
+                    <div class="form-group"><input type="text" name="global_company.payment_terms" placeholder="Payment Terms" required></div>
+                    <div class="form-group"><input type="number" name="global_company.purpose_code_id" placeholder="Purpose Code ID" required></div>
+                    <div class="form-group"><input type="text" name="global_company.hs_codes" placeholder="HS Codes (comma separated)" required></div>
+                    <div class="form-group"><input type="text" name="global_company.category" placeholder="Category" required></div>
+                    <div class="form-group full-width"><textarea name="global_company.description_of_products_and_services" placeholder="Description of Products and Services" required></textarea></div>
+                    <div class="form-group full-width"><textarea name="global_company.agreement_details" placeholder="Agreement Details" required></textarea></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-university"></i> Settlement Details</div>
+                <div class="form-grid">
+                    <div class="form-group"><input type="text" name="settlement_details.bank_account_number" placeholder="Bank Account Number" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_account_name" placeholder="Bank Account Name" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_swift_code" placeholder="Bank SWIFT Code" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_name" placeholder="Bank Name" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_branch_name" placeholder="Bank Branch Name" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_address" placeholder="Bank Address" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_city" placeholder="Bank City" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_state" placeholder="Bank State" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_country" placeholder="Bank Country" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.bank_pincode" placeholder="Bank Pincode" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.routing_number" placeholder="Routing Number" required></div>
+                    <div class="form-group"><input type="text" name="settlement_details.settlement_currency" placeholder="Settlement Currency" required></div>
+                </div>
+            </div>
+            <button type="submit" class="main-action-btn"><i class="fas fa-user-plus"></i> Add Sub Merchant</button>
+        </form>
+        <div id="result" style="margin-top:24px;"></div>
+    </div>
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script src="../assets/js/common-utils.js"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/add_sub_merchant.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

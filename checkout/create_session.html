@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Create Payment Session</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/checkout_create_session.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="../index.html" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="#" data-action="createSampleData" class="header-button">
+                <i class="fas fa-magic"></i>
+                Set Sample Data
+            </a>
+            <a href="#" data-action="clearCache" class="header-button">
+                <i class="fas fa-broom"></i>
+                Clear Fields
+            </a>
+        </div>
+    </div>
+
+    <!-- Mobile Quick Actions -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-quick-actions">
+        <button class="mobile-fab" id="mobileFab">
+            <i class="fas fa-bolt"></i>
+        </button>
+        <div class="mobile-actions-menu" id="mobileActionsMenu">
+            <button type="button" data-action="goHome" class="mobile-action-item">
+                <i class="fas fa-home"></i>
+                <span>Back to Home</span>
+            </button>
+            <button type="button" data-action="createSampleData" class="mobile-action-item">
+                <i class="fas fa-magic"></i>
+                <span>Set Sample Data</span>
+            </button>
+            <button type="button" data-action="clearCache" class="mobile-action-item">
+                <i class="fas fa-broom"></i>
+                <span>Clear Fields</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">Create Payment Checkout</h1>
+        <div class="subtitle" style="text-wrap: balanced;">
+            This checkout page demonstrates a hosted payment flow, mimicking an SDK call from your backend. Fill in the details to generate a payment session and experience the integration as your customers would.
+        </div>
+
+        <div class="header-actions">
+        </div>
+
+        <form id="sessionForm" autocomplete="off">
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-credit-card"></i> Order Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="amount" name="amount" placeholder="Amount" inputmode="decimal">
+                        <span class="tooltiptext">
+                            <strong>Payment Amount</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Enter the total amount to be charged (e.g., 1000.00)<br>
+                            Must be a positive decimal number
+                        </span>
+                        <div class="helper-text">Enter the total Sale Amount <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="currency" name="currency" value="INR" placeholder="Currency">
+                        <span class="tooltiptext">
+                            <strong>Currency Code</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            ISO 4217 currency code (e.g., INR, USD, EUR)<br>
+                            Defaults to INR if not specified
+                        </span>
+                    </div>
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="returnUrl" name="return_url" data-inject-config="API_URL" data-inject-suffix="/sample-integration/checkout/callback/" placeholder="Return URL">
+                        <span class="tooltiptext">
+                            <strong>Return URL</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            URL where customer will be redirected after payment<br>
+                            Must be a valid HTTPS URL for production
+                        </span>
+                        <div class="helper-text">Where the customer will be redirected after payment. <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number" autocomplete="off">
+                        <span class="tooltiptext">
+                            <strong>Reference ID</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Unique identifier for this transaction<br>
+                            Use alphanumeric characters, max 50 chars
+                        </span>
+                        <div class="helper-text">Merchant's Unique identifier for the order <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="mopType" name="mop_type" placeholder="Mode of Payment">
+                            <option value="">Select Mode of Payment</option>
+                            <option value="UPI">UPI</option>
+                            <option value="NET_BANKING">Net Banking</option>
+                            <option value="DEBIT_CARD">Debit Card</option>
+                            <option value="CREDIT_CARD">Credit Card</option>
+                            <option value="QR">QR</option>
+                            <option value="WALLET">Wallet</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Mode of Payment</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Restrict payment to specific method<br>
+                            Leave empty to allow all payment methods
+                        </span>
+                        <div class="helper-text">Restict the payment to a selected Mode</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-user"></i> Buyer Details</div>
+                <div class="form-grid">
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="buyerName" name="buyer_name" placeholder="Buyer Name">
+                        <span class="tooltiptext">
+                            <strong>Buyer Name</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Full legal name of the customer<br>
+                            Used for payment processing and receipts
+                        </span>
+                        <div class="helper-text">Full name of the buyer <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="email" id="buyerEmail" name="buyer_email" placeholder="Buyer Email">
+                        <span class="tooltiptext">
+                            <strong>Email Address</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Valid email address for payment receipts<br>
+                            Format: user@example.com
+                        </span>
+                        <div class="helper-text">Buyer Email <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <span class="phone-prefix">+91</span>
+                        <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input" placeholder="Buyer Phone">
+                        <span class="tooltiptext">
+                            <strong>Phone Number</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            10-digit mobile number without country code<br>
+                            Used for payment notifications and support
+                        </span>
+                        <div class="helper-text">Buyer Phone <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="buyerAddressLine1" name="buyer_address_line_1" placeholder="Address Line 1">
+                        <span class="tooltiptext">
+                            <strong>Address Line 1</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Street address, building number, apartment<br>
+                            Required for compliance in some regions
+                        </span>
+                        <div class="helper-text">Buyer Address Line 1 <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="buyerAddressLine2" name="buyer_address_line_2" placeholder="Address Line 2">
+                        <span class="tooltiptext">
+                            <strong>Address Line 2</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Additional address information<br>
+                            Suite, floor, landmark details
+                        </span>
+                        <div class="helper-text">Buyer Address Line 2</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="buyerCity" name="buyer_city" placeholder="City">
+                        <span class="tooltiptext">
+                            <strong>City</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            City or town name<br>
+                            Required for billing address validation
+                        </span>
+                        <div class="helper-text">Buyer City<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="buyerState" name="buyer_state" placeholder="State">
+                        <span class="tooltiptext">
+                            <strong>State/Province</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            State, province, or region<br>
+                            Use standard abbreviations (e.g., MH, DL)
+                        </span>
+                        <div class="helper-text">Buyer State<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="buyerPostalCode" name="buyer_postal_code" placeholder="Postal Code">
+                        <span class="tooltiptext">
+                            <strong>Postal Code</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            ZIP or postal code<br>
+                            6-digit PIN code for India
+                        </span>
+                        <div class="helper-text">Buyer Postal Code<span class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-box"></i> Product Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="productName" name="product_name" placeholder="Product Name">
+                        <span class="tooltiptext">
+                            <strong>Product Name</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Name or title of the product/service<br>
+                            Displayed on payment receipts
+                        </span>
+                        <div class="helper-text">Product Name<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="typeOfGoods" name="type_of_goods" placeholder="Type of Goods">
+                            <option value="">Select Type of Goods</option>
+                            <option value="goods">Goods</option>
+                            <option value="service">Service</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Type of Goods</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Classify as physical goods or services<br>
+                            Required for tax and compliance purposes
+                        </span>
+                        <div class="helper-text">Specify whether this is goods or service<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="productDescription" name="product_description" placeholder="Product Description">
+                        <span class="tooltiptext">
+                            <strong>Product Description</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Detailed description of the product/service<br>
+                            Helps with transaction clarity
+                        </span>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="hsCode" name="hs_code" placeholder="HS Code">
+                        <span class="tooltiptext">
+                            <strong>HS Code</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Harmonized System classification code<br>
+                            6-8 digit code for international trade
+                        </span>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="hsCodeDescription" name="hs_code_description" placeholder="HS Code Description">
+                        <span class="tooltiptext">
+                            <strong>HS Code Description</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Description of the HS code classification<br>
+                            Human-readable explanation of the code
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-file-invoice"></i> Invoice Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="invoiceNumber" name="invoice_number" placeholder="Invoice Number">
+                        <span class="tooltiptext">
+                            <strong>Invoice Number</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Unique invoice identifier<br>
+                            Used for accounting and record keeping
+                        </span>
+                        <div class="helper-text">Unique identifier</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="date" id="invoiceDate" name="invoice_date" placeholder="Invoice Date">
+                        <span class="tooltiptext">
+                            <strong>Invoice Date</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Date when the invoice was issued<br>
+                            Format: YYYY-MM-DD
+                        </span>
+                        <div class="helper-text">Date of issuance</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip full-width">
+                        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-weight: 600; color: #2d3748; cursor: pointer;">
+                            <input type="checkbox" id="isPspCheckbox" style="width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: rgb(38, 168, 135);">
+                            <span style="font-weight: normal;">Is PSP?</span>
+                        </label>
+                        <span class="tooltiptext">
+                            <strong>PSP Mode</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Check this if you are a Payment Service Provider<br>
+                            This will enable merchant ID field
+                        </span>
+                        <div class="helper-text">Enable Payment Service Provider mode</div>
+                    </div>
+                    <div class="form-group tooltip full-width" id="merchantIdGroup" style="display: none;">
+                        <input type="text" id="merchantId" name="merchant_id" placeholder="Merchant ID">
+                        <span class="tooltiptext">
+                            <strong>Merchant ID</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Enter the Merchant ID if this is a PSP transaction
+                        </span>
+                        <div class="helper-text">Merchant ID (only for PSP)</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="clientId" name="client_id" value="" placeholder="Client ID">
+                        <span class="tooltiptext">
+                            <strong>Client ID</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Your unique merchant identifier<br>
+                            Obtained from your merchant dashboard
+                        </span>
+                        <div class="helper-text">Client ID from the Merchant Account<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="password" id="authKey" name="auth_key" value="" placeholder="Client Secret">
+                        <span class="tooltiptext">
+                            <strong>Client Secret</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Secret key for API authentication<br>
+                            Keep this confidential and secure
+                        </span>
+                        <div class="helper-text">Client Secret from the Merchant Account<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="mode" name="mode">
+                            <option value="sandbox" selected>Sandbox</option>
+                            <option value="production">Production</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Mode</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Select 'sandbox' for testing or 'production' for live payments.
+                        </span>
+                        <div class="helper-text">Choose environment mode <span class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="createButton" class="main-action-btn">
+                <i class="fas fa-lock"></i>
+                <span id="btnText">Initiate Checkout</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script src="../assets/js/common-utils.js"></script>
+
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+
+    <!-- Page-specific logic -->
+    <script src="../assets/js/create_session.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

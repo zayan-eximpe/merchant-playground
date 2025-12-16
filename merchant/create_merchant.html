@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Create Merchant</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/merchant_create_merchant.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="#" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="#" data-action="create-sample-data" class="header-button">
+                <i class="fas fa-magic"></i>
+                Set Sample Data
+            </a>
+            <a href="#" data-action="clear-cache" class="header-button">
+                <i class="fas fa-broom"></i>
+                Clear Fields
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">Create Merchant</h1>
+        <div class="subtitle">Register a new merchant account with detailed business information</div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <input type="text" id="clientId" name="client_id" value="" placeholder="Client ID" autocomplete="username">
+                    <div class="helper-text">Client ID from the Merchant Account</div>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="authKey" name="auth_key" value="" placeholder="Client Secret" autocomplete="off">
+                    <div class="helper-text">Client Secret from the Merchant Account</div>
+                </div>
+            </div>
+        </div>
+
+        <form id="merchantForm" autocomplete="off">
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-building"></i> Company Details</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="text" id="legalName" name="legal_name" placeholder="Legal Name" autocomplete="organization" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="companyType" name="company_type" placeholder="Company Type" autocomplete="off" required>
+                        <div class="helper-text">e.g., Private Limited, Public Limited, LLP</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="registrationNumber" name="registration_number" placeholder="Registration Number" autocomplete="off" required>
+                        <div class="helper-text">Company Registration Number</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="taxId" name="tax_id" placeholder="Tax ID" autocomplete="off" required>
+                        <div class="helper-text">GSTIN/Tax Identification Number</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <textarea id="address" name="address" placeholder="Company Address" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="country" name="country" placeholder="Country" value="India" autocomplete="country-name" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-user"></i> Contact Details</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Contact Email" autocomplete="email" required>
+                    </div>
+                    <div class="form-group">
+                        <span class="phone-prefix">+91</span>
+                        <input type="tel" id="phone" name="phone" class="phone-input" placeholder="Contact Phone" autocomplete="tel" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-briefcase"></i> Business Details</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="text" id="businessCategory" name="business_category" placeholder="Business Category" autocomplete="off" required>
+                        <div class="helper-text">e.g., IT & ITES, Manufacturing, Retail</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="purposeCode" name="purpose_code" placeholder="Purpose Code" autocomplete="off" required>
+                        <div class="helper-text">e.g., P0806 for Software</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="commodity" name="commodity" placeholder="Commodity" autocomplete="off" required>
+                        <div class="helper-text">e.g., Software, Hardware, Services</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="paymentTerms" name="payment_terms" placeholder="Payment Terms" autocomplete="off" required>
+                        <div class="helper-text">e.g., Net 30, Immediate</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="url" id="website" name="website" placeholder="Website URL" autocomplete="url" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-university"></i> Bank Details</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="text" id="accountNumber" name="account_number" placeholder="Account Number" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="bankName" name="name" placeholder="Bank Name" autocomplete="off" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <textarea id="bankAddress" name="address" placeholder="Bank Address" rows="2" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-file-invoice"></i> Documents</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="file" id="registrationDocuments" name="registration_documents[]" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+                        <div class="helper-text">Registration Documents (Multiple files allowed)</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="file" id="businessLicenses" name="business_licenses[]" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+                        <div class="helper-text">Business Licenses (Multiple files allowed)</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="file" id="otherDocuments" name="other_documents[]" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                        <div class="helper-text">Other Supporting Documents (Optional)</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="createButton" class="main-action-btn">
+                <i class="fas fa-user-plus"></i>
+                <span id="btnText">Create Merchant</span>
+            </button>
+        </form>
+    </div>
+
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script src="../assets/js/common-utils.js"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/create_merchant.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

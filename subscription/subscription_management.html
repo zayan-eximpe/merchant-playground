@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Subscription Management - EximPe Integrations</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/order_edit_order.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="#" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <button id="clearResultsBtn" class="header-button" style="width: 100%;">
+                <i class="fas fa-eraser"></i>
+                Clear Results
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">Subscription Management</h1>
+        <div class="subtitle">Fetch details for an existing subscription using its Subscription ID.</div>
+        <div class="form-container">
+            <form id="subscriptionManagementForm">
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <input type="text" id="subscriptionId" name="subscription_id" placeholder="Subscription ID" required>
+                            <div class="helper-text">Enter the Subscription ID to fetch</div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" id="fetchSubscriptionBtn" class="header-button" style="width:100%;margin-top:0;">
+                                <i class="fas fa-search"></i> Fetch Subscription
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="clientId" name="client_id" placeholder="Client ID" required>
+                            <div class="helper-text">Client ID from the Merchant Account</div>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="authKey" name="auth_key" placeholder="Client Secret" required>
+                            <div class="helper-text">Client Secret from the Merchant Account</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="result-container" id="resultContainer" style="display: none;">
+            <div class="result-card" style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);">
+                <div class="result-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+                    <i class="fas fa-info-circle" style="color: rgb(38, 168, 135);"></i>
+                    <h2 class="result-title" style="font-size: 18px; font-weight: 600; color: #2d3748; margin: 0;">Subscription Information</h2>
+                </div>
+                <div class="result-content" id="resultContent">
+                    <!-- Results will be populated here -->
+                </div>
+                <div id="subscriptionActions" style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-start;">
+                    <button type="button" id="btnGetStatus" class="header-button" style="margin: 0;">
+                        <i class="fas fa-info-circle"></i>
+                        Get Status
+                    </button>
+                    <button type="button" id="btnUpdateMandate" class="header-button" style="margin: 0;">
+                        <i class="fas fa-edit"></i>
+                        Update Mandate
+                    </button>
+                    <button type="button" id="btnRecurringPayment" class="header-button" style="margin: 0;">
+                        <i class="fas fa-sync-alt"></i>
+                        Charge Recurring
+                    </button>
+                    <button type="button" id="btnPreDebit" class="header-button" style="margin: 0;">
+                        <i class="fas fa-bell"></i>
+                        Send Pre-Debit
+                    </button>
+                    <button type="button" id="btnCancelMandate" class="header-button" style="margin: 0; background: #fed7d7; color: #c53030;">
+                        <i class="fas fa-times-circle"></i>
+                        Cancel Mandate
+                    </button>
+                </div>
+                <!-- Inline Update Mandate Editor -->
+                <div id="updateMandatePanel" style="margin-top: 16px; display: none; padding: 16px; border-radius: 12px; background: #f7fafc; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-edit" style="color: rgb(38, 168, 135);"></i>
+                            <span style="font-weight: 600; color:#2d3748;">Update Mandate Details</span>
+                        </div>
+                        <button type="button" id="btnCloseUpdateMandate" style="border:none; background:transparent; cursor:pointer; color:#a0aec0;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; align-items:center;">
+                        <div class="form-group" style="margin:0;">
+                            <label for="updateMandateAmount" style="display:block; font-size: 13px; font-weight:500; color:#4a5568; margin-bottom:4px;">
+                                New Mandate Amount
+                            </label>
+                            <input type="text" id="updateMandateAmount" placeholder="e.g., 1500.00">
+                            <div class="helper-text">Leave blank to keep existing amount.</div>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label for="updateMandateEndDate" style="display:block; font-size: 13px; font-weight:500; color:#4a5568; margin-bottom:4px;">
+                                New Mandate End Date
+                            </label>
+                            <input type="date" id="updateMandateEndDate">
+                            <div class="helper-text">Leave blank to keep existing end date.</div>
+                        </div>
+                        <div class="form-group" style="margin:0; display:flex; gap:8px; align-items:center;">
+                            <button
+                                type="button"
+                                id="btnSubmitUpdateMandate"
+                                class="header-button"
+                                style="margin:0; flex:1; height:52px; display:flex; align-items:center; justify-content:center; padding-top:0; padding-bottom:0;"
+                            >
+                                <i class="fas fa-save"></i>
+                                Apply Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Inline Pre-Debit Notification Editor -->
+                <div id="preDebitPanel" style="margin-top: 16px; display: none; padding: 16px; border-radius: 12px; background: #f7fafc; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-bell" style="color: rgb(38, 168, 135);"></i>
+                            <span style="font-weight: 600; color:#2d3748;">Pre-Debit Notification</span>
+                        </div>
+                        <button type="button" id="btnClosePreDebit" style="border:none; background:transparent; cursor:pointer; color:#a0aec0;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; align-items:center;">
+                        <div class="form-group" style="margin:0;">
+                            <label for="preDebitAmount" style="display:block; font-size: 13px; font-weight:500; color:#4a5568; margin-bottom:4px;">
+                                Debit Amount
+                            </label>
+                            <input type="text" id="preDebitAmount" placeholder="Leave blank to use billing amount">
+                            <div class="helper-text">Leave blank to use the subscription's billing amount.</div>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label for="preDebitDate" style="display:block; font-size: 13px; font-weight:500; color:#4a5568; margin-bottom:4px;">
+                                Debit Date
+                            </label>
+                            <input type="date" id="preDebitDate" style="height:52px;">
+                            <div class="helper-text">Upcoming debit date (YYYY-MM-DD).</div>
+                        </div>
+                        <div class="form-group" style="margin:0; display:flex; gap:8px; align-items:center;">
+                            <button
+                                type="button"
+                                id="btnSubmitPreDebit"
+                                class="header-button"
+                                style="margin:0; flex:1; height:52px; display:flex; align-items:center; justify-content:center; padding-top:0; padding-bottom:0;"
+                            >
+                                <i class="fas fa-paper-plane"></i>
+                                Send Notification
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Inline Recurring Payment Editor -->
+                <div id="recurringPanel" style="margin-top: 16px; display: none; padding: 16px; border-radius: 12px; background: #f7fafc; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-sync-alt" style="color: rgb(38, 168, 135);"></i>
+                            <span style="font-weight: 600; color:#2d3748;">Trigger Recurring Payment</span>
+                        </div>
+                        <button type="button" id="btnCloseRecurring" style="border:none; background:transparent; cursor:pointer; color:#a0aec0;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; align-items:center;">
+                        <div class="form-group" style="margin:0;">
+                            <label for="recurringAmount" style="display:block; font-size: 13px; font-weight:500; color:#4a5568; margin-bottom:4px;">
+                                Charge Amount
+                            </label>
+                            <input type="text" id="recurringAmount" placeholder="Leave blank to use billing amount">
+                            <div class="helper-text">Leave blank to use the subscription's billing amount.</div>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label for="recurringInvoiceDisplayNumber" style="display:block; font-size: 13px; font-weight:500; color:#4a5568; margin-bottom:4px;">
+                                Invoice Display Number <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <input type="text" id="recurringInvoiceDisplayNumber" placeholder="e.g., INV-2024-001" required>
+                            <div class="helper-text">A unique display number for this recurring charge (required).</div>
+                        </div>
+                        <div class="form-group" style="margin:0; display:flex; gap:8px; align-items:center;">
+                            <button
+                                type="button"
+                                id="btnSubmitRecurring"
+                                class="header-button"
+                                style="margin:0; flex:1; height:52px; display:flex; align-items:center; justify-content:center; padding-top:0; padding-bottom:0;"
+                            >
+                                <i class="fas fa-bolt"></i>
+                                Charge Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script src="../assets/js/common-utils.js"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/subscription_management.js?v=2"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,717 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Subscriptions - EximPe Integrations</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/upi_collection.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="#" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="#" data-action="create-sample-data" class="header-button">
+                <i class="fas fa-magic"></i>
+                Set Sample Data
+            </a>
+            <a href="#" data-action="clear-cache" class="header-button">
+                <i class="fas fa-broom"></i>
+                Clear Fields
+            </a>
+        </div>
+    </div>
+
+    <!-- Mobile Quick Actions -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-quick-actions">
+        <button class="mobile-fab" id="mobileFab">
+            <i class="fas fa-bolt"></i>
+        </button>
+        <div class="mobile-actions-menu" id="mobileActionsMenu">
+            <button type="button" data-action="navigate-home" class="mobile-action-item">
+                <i class="fas fa-home"></i>
+                <span>Back to Home</span>
+            </button>
+            <button type="button" data-action="create-sample-data" class="mobile-action-item">
+                <i class="fas fa-magic"></i>
+                <span>Set Sample Data</span>
+            </button>
+            <button type="button" data-action="clear-cache" class="mobile-action-item">
+                <i class="fas fa-broom"></i>
+                <span>Clear Fields</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">Subscriptions</h1>
+        <div class="subtitle" style="text-wrap: balanced;">
+            Manage recurring subscriptions and billing cycles. Create, update, and track subscription lifecycle events including activation, renewal, cancellation, and payment failures.
+        </div>
+
+        <div class="header-actions">
+        </div>
+
+        <form id="subscriptionsForm" autocomplete="off">
+            <!-- Payment Method Selection -->
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-list"></i> Payment Method</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip full-width">
+                        <select id="upiFlowType" name="payment_method" placeholder="Payment Method">
+                            <option value="collection" selected>UPI Collection</option>
+                            <option value="intent">UPI Intent</option>
+                            <option value="card">Card</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Payment Method</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            <strong>UPI Collection:</strong> Requires VPA upfront, returns ACS template for issuer UI<br>
+                            <strong>UPI Intent:</strong> No VPA required, returns UPI deep link (intent_uri)<br>
+                            <strong>Card:</strong> Credit or Debit card subscription with 3D Secure authentication
+                        </span>
+                        <div class="helper-text">Payment Method <span class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-credit-card"></i> Order Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="amount" name="amount" placeholder="Amount" inputmode="decimal">
+                        <span class="tooltiptext">
+                            <strong>Payment Amount</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Enter the total amount to be charged (e.g., 1000.00)<br>
+                            Must be a positive decimal number
+                        </span>
+                        <div class="helper-text">Enter the total Sale Amount <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="currency" name="currency" value="INR" placeholder="Currency">
+                        <span class="tooltiptext">
+                            <strong>Currency Code</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            ISO 4217 currency code (e.g., INR, USD, EUR)<br>
+                            Defaults to INR if not specified
+                        </span>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number" autocomplete="off">
+                        <span class="tooltiptext">
+                            <strong>Reference ID</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Unique identifier for this transaction<br>
+                            Use alphanumeric characters, max 50 chars
+                        </span>
+                        <div class="helper-text">Merchant's Unique identifier for the order <span class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPI Payment Details Section -->
+            <div class="form-section" id="upiPaymentSection">
+                <div class="section-title"><i class="fas fa-mobile-alt"></i> UPI Payment Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip" id="vpaGroup">
+                        <input
+                            type="text"
+                            id="upiId"
+                            name="vpa"
+                            placeholder="UPI ID"
+                            autocomplete="off"
+                            value="9999999999@upi"
+                        >
+                        <span class="tooltiptext">
+                            <strong>UPI ID</strong><br>
+                            <span class="tooltip-required" id="vpaRequired">Required for Collection flow</span><br>
+                            <span id="vpaDescription">For sandbox subscriptions, use <code>9999999999@upi</code> for Collection flow.<br>
+                            Not required for Intent flow.</span>
+                        </span>
+                        <div class="helper-text" id="vpaHelperText">Sandbox UPI ID (required for Collection flow)</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="upiAppName" name="upi_app_name" placeholder="UPI App">
+                            <option value="">Select UPI App</option>
+                            <option value="bhim">BHIM</option>
+                            <option value="paytm">Paytm</option>
+                            <option value="google_pay">Google Pay</option>
+                            <option value="phonepe">PhonePe</option>
+                            <option value="cred">CRED</option>
+                            <option value="amazon_pay">Amazon Pay</option>
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="others">Others</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>UPI App Name</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Select the UPI app to be used for payment<br>
+                            This helps in directing payment to specific UPI app
+                        </span>
+                        <div class="helper-text">Preferred UPI app for payment</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Payment Details Section -->
+            <div class="form-section" id="cardPaymentSection" style="display: none;">
+                <div class="section-title"><i class="fas fa-credit-card"></i> Card Payment Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <select id="cardType" name="card_type" placeholder="Card Type">
+                            <option value="">Select Card Type</option>
+                            <option value="CREDIT_CARD">Credit Card</option>
+                            <option value="DEBIT_CARD">Debit Card</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Card Type</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Select whether this is a Credit Card or Debit Card subscription
+                        </span>
+                        <div class="helper-text">Card Type <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="cardNetwork" name="card_network" placeholder="Card Network">
+                            <option value="">Select Card Network</option>
+                            <option value="VISA">VISA</option>
+                            <option value="MASTERCARD">MASTERCARD</option>
+                            <option value="AMEX">AMEX</option>
+                            <option value="RUPAY">RUPAY</option>
+                            <option value="MAESTRO">MAESTRO</option>
+                            <option value="SBI_MAESTRO">SBI MAESTRO</option>
+                            <option value="DINERS">DINERS</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Card Network</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Select the card network. Valid networks depend on card type.
+                        </span>
+                        <div class="helper-text">Card Network <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip full-width">
+                        <input type="text" id="cardNumber" name="card_number" placeholder="Card Number" autocomplete="cc-number" maxlength="19">
+                        <span class="tooltiptext">
+                            <strong>Card Number</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Enter the 13-19 digit card number. Must pass Luhn algorithm validation.
+                        </span>
+                        <div class="helper-text">Card Number <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip full-width">
+                        <input type="text" id="cardHolderName" name="cardholder_name" placeholder="Cardholder Name" autocomplete="cc-name">
+                        <span class="tooltiptext">
+                            <strong>Cardholder Name</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Enter the name as it appears on the card
+                        </span>
+                        <div class="helper-text">Cardholder Name <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="expiryMonth" name="expiry_month" placeholder="Expiry Month">
+                            <option value="">Month</option>
+                            <option value="1">01 - January</option>
+                            <option value="2">02 - February</option>
+                            <option value="3">03 - March</option>
+                            <option value="4">04 - April</option>
+                            <option value="5">05 - May</option>
+                            <option value="6">06 - June</option>
+                            <option value="7">07 - July</option>
+                            <option value="8">08 - August</option>
+                            <option value="9">09 - September</option>
+                            <option value="10">10 - October</option>
+                            <option value="11">11 - November</option>
+                            <option value="12">12 - December</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Expiry Month</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Select the card expiry month (1-12)
+                        </span>
+                        <div class="helper-text">Expiry Month <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="expiryYear" name="expiry_year" placeholder="Expiry Year">
+                            <option value="">Year</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Expiry Year</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Select the card expiry year
+                        </span>
+                        <div class="helper-text">Expiry Year <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="cvv" name="cvv" placeholder="CVV" autocomplete="cc-csc" maxlength="4" inputmode="numeric">
+                        <span class="tooltiptext">
+                            <strong>CVV</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Enter the 3 or 4 digit CVV code from the back of the card
+                        </span>
+                        <div class="helper-text">CVV <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="cardNickname" name="card_nickname" placeholder="Card Nickname">
+                        <span class="tooltiptext">
+                            <strong>Card Nickname</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Enter a nickname to identify this card (e.g., "My Credit Card")
+                        </span>
+                        <div class="helper-text">Card Nickname <span class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-user"></i> Buyer Details</div>
+                <div class="form-grid">
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="buyerName" name="buyer_name" placeholder="Buyer Name">
+                        <span class="tooltiptext">
+                            <strong>Buyer Name</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Full legal name of the customer<br>
+                            Used for payment processing and receipts
+                        </span>
+                        <div class="helper-text">Full name of the buyer <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="email" id="buyerEmail" name="buyer_email" placeholder="Buyer Email">
+                        <span class="tooltiptext">
+                            <strong>Email Address</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Valid email address for payment receipts<br>
+                            Format: user@example.com
+                        </span>
+                        <div class="helper-text">Buyer Email <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <span class="phone-prefix">+91</span>
+                        <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input" placeholder="Buyer Phone">
+                        <span class="tooltiptext">
+                            <strong>Phone Number</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            10-digit mobile number without country code<br>
+                            Used for payment notifications and support
+                        </span>
+                        <div class="helper-text">Buyer Phone <span class="required">*</span></div>
+                    </div>
+
+                    <div class="form-group tooltip">
+                        <input type="text" id="userIp" name="user_ip" placeholder="User IP Address">
+                        <span class="tooltiptext">
+                            <strong>User IP Address</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            IP address of the end user making the payment<br>
+                            Used for fraud detection and compliance (e.g., 192.168.1.1)
+                        </span>
+                        <div class="helper-text">End user's IP address for S2S transactions</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="userAgent" name="user_agent" placeholder="User Agent">
+                        <span class="tooltiptext">
+                            <strong>User Agent</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Browser/device information of the end user<br>
+                            Used for fraud detection and analytics
+                        </span>
+                        <div class="helper-text">End user's browser/device information</div>
+                    </div>
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="buyerAddressLine1" name="buyer_address_line_1" placeholder="Address Line 1">
+                        <span class="tooltiptext">
+                            <strong>Address Line 1</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Street address, building number, apartment<br>
+                            Required for compliance in some regions
+                        </span>
+                        <div class="helper-text">Buyer Address Line 1 <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="buyerAddressLine2" name="buyer_address_line_2" placeholder="Address Line 2">
+                        <span class="tooltiptext">
+                            <strong>Address Line 2</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Additional address information<br>
+                            Suite, floor, landmark details
+                        </span>
+                        <div class="helper-text">Buyer Address Line 2</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="buyerCity" name="buyer_city" placeholder="City">
+                        <span class="tooltiptext">
+                            <strong>City</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            City or town name<br>
+                            Required for billing address validation
+                        </span>
+                        <div class="helper-text">Buyer City<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="buyerState" name="buyer_state" placeholder="State">
+                        <span class="tooltiptext">
+                            <strong>State/Province</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            State, province, or region<br>
+                            Use standard abbreviations (e.g., MH, DL)
+                        </span>
+                        <div class="helper-text">Buyer State<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="buyerPostalCode" name="buyer_postal_code" placeholder="Postal Code">
+                        <span class="tooltiptext">
+                            <strong>Postal Code</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            ZIP or postal code<br>
+                            6-digit PIN code for India
+                        </span>
+                        <div class="helper-text">Buyer Postal Code<span class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-box"></i> Product Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="productName" name="product_name" placeholder="Product Name">
+                        <span class="tooltiptext">
+                            <strong>Product Name</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Name or title of the product/service<br>
+                            Displayed on payment receipts
+                        </span>
+                        <div class="helper-text">Product Name<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="typeOfGoods" name="type_of_goods" placeholder="Type of Goods">
+                            <option value="">Select Type of Goods</option>
+                            <option value="goods">Goods</option>
+                            <option value="service">Service</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Type of Goods</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Classify as physical goods or services<br>
+                            Required for tax and compliance purposes
+                        </span>
+                        <div class="helper-text">Specify whether this is goods or service<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="productDescription" name="product_description" placeholder="Product Description">
+                        <span class="tooltiptext">
+                            <strong>Product Description</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Detailed description of the product/service<br>
+                            Helps with transaction clarity
+                        </span>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="hsCode" name="hs_code" placeholder="HS Code">
+                        <span class="tooltiptext">
+                            <strong>HS Code</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Harmonized System classification code<br>
+                            6-8 digit code for international trade
+                        </span>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="hsCodeDescription" name="hs_code_description" placeholder="HS Code Description">
+                        <span class="tooltiptext">
+                            <strong>HS Code Description</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Description of the HS code classification<br>
+                            Human-readable explanation of the code
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-file-invoice"></i> Invoice Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="invoiceNumber" name="invoice_number" placeholder="Invoice Number">
+                        <span class="tooltiptext">
+                            <strong>Invoice Number</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Unique invoice identifier<br>
+                            Used for accounting and record keeping
+                        </span>
+                        <div class="helper-text">Unique identifier</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="date" id="invoiceDate" name="invoice_date" placeholder="Invoice Date">
+                        <span class="tooltiptext">
+                            <strong>Invoice Date</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Date when the invoice was issued<br>
+                            Format: YYYY-MM-DD
+                        </span>
+                        <div class="helper-text">Date of issuance</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-sync-alt"></i> Standing Instruction</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="billingAmount" name="billing_amount" placeholder="Billing Amount" inputmode="decimal">
+                        <span class="tooltiptext">
+                            <strong>Billing Amount</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            The amount to be charged in each billing cycle<br>
+                            Must be a positive decimal number (e.g., 100.00)
+                        </span>
+                        <div class="helper-text">Amount to be charged per billing cycle <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="billingCurrency" name="billing_currency" value="INR" placeholder="Billing Currency">
+                        <span class="tooltiptext">
+                            <strong>Billing Currency</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            ISO 4217 currency code (e.g., INR, USD, EUR)<br>
+                            Defaults to INR if not specified
+                        </span>
+                        <div class="helper-text">Currency for billing amount <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="billingCycle" name="billing_cycle">
+                            <option value="">Select Billing Cycle</option>
+                            <option value="ONCE">ONCE</option>
+                            <option value="ADHOC">ADHOC</option>
+                            <option value="DAILY">DAILY</option>
+                            <option value="WEEKLY">WEEKLY</option>
+                            <option value="MONTHLY">MONTHLY</option>
+                            <option value="YEARLY">YEARLY</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Billing Cycle</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Frequency of billing cycle<br>
+                            ONCE, ADHOC, DAILY, WEEKLY, MONTHLY, or YEARLY
+                        </span>
+                        <div class="helper-text">Billing cycle frequency <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="number" id="billingInterval" name="billing_interval" placeholder="Billing Interval" min="1">
+                        <span class="tooltiptext">
+                            <strong>Billing Interval</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Frequency at which subscription plan needs to be executed<br>
+                            For MONTHLY with interval 1 = monthly, interval 3 = every 3 months<br>
+                            For DAILY with interval 3 = every 3 days
+                        </span>
+                        <div class="helper-text">Billing interval (e.g., 1 for monthly, 3 for quarterly) <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="date" id="paymentStartDate" name="payment_start_date" placeholder="Payment Start Date">
+                        <span class="tooltiptext">
+                            <strong>Payment Start Date</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Start date for recurring payments<br>
+                            Format: YYYY-MM-DD
+                        </span>
+                        <div class="helper-text">Start date for recurring payments <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="date" id="paymentEndDate" name="payment_end_date" placeholder="Payment End Date">
+                        <span class="tooltiptext">
+                            <strong>Payment End Date</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            End date for recurring payments<br>
+                            Format: YYYY-MM-DD
+                        </span>
+                        <div class="helper-text">End date for recurring payments <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="number" id="billingDate" name="billing_date" placeholder="Billing Date" min="1" max="31">
+                        <span class="tooltiptext">
+                            <strong>Billing Date</strong><br>
+                            <span class="tooltip-optional">Optional - UPI Only</span><br>
+                            Date/day for recurring debit (numeric 1-31)<br>
+                            For WEEKLY: 1=Monday, 2=Tuesday...7=Sunday<br>
+                            For MONTHLY: Day of month (1-31)<br>
+                            For FORTNIGHTLY: Day calculation based on start date
+                        </span>
+                        <div class="helper-text">Billing date/day (1-31) - UPI Only</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="billingLimit" name="billing_limit">
+                            <option value="">Select Billing Limit (Optional)</option>
+                            <option value="ON">ON</option>
+                            <option value="BEFORE">BEFORE</option>
+                            <option value="AFTER" selected>AFTER</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Billing Limit</strong><br>
+                            <span class="tooltip-optional">Optional - UPI Only</span><br>
+                            Period for debit from mandate recurring date<br>
+                            ON = Deduct on specific date<br>
+                            BEFORE = Deduct before and on specific date<br>
+                            AFTER = Deduct after and on specific date (default)
+                        </span>
+                        <div class="helper-text">Billing limit period - UPI Only</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="billingRule" name="billing_rule">
+                            <option value="">Select Billing Rule (Optional)</option>
+                            <option value="MAX" selected>MAX</option>
+                            <option value="EXACT">EXACT</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Billing Rule</strong><br>
+                            <span class="tooltip-optional">Optional - UPI Only</span><br>
+                            Limitation on amount of recurring debit<br>
+                            MAX = Maximum amount (can debit lesser or equal)<br>
+                            EXACT = Exact amount to debit (default: MAX)
+                        </span>
+                        <div class="helper-text">Billing rule for amount - UPI Only</div>
+                    </div>
+                    <div class="form-group tooltip full-width">
+                        <input type="text" id="remarks" name="remarks" placeholder="Remarks" maxlength="50">
+                        <span class="tooltiptext">
+                            <strong>Remarks</strong><br>
+                            <span class="tooltip-optional">Optional - UPI Only</span><br>
+                            Remarks for PSP applications during UPI registration<br>
+                            Character limit: 50 characters<br>
+                            Note: Only applicable for UPI subscriptions
+                        </span>
+                        <div class="helper-text">Remarks for UPI subscription (max 50 chars)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip full-width">
+                        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-weight: 600; color: #2d3748; cursor: pointer;">
+                            <input type="checkbox" id="isPspCheckbox" style="width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: rgb(38, 168, 135);">
+                            <span style="font-weight: normal;">Is PSP?</span>
+                        </label>
+                        <span class="tooltiptext">
+                            <strong>PSP Mode</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Check this if you are a Payment Service Provider<br>
+                            This will enable merchant ID field
+                        </span>
+                        <div class="helper-text">Enable Payment Service Provider mode</div>
+                    </div>
+                    <div class="form-group tooltip full-width" id="merchantIdGroup" style="display: none;">
+                        <input type="text" id="merchantId" name="merchant_id" placeholder="Merchant ID">
+                        <span class="tooltiptext">
+                            <strong>Merchant ID</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Enter the Merchant ID if this is a PSP transaction
+                        </span>
+                        <div class="helper-text">Merchant ID (only for PSP)</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="clientId" name="client_id" value="" placeholder="Client ID">
+                        <span class="tooltiptext">
+                            <strong>Client ID</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Your unique merchant identifier<br>
+                            Obtained from your merchant dashboard
+                        </span>
+                        <div class="helper-text">Client ID from the Merchant Account<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="password" id="authKey" name="auth_key" value="" placeholder="Client Secret">
+                        <span class="tooltiptext">
+                            <strong>Client Secret</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Secret key for API authentication<br>
+                            Keep this confidential and secure
+                        </span>
+                        <div class="helper-text">Client Secret from the Merchant Account<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="mode" name="mode">
+                            <option value="sandbox" selected>Sandbox</option>
+                            <option value="production">Production</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Mode</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Select 'sandbox' for testing or 'production' for live payments.
+                        </span>
+                        <div class="helper-text">Choose environment mode <span class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="createButton" class="main-action-btn">
+                <i class="fas fa-calendar-check"></i>
+                <span id="btnText">Create Subscription</span>
+            </button>
+        </form>
+        <!-- ACS Template Render Container -->
+        <div id="acsContainer" style="display:none; margin-top:24px;">
+            <div style="background:white; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(44,62,80,0.07);">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                    <i class="fas fa-shield-alt" style="color:rgb(38,168,135);"></i>
+                    <span style="font-weight:600; color:#2d3748;">Issuer Authentication (ACS)</span>
+                </div>
+                <div id="acsContent" style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; background:#f7fafc;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script src="../assets/js/common-utils.js"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+        window.subscriptionsScriptLoaded = false;
+        window.addEventListener('error', function(e) {
+            // Handle JavaScript errors silently
+        });
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/subscriptions.js?v=2.0"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

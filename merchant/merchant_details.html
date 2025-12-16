@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Merchant Details</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/merchant_merchant_details.css">
+    <script src="../assets/js/config.js"></script>
+</head>
+<body>
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="#" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="../merchant/create_merchant.html" class="header-button">
+                <i class="fas fa-plus"></i>
+                Create New Merchant
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">Merchant Details</h1>
+        <div class="subtitle">View detailed information about the merchant account</div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <input type="text" id="clientId" name="client_id" value="" placeholder="Client ID">
+                    <div class="helper-text">Client ID from the Merchant Account</div>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="authKey" name="auth_key" value="" placeholder="Client Secret">
+                    <div class="helper-text">Client Secret from the Merchant Account</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-section" id="merchantIdForm">
+            <h2 class="section-title"><i class="fas fa-search"></i> Enter Merchant ID</h2>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <input type="text" id="merchantIdInput" placeholder="Enter Merchant ID" style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                <button data-action="load-merchant-details" class="header-button" style="margin: 0;">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <i class="fas fa-circle-notch"></i>
+        </div>
+
+        <div id="merchantDetails" style="display: none;">
+            <!-- Company Details Section -->
+            <div class="details-section">
+                <h2 class="section-title"><i class="fas fa-building"></i> Company Details</h2>
+                <div class="details-grid" id="companyDetails">
+                    <!-- Company details will be populated here -->
+                </div>
+            </div>
+
+            <!-- Contact Details Section -->
+            <div class="details-section">
+                <h2 class="section-title"><i class="fas fa-user"></i> Contact Details</h2>
+                <div class="details-grid" id="contactDetails">
+                    <!-- Contact details will be populated here -->
+                </div>
+            </div>
+
+            <!-- Business Details Section -->
+            <div class="details-section">
+                <h2 class="section-title"><i class="fas fa-briefcase"></i> Business Details</h2>
+                <div class="details-grid" id="businessDetails">
+                    <!-- Business details will be populated here -->
+                </div>
+            </div>
+
+            <!-- Bank Details Section -->
+            <div class="details-section">
+                <h2 class="section-title"><i class="fas fa-university"></i> Bank Details</h2>
+                <div class="details-grid" id="bankDetails">
+                    <!-- Bank details will be populated here -->
+                </div>
+            </div>
+
+            <!-- Documents Section -->
+            <div class="details-section">
+                <h2 class="section-title"><i class="fas fa-file-invoice"></i> Documents</h2>
+                <div class="details-grid" id="documentDetails">
+                    <!-- Document details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script src="../assets/js/common-utils.js"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/merchant_details.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-inject-config]').forEach(el => {
+                const key = el.dataset.injectConfig;
+                const suffix = el.dataset.injectSuffix || '';
+                if (window.Config && window.Config[key]) {
+                    el.value = window.Config[key] + suffix;
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>
