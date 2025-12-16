@@ -59,15 +59,8 @@ let currentPage = 1;
 
         // List settlements functionality
         async function listSettlements(page = 1) {
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
-
-            if (!clientId || !authKey) {
-                showModal('error', 'Validation Error', 'Please enter both Client ID and Client Secret');
-                return;
-            }
 
             try {
                 let url = `/pg/settlements/?page=${page}`;
@@ -85,8 +78,9 @@ let currentPage = 1;
                     headers: {
                         'Accept': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
+                        ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                     }
                 });
 
@@ -260,8 +254,6 @@ let currentPage = 1;
             e.preventDefault();
 
             const settlementId = document.getElementById('settlementId').value;
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
             const resultContainer = document.getElementById('resultContainer');
             const resultContent = document.getElementById('resultContent');
 
@@ -270,14 +262,6 @@ let currentPage = 1;
                 showModal('error', 'Validation Error', 'Please enter a Settlement ID');
                 return;
             }
-            if (!clientId || !authKey) {
-                showModal('error', 'Validation Error', 'Please enter both Client ID and Client Secret');
-                return;
-            }
-
-            // Save to localStorage for convenience
-            if (clientId) localStorage.setItem('eximpe_client_id', clientId);
-            if (authKey) localStorage.setItem('eximpe_auth_key', authKey);
 
             try {
                 const response = await fetch(`/pg/settlements/${settlementId}/`, {
@@ -285,8 +269,9 @@ let currentPage = 1;
                     headers: {
                         'Accept': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
+                        ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                     }
                 });
                 const responseData = await response.json();
@@ -465,15 +450,8 @@ let currentPage = 1;
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const clientIdInput = document.getElementById('clientId');
-            const authKeyInput = document.getElementById('authKey');
             const settlementIdInput = document.getElementById('settlementId');
 
-            // Load saved API credentials
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-            if (savedClientId) clientIdInput.value = savedClientId;
-            if (savedAuthKey) authKeyInput.value = savedAuthKey;
 
             // Load last used settlement ID if available
             const lastUsedSettlementId = localStorage.getItem('last_used_settlement_id');

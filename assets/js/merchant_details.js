@@ -49,38 +49,6 @@ function createDetailItem(label, value) {
             `;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const authKeyInput = document.getElementById('authKey');
-            const clientIdInput = document.getElementById('clientId');
-
-            // Load Client Secret from local storage if it exists
-            const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-            if (savedAuthKey) {
-                authKeyInput.value = savedAuthKey;
-            }
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            if (savedClientId) {
-                clientIdInput.value = savedClientId;
-            }
-
-            // Save Client Secret to local storage when it changes
-            authKeyInput.addEventListener('change', function() {
-                if (this.value) {
-                    localStorage.setItem('eximpe_auth_key', this.value);
-                } else {
-                    localStorage.removeItem('eximpe_auth_key');
-                }
-            });
-
-            clientIdInput.addEventListener('change', function() {
-                if (this.value) {
-                    localStorage.setItem('eximpe_client_id', this.value);
-                } else {
-                    localStorage.removeItem('eximpe_client_id');
-                }
-            });
-        });
-
         async function loadMerchantDetails() {
             const merchantId = document.getElementById('merchantIdInput').value.trim();
             if (!merchantId) {
@@ -94,8 +62,8 @@ function createDetailItem(label, value) {
             try {
                 const response = await fetch(`${window.API_URL}/merchants/${merchantId}/`, {
                     headers: {
-                        'X-Client-Secret': document.getElementById('authKey').value,
-                        'X-Client-ID': document.getElementById('clientId').value,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                         'Accept': 'application/json'
                     }
                 });

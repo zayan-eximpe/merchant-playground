@@ -33,25 +33,6 @@
             if (e.target === document.getElementById('modalOverlay')) hideModal();
         });
 
-        // --- Load API config from localStorage ---
-        document.addEventListener('DOMContentLoaded', function() {
-            const clientIdInput = document.getElementById('clientId');
-            const authKeyInput = document.getElementById('authKey');
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-            if (savedClientId) clientIdInput.value = savedClientId;
-            if (savedAuthKey) authKeyInput.value = savedAuthKey;
-
-            clientIdInput.addEventListener('change', function() {
-                if (this.value) localStorage.setItem('eximpe_client_id', this.value);
-                else localStorage.removeItem('eximpe_client_id');
-            });
-            authKeyInput.addEventListener('change', function() {
-                if (this.value) localStorage.setItem('eximpe_auth_key', this.value);
-                else localStorage.removeItem('eximpe_auth_key');
-            });
-        });
-
         // --- Copy cURL function ---
         function copyCurl() {
             const curlContent = document.getElementById('curlContent').textContent;
@@ -64,16 +45,9 @@
 
         // --- Clear form function ---
         function clearForm() {
-            // Store current auth credentials
-            const currentAuthKey = document.getElementById('authKey').value;
-            const currentClientId = document.getElementById('clientId').value;
 
             // Reset form
             document.getElementById('refundDetailsForm').reset();
-
-            // Restore auth credentials
-            document.getElementById('authKey').value = currentAuthKey;
-            document.getElementById('clientId').value = currentClientId;
 
             // Hide response areas
             document.getElementById('responseArea').classList.remove('show');
@@ -174,13 +148,10 @@
         document.getElementById('refundDetailsForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             hideModal();
-
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
             const refundId = document.getElementById('refundId').value;
 
-            if (!clientId || !authKey || !refundId) {
-                showModal('error', 'Validation Error', 'Please fill in Client ID, Client Secret, and Refund ID.');
+            if (!refundId) {
+                showModal('error', 'Validation Error', 'Please fill in Refund ID.');
                 return;
             }
 
@@ -194,8 +165,9 @@
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
+                        ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                     }
                 });
 

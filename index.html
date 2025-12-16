@@ -43,12 +43,6 @@
         </div>
 
         <div class="header-actions">
-            <select id="env-switcher" class="header-button"
-                style="cursor: pointer; outline: none; background-color: white; border: 1px solid #e2e8f0;">
-                <option value="production">Production</option>
-                <option value="staging">Staging</option>
-                <option value="uat" selected>UAT</option>
-            </select>
             <a href="https://docs.eximpe.com" target="_blank" rel="noopener" class="header-button">
                 <i class="fas fa-book"></i>
                 Integration Docs
@@ -57,6 +51,69 @@
                 <i class="fas fa-chart-line"></i>
                 Dashboard
             </a>
+        </div>
+
+        <!-- Credentials per-environment -->
+        <!-- Notification for missing credentials -->
+        <div id="cred-notification" style="display:none; margin-bottom:16px; padding:12px 20px; border-radius:8px; background:#fff3cd; color:#856404; border:1px solid #ffeeba; font-size:15px; position:relative; align-items:center; gap:10px;">
+            <span style="display:inline-flex; align-items:center; gap:8px;"><i class="fas fa-exclamation-triangle"></i> <span id="cred-notification-msg">Set credentials for the selected environment before proceeding.</span></span>
+            <button id="cred-notification-close" style="position:absolute; right:12px; top:10px; background:none; border:none; color:#856404; font-size:18px; cursor:pointer;">&times;</button>
+        </div>
+        <div class="form-section" id="credentials-section" style="background: #f8fafc; border-radius: 12px; padding: 28px 24px 20px 24px; margin-bottom: 32px; border: 2px solid #38a887; box-shadow: 0 2px 8px 0 rgba(38,168,135,0.06);">
+
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px 8px; margin-bottom:10px;">
+                <div class="section-title" style="margin:0; padding:0;"><i class="fas fa-key"></i> Credentials (per-environment)</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <label for="env-switcher" style="font-size:14px; color:#2d3748; font-weight:500;">Environment:</label>
+                    <select id="env-switcher" class="header-button" style="cursor:pointer; outline:none; background-color:white; border:1.5px solid #38a887; border-radius:6px; padding:6px 18px; font-size:15px; color:#2d3748; font-weight:500;">
+                        <option value="production">Production</option>
+                        <option value="staging">Staging</option>
+                        <option value="uat">UAT</option>
+                        <option value="development">Development</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="status-form" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px 20px; margin-top:18px; margin-bottom:10px;">
+                <div class="form-group">
+                    <label class="form-label">Client ID</label>
+                    <input id="clientId" data-inject-config="CLIENT_ID" type="text" placeholder="Enter Client ID" class="form-input" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Client Secret</label>
+                    <input id="authKey" data-inject-config="AUTH_KEY" type="password" placeholder="Enter Client Secret" class="form-input" />
+                </div>
+                <!-- Callback URL not required in playground credentials panel -->
+                <div class="form-group tooltip" style="display:flex; align-items:center;">
+                    <label class="form-label" style="margin:0 12px 0 0;">PSP Mode</label>
+                    <label style="display:flex; align-items:center; gap:8px; margin:0; cursor:pointer;">
+                        <input type="checkbox" id="isPspCheckbox" style="width:18px; height:18px; margin:0; cursor:pointer; accent-color: rgb(38, 168, 135);">
+                        <span style="font-weight:normal; color:#4a5568;">Is PSP?</span>
+                    </label>
+                </div>
+                <div class="form-group" id="merchantIdGroup" style="display:none;">
+                    <label class="form-label">Merchant ID</label>
+                    <input id="merchantId" data-inject-config="MERCHANT_ID" type="text" placeholder="Enter Merchant ID" class="form-input" />
+                </div>
+            </div>
+
+            <div style="margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                <button id="cred-save" class="status-button small-btn">Save Credentials</button>
+                <button id="cred-clear" class="secondary-button small-btn">Clear Credentials</button>
+
+                <label style="display:flex; align-items:center; gap:8px;">
+                    <input id="cred-encrypt-toggle" type="checkbox" /> <span style="font-size:13px; color:#4a5568;">Encrypt</span>
+                </label>
+                <input id="cred-passphrase" type="password" placeholder="Passphrase (for encryption)" class="form-input" style="display:none; min-width:220px;" />
+
+                <button id="cred-export" class="secondary-button small-btn">Export</button>
+                <button id="cred-import-btn" class="secondary-button small-btn">Import</button>
+                <input id="cred-import-file" type="file" accept="application/json" style="display:none;" />
+
+                <button id="cred-load-encrypted" class="status-button small-btn">Load Encrypted</button>
+
+                <div id="cred-status" style="align-self:center; color:#4a5568; font-size:13px;"></div>
+            </div>
         </div>
 
         <div class="api-sections">
@@ -409,31 +466,293 @@
 
     <!-- Pass Django variables to JavaScript -->
     <script>
-        window.API_URL = window.Config.API_URL;
-    </script>
+        window.API_URL = (window.Config && window.Config.API_URL) || '';
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
+        // --- Web Crypto helpers for AES-GCM encryption using a passphrase ---
+        async function deriveKey(passphrase, salt) {
+            const enc = new TextEncoder();
+            const passKey = await window.crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+            return window.crypto.subtle.deriveKey({
+                name: 'PBKDF2',
+                salt: salt,
+                iterations: 250000,
+                hash: 'SHA-256'
+            }, passKey, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+        }
+
+        function concatBuffers(...bufs) {
+            let total = 0;
+            bufs.forEach(b => total += b.byteLength);
+            const tmp = new Uint8Array(total);
+            let offset = 0;
+            bufs.forEach(b => { tmp.set(new Uint8Array(b), offset); offset += b.byteLength; });
+            return tmp.buffer;
+        }
+
+        function toBase64(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+        function fromBase64(str) { return Uint8Array.from(atob(str), c => c.charCodeAt(0)).buffer; }
+
+        async function encryptString(plaintext, passphrase) {
+            const enc = new TextEncoder();
+            const salt = window.crypto.getRandomValues(new Uint8Array(16));
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveKey(passphrase, salt.buffer);
+            const ct = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, enc.encode(plaintext));
+            // store as base64(salt|iv|ciphertext)
+            return toBase64(concatBuffers(salt.buffer, iv.buffer, ct));
+        }
+
+        async function decryptString(b64payload, passphrase) {
+            try {
+                const raw = fromBase64(b64payload);
+                const full = new Uint8Array(raw);
+                const salt = full.slice(0, 16).buffer;
+                const iv = full.slice(16, 28).buffer;
+                const ct = full.slice(28).buffer;
+                const key = await deriveKey(passphrase, salt);
+                const pt = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, ct);
+                return new TextDecoder().decode(pt);
+            } catch (e) {
+                throw new Error('Decryption failed');
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const envSwitcher = document.getElementById('env-switcher');
-            if (envSwitcher && window.Config && window.Config.CURRENT_ENV) {
-                envSwitcher.value = window.Config.CURRENT_ENV;
+            const statusEl = document.getElementById('cred-status');
+            const encryptToggle = document.getElementById('cred-encrypt-toggle');
+            const passInput = document.getElementById('cred-passphrase');
+            const importFile = document.getElementById('cred-import-file');
 
+            function getSelectedEnv() {
+                return localStorage.getItem('selected_env') || (window.Config && window.Config.CURRENT_ENV) || (envSwitcher && envSwitcher.value) || 'production';
+            }
+
+            // Check if credentials exist for the selected environment
+            function credentialsExistForEnv() {
+                const env = getSelectedEnv();
+                const storedKey = 'eximpe_credentials_' + env;
+                const raw = localStorage.getItem(storedKey);
+                if (!raw) return false;
+                // If encrypted, require passphrase to load, so treat as not set
+                try {
+                    const parsed = JSON.parse(raw);
+                    // Must have at least CLIENT_ID and AUTH_KEY
+                    return Boolean(parsed.CLIENT_ID && parsed.AUTH_KEY);
+                } catch (e) {
+                    // Encrypted or malformed, treat as not set
+                    return false;
+                }
+            }
+
+            // Determine if a stored entry is encrypted by checking if value is a string that doesn't parse as JSON
+            function isEncryptedString(val) {
+                if (typeof val !== 'string') return false;
+                try { JSON.parse(val); return false; } catch (_) { return true; }
+            }
+
+            function loadCredentials() {
+                const env = getSelectedEnv();
+                if (envSwitcher) envSwitcher.value = env;
+                const storedKey = 'eximpe_credentials_' + env;
+                let raw = localStorage.getItem(storedKey);
+                if (!raw) {
+                    // fall back to window.Config values
+                    document.getElementById('clientId').value = (window.Config && (window.Config.CLIENT_ID || window.Config.CLIENTID || window.Config.CLIENT)) || (window.Config && window.Config.CLIENT_ID) || '';
+                    document.getElementById('authKey').value = (window.Config && (window.Config.AUTH_KEY || window.Config.CLIENT_SECRET || window.Config.AUTH_KEY)) || '';
+                    document.getElementById('merchantId').value = (window.Config && window.Config.MERCHANT_ID) || '';
+                    document.getElementById('isPspCheckbox').checked = false;
+                    const _cbEl = document.getElementById('cred-callback-url');
+                    if (_cbEl) _cbEl.value = (window.Config && window.Config.CALLBACK_URL) || '';
+                    statusEl.textContent = 'No credentials for ' + env;
+                    return;
+                }
+
+                if (isEncryptedString(raw)) {
+                    statusEl.textContent = 'Encrypted credentials found — enter passphrase and click Load';
+                    // leave fields alone until decrypted
+                    document.getElementById('clientId').value = '';
+                    document.getElementById('authKey').value = '';
+                    document.getElementById('merchantId').value = '';
+                    document.getElementById('isPspCheckbox').checked = false;
+                    const _cbEl2 = document.getElementById('cred-callback-url');
+                    if (_cbEl2) _cbEl2.value = '';
+                } else {
+                    try {
+                        const parsed = JSON.parse(raw || '{}');
+                        document.getElementById('clientId').value = parsed.CLIENT_ID || parsed.API_KEY || '';
+                        document.getElementById('authKey').value = parsed.AUTH_KEY || parsed.MERCHANT_SECRET || '';
+                        document.getElementById('merchantId').value = parsed.MERCHANT_ID || '';
+                        document.getElementById('isPspCheckbox').checked = parsed.IS_PSP ? true : false;
+                        const _cbEl3 = document.getElementById('cred-callback-url');
+                        if (_cbEl3) _cbEl3.value = parsed.CALLBACK_URL || '';
+                        statusEl.textContent = 'Loaded credentials for ' + env;
+                    } catch (e) {
+                        statusEl.textContent = 'Failed to parse stored credentials for ' + env;
+                    }
+                }
+                // toggle merchant id visibility like other pages expect
+                const merchantGroup = document.getElementById('merchantIdGroup');
+                if (merchantGroup) merchantGroup.style.display = document.getElementById('isPspCheckbox').checked ? 'block' : 'none';
+            }
+
+            async function saveCredentials() {
+                const env = getSelectedEnv();
+                const storedKey = 'eximpe_credentials_' + env;
+                const payload = {
+                    CLIENT_ID: document.getElementById('clientId').value || '',
+                    AUTH_KEY: document.getElementById('authKey').value || '',
+                    IS_PSP: document.getElementById('isPspCheckbox').checked ? true : false,
+                    MERCHANT_ID: document.getElementById('merchantId').value || '',
+                    CALLBACK_URL: (document.getElementById('cred-callback-url') ? document.getElementById('cred-callback-url').value : '') || ''
+                };
+
+                if (encryptToggle.checked) {
+                    const pass = passInput.value || '';
+                    if (!pass) { statusEl.textContent = 'Enter passphrase to encrypt'; return; }
+                    try {
+                        const enc = await encryptString(JSON.stringify(payload), pass);
+                        localStorage.setItem(storedKey, enc);
+                        statusEl.textContent = 'Saved (encrypted) credentials for ' + env;
+                    } catch (e) {
+                        statusEl.textContent = 'Encryption failed';
+                    }
+                } else {
+                    localStorage.setItem(storedKey, JSON.stringify(payload));
+                    statusEl.textContent = 'Saved credentials for ' + env;
+                }
+            }
+
+            async function loadEncryptedWithPassphrase() {
+                const env = getSelectedEnv();
+                const storedKey = 'eximpe_credentials_' + env;
+                const raw = localStorage.getItem(storedKey);
+                if (!raw || !isEncryptedString(raw)) { statusEl.textContent = 'No encrypted credentials to load'; return; }
+                const pass = passInput.value || '';
+                if (!pass) { statusEl.textContent = 'Enter passphrase to decrypt'; return; }
+                try {
+                    const dec = await decryptString(raw, pass);
+                    const parsed = JSON.parse(dec || '{}');
+                    document.getElementById('clientId').value = parsed.CLIENT_ID || '';
+                    document.getElementById('authKey').value = parsed.AUTH_KEY || '';
+                    document.getElementById('merchantId').value = parsed.MERCHANT_ID || '';
+                    document.getElementById('isPspCheckbox').checked = parsed.IS_PSP ? true : false;
+                    const _cbEl4 = document.getElementById('cred-callback-url');
+                    if (_cbEl4) _cbEl4.value = parsed.CALLBACK_URL || '';
+                    statusEl.textContent = 'Decrypted and loaded for ' + env;
+                } catch (e) {
+                    statusEl.textContent = 'Decryption failed — bad passphrase?';
+                }
+            }
+
+            function clearCredentials() {
+                const env = getSelectedEnv();
+                const storedKey = 'eximpe_credentials_' + env;
+                localStorage.removeItem(storedKey);
+                loadCredentials();
+                statusEl.textContent = 'Cleared credentials for ' + env;
+            }
+
+            async function exportCredentials() {
+                const env = getSelectedEnv();
+                const storedKey = 'eximpe_credentials_' + env;
+                const raw = localStorage.getItem(storedKey);
+                if (!raw) { statusEl.textContent = 'No credentials to export for ' + env; return; }
+                const blob = new Blob([raw], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `eximpe_credentials_${env}.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                statusEl.textContent = 'Exported credentials for ' + env;
+            }
+
+            function importCredentialsFile(file) {
+                const env = getSelectedEnv();
+                const storedKey = 'eximpe_credentials_' + env;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    // store as-is (could be encrypted or plain JSON)
+                    localStorage.setItem(storedKey, text);
+                    loadCredentials();
+                    statusEl.textContent = 'Imported credentials for ' + env;
+                };
+                reader.readAsText(file);
+            }
+
+            if (envSwitcher) {
+                envSwitcher.value = getSelectedEnv();
                 envSwitcher.addEventListener('change', (e) => {
                     const newEnv = e.target.value;
                     localStorage.setItem('selected_env', newEnv);
-                    window.location.reload();
+                    loadCredentials();
                 });
             }
+
+            encryptToggle.addEventListener('change', () => {
+                passInput.style.display = encryptToggle.checked ? 'inline-block' : 'none';
+            });
+
+            // Handle PSP checkbox toggling of merchant ID field
+            const isPspCb = document.getElementById('isPspCheckbox');
+            if (isPspCb) {
+                isPspCb.addEventListener('change', () => {
+                    const merchantGroup = document.getElementById('merchantIdGroup');
+                    if (merchantGroup) merchantGroup.style.display = isPspCb.checked ? 'block' : 'none';
+                });
+            }
+
+            document.getElementById('cred-save').addEventListener('click', saveCredentials);
+            document.getElementById('cred-clear').addEventListener('click', clearCredentials);
+            document.getElementById('cred-export').addEventListener('click', exportCredentials);
+            document.getElementById('cred-import-btn').addEventListener('click', () => importFile.click());
+            importFile.addEventListener('change', (e) => { if (e.target.files && e.target.files[0]) importCredentialsFile(e.target.files[0]); });
+
+            // Wire up the Load Encrypted button in the UI
+            const loadEncryptedBtn = document.getElementById('cred-load-encrypted');
+            if (loadEncryptedBtn) loadEncryptedBtn.addEventListener('click', loadEncryptedWithPassphrase);
+
+            // Prevent navigation if credentials are not set
+            function showCredNotification(msg) {
+                const notif = document.getElementById('cred-notification');
+                const notifMsg = document.getElementById('cred-notification-msg');
+                if (notif && notifMsg) {
+                    notifMsg.textContent = msg;
+                    notif.style.display = 'flex';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    // Auto-hide after 4 seconds
+                    if (notif._timeout) clearTimeout(notif._timeout);
+                    notif._timeout = setTimeout(() => { notif.style.display = 'none'; }, 4000);
+                }
+            }
+
+            function blockIntegrationNavigationIfNoCreds() {
+                const integrationLinks = document.querySelectorAll('.integration-card[href]:not([href=""])');
+                integrationLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        if (!credentialsExistForEnv()) {
+                            e.preventDefault();
+                            showCredNotification('Set credentials for the selected environment before proceeding.');
+                        }
+                    });
+                });
+                // Dismiss button
+                const notifClose = document.getElementById('cred-notification-close');
+                if (notifClose) {
+                    notifClose.addEventListener('click', function() {
+                        const notif = document.getElementById('cred-notification');
+                        if (notif) notif.style.display = 'none';
+                    });
+                }
+            }
+
+            // initial load
+            loadCredentials();
+            blockIntegrationNavigationIfNoCreds();
         });
     </script>
 

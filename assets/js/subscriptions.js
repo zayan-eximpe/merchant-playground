@@ -230,11 +230,6 @@ function clearFormData() {
 }
 
 function clearCache() {
-    // Store current Client Secret and client ID
-    const currentAuthKey = document.getElementById('authKey')?.value || '';
-    const currentClientId = document.getElementById('clientId')?.value || '';
-    const currentMerchantId = document.getElementById('merchantId')?.value || '';
-    const isPsp = document.getElementById('isPspCheckbox')?.checked || false;
 
     // Clear all form data
     clearFormData();
@@ -243,17 +238,6 @@ function clearCache() {
     if (form) {
         form.reset();
     }
-
-    // Restore Client Secret and client ID
-    const authKeyEl = document.getElementById('authKey');
-    const clientIdEl = document.getElementById('clientId');
-    const merchantIdEl = document.getElementById('merchantId');
-    const isPspCheckbox = document.getElementById('isPspCheckbox');
-
-    if (authKeyEl) authKeyEl.value = currentAuthKey;
-    if (clientIdEl) clientIdEl.value = currentClientId;
-    if (merchantIdEl) merchantIdEl.value = currentMerchantId;
-    if (isPspCheckbox) isPspCheckbox.checked = isPsp;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -273,12 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!createButton) {
         return;
     }
-
-    const btnText = document.getElementById('btnText');
-    const authKeyInput = document.getElementById('authKey');
-    const clientIdInput = document.getElementById('clientId');
-    const isPspCheckbox = document.getElementById('isPspCheckbox');
-    const merchantIdGroup = document.getElementById('merchantIdGroup');
 
     // Modal elements
     const modalOverlay = document.getElementById('modalOverlay');
@@ -439,79 +417,6 @@ document.addEventListener('DOMContentLoaded', function() {
             element.addEventListener('input', saveFormData);
             element.addEventListener('change', saveFormData);
         }
-    }
-
-    // Load Client Secret from local storage if it exists
-    const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-    if (savedAuthKey && authKeyInput) {
-        authKeyInput.value = savedAuthKey;
-    }
-    const savedClientId = localStorage.getItem('eximpe_client_id');
-    if (savedClientId && clientIdInput) {
-        clientIdInput.value = savedClientId;
-    }
-
-    // Load PSP checkbox and merchant ID from local storage
-    const savedIsPsp = localStorage.getItem('eximpe_is_psp');
-    if (savedIsPsp === 'true' && isPspCheckbox) {
-        isPspCheckbox.checked = true;
-        if (merchantIdGroup) merchantIdGroup.style.display = '';
-    }
-    const savedMerchantId = localStorage.getItem('eximpe_merchant_id');
-    if (savedMerchantId) {
-        const merchantIdEl = document.getElementById('merchantId');
-        if (merchantIdEl) merchantIdEl.value = savedMerchantId;
-    }
-
-    // Save Client Secret to local storage when it changes
-    if (authKeyInput) {
-        authKeyInput.addEventListener('change', function() {
-            if (this.value) {
-                localStorage.setItem('eximpe_auth_key', this.value);
-            } else {
-                localStorage.removeItem('eximpe_auth_key');
-            }
-        });
-    }
-
-    if (clientIdInput) {
-        clientIdInput.addEventListener('change', function() {
-            if (this.value) {
-                localStorage.setItem('eximpe_client_id', this.value);
-            } else {
-                localStorage.removeItem('eximpe_client_id');
-            }
-        });
-    }
-
-    // Save PSP checkbox state to local storage when it changes
-    if (isPspCheckbox) {
-        isPspCheckbox.addEventListener('change', function() {
-            localStorage.setItem('eximpe_is_psp', this.checked.toString());
-            if (merchantIdGroup) {
-                merchantIdGroup.style.display = this.checked ? '' : 'none';
-            }
-        });
-    }
-
-    // Save merchant ID to local storage when it changes
-    const merchantIdEl = document.getElementById('merchantId');
-    if (merchantIdEl) {
-        merchantIdEl.addEventListener('change', function() {
-            if (this.value) {
-                localStorage.setItem('eximpe_merchant_id', this.value);
-            } else {
-                localStorage.removeItem('eximpe_merchant_id');
-            }
-        });
-
-        merchantIdEl.addEventListener('input', function() {
-            if (this.value) {
-                localStorage.setItem('eximpe_merchant_id', this.value);
-            } else {
-                localStorage.removeItem('eximpe_merchant_id');
-            }
-        });
     }
 
     // Card-style modal with optional ACS button (mirrors S2S card payment flow)
@@ -832,8 +737,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const headers = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'X-Client-Secret': document.getElementById('authKey').value,
-                    'X-Client-ID': document.getElementById('clientId').value
+                    'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                    'X-Client-ID': getConfigValue('CLIENT_ID')
                 };
 
                 if (isPspCheckbox && isPspCheckbox.checked && document.getElementById('merchantId')?.value) {

@@ -305,66 +305,6 @@
                 </div>
             </div>
 
-            <div class="form-section">
-                <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
-                <div class="form-grid">
-                    <div class="form-group tooltip full-width">
-                        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-weight: 600; color: #2d3748; cursor: pointer;">
-                            <input type="checkbox" id="isPspCheckbox" style="width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: rgb(38, 168, 135);">
-                            <span style="font-weight: normal;">Is PSP?</span>
-                        </label>
-                        <span class="tooltiptext">
-                            <strong>PSP Mode</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
-                            Check this if you are a Payment Service Provider<br>
-                            This will enable merchant ID field
-                        </span>
-                        <div class="helper-text">Enable Payment Service Provider mode</div>
-                    </div>
-                    <div class="form-group tooltip full-width" id="merchantIdGroup" style="display: none;">
-                        <input type="text" id="merchantId" name="merchant_id" placeholder="Merchant ID">
-                        <span class="tooltiptext">
-                            <strong>Merchant ID</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
-                            Enter the Merchant ID if this is a PSP transaction
-                        </span>
-                        <div class="helper-text">Merchant ID (only for PSP)</div>
-                    </div>
-                    <div class="form-group tooltip">
-                        <input type="text" id="clientId" name="client_id" value="" placeholder="Client ID">
-                        <span class="tooltiptext">
-                            <strong>Client ID</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            Your unique merchant identifier<br>
-                            Obtained from your merchant dashboard
-                        </span>
-                        <div class="helper-text">Client ID from the Merchant Account<span class="required">*</span></div>
-                    </div>
-                    <div class="form-group tooltip">
-                        <input type="password" id="authKey" name="auth_key" value="" placeholder="Client Secret">
-                        <span class="tooltiptext">
-                            <strong>Client Secret</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            Secret key for API authentication<br>
-                            Keep this confidential and secure
-                        </span>
-                        <div class="helper-text">Client Secret from the Merchant Account<span class="required">*</span></div>
-                    </div>
-                    <div class="form-group tooltip">
-                        <select id="mode" name="mode">
-                            <option value="sandbox" selected>Sandbox</option>
-                            <option value="production">Production</option>
-                        </select>
-                        <span class="tooltiptext">
-                            <strong>Mode</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            Select 'sandbox' for testing or 'production' for live payments.
-                        </span>
-                        <div class="helper-text">Choose environment mode <span class="required">*</span></div>
-                    </div>
-                </div>
-            </div>
-
             <button type="submit" id="createButton" class="main-action-btn">
                 <i class="fas fa-lock"></i>
                 <span id="btnText">Initiate Payment</span>
@@ -383,17 +323,7 @@
     <!-- Page-specific logic -->
     <script src="../assets/js/upi_intent.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
-    </script>
+    <!-- Credential injection handled centrally by common-utils.js -->
     
 </body>
 </html>

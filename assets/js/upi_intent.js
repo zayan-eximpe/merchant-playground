@@ -265,31 +265,17 @@ document.body.style.zoom = "90%";
         }
 
         function clearCache() {
-            // Store current Client Secret and client ID
-            const currentAuthKey = document.getElementById('authKey').value;
-            const currentClientId = document.getElementById('clientId').value;
-            const currentMerchantId = document.getElementById('merchantId').value;
-            const isPsp = document.getElementById('isPspCheckbox').checked;
 
             // Clear all form data
             clearFormData();
             // Reset form
             document.getElementById('sessionForm').reset();
-
-
-            // Restore Client Secret and client ID
-            document.getElementById('authKey').value = currentAuthKey;
-            document.getElementById('clientId').value = currentClientId;
-            document.getElementById('merchantId').value = currentMerchantId;
-            document.getElementById('isPspCheckbox').checked = isPsp;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('sessionForm');
             const createButton = document.getElementById('createButton');
             const btnText = document.getElementById('btnText');
-            const authKeyInput = document.getElementById('authKey');
-            const clientIdInput = document.getElementById('clientId');
             // Modal elements
             const modalOverlay = document.getElementById('modalOverlay');
             const modalBox = document.getElementById('modalBox');
@@ -371,68 +357,6 @@ document.body.style.zoom = "90%";
                     element.addEventListener('change', saveFormData);
                 }
             }
-
-            // Load Client Secret from local storage if it exists
-            const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-            if (savedAuthKey) {
-                authKeyInput.value = savedAuthKey;
-            }
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            if (savedClientId) {
-                clientIdInput.value = savedClientId;
-            }
-
-            // Load PSP checkbox and merchant ID from local storage
-            const savedIsPsp = localStorage.getItem('eximpe_is_psp');
-            if (savedIsPsp === 'true') {
-                isPspCheckbox.checked = true;
-                merchantIdGroup.style.display = '';
-            }
-            const savedMerchantId = localStorage.getItem('eximpe_merchant_id');
-            if (savedMerchantId) {
-                document.getElementById('merchantId').value = savedMerchantId;
-            }
-
-            // Save Client Secret to local storage when it changes
-            authKeyInput.addEventListener('change', function() {
-                if (this.value) {
-                    localStorage.setItem('eximpe_auth_key', this.value);
-                } else {
-                    localStorage.removeItem('eximpe_auth_key');
-                }
-            });
-
-            clientIdInput.addEventListener('change', function() {
-                if (this.value) {
-                    localStorage.setItem('eximpe_client_id', this.value);
-                } else {
-                    localStorage.removeItem('eximpe_client_id');
-                }
-            });
-
-            // Save PSP checkbox state to local storage when it changes
-            isPspCheckbox.addEventListener('change', function() {
-                localStorage.setItem('eximpe_is_psp', this.checked.toString());
-                merchantIdGroup.style.display = this.checked ? '' : 'none';
-            });
-
-            // Save merchant ID to local storage when it changes
-            document.getElementById('merchantId').addEventListener('change', function() {
-                if (this.value) {
-                    localStorage.setItem('eximpe_merchant_id', this.value);
-                } else {
-                    localStorage.removeItem('eximpe_merchant_id');
-                }
-            });
-
-            // Also add input event listeners for immediate saving
-            document.getElementById('merchantId').addEventListener('input', function() {
-                if (this.value) {
-                    localStorage.setItem('eximpe_merchant_id', this.value);
-                } else {
-                    localStorage.removeItem('eximpe_merchant_id');
-                }
-            });
 
             function escapeHtml(text) {
                 const div = document.createElement('div');
@@ -603,9 +527,9 @@ document.body.style.zoom = "90%";
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
-                            'X-Client-Secret': document.getElementById('authKey').value,
-                            'X-Client-ID': document.getElementById('clientId').value,
-                            ...(isPspCheckbox.checked && document.getElementById('merchantId').value ? {'X-Merchant-ID': document.getElementById('merchantId').value} : {})
+                            'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                            'X-Client-ID': getConfigValue('CLIENT_ID'),
+                            ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                         },
                         body: JSON.stringify(cleanPayload)
                     });

@@ -171,11 +171,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Hidden fields required for API calls -->
-            <input type="hidden" id="clientId" name="client_id">
-            <input type="hidden" id="authKey" name="auth_key">
-            <input type="hidden" id="merchantId" name="merchant_id">
-            <input type="hidden" id="isPspCheckbox" name="is_psp">
             <!-- Added missing hidden fields for JS compatibility -->
             <input type="hidden" id="amount" name="amount">
             <input type="hidden" id="currency" name="currency">
@@ -263,17 +258,7 @@
     <!-- Page-specific logic -->
     <script src="../assets/js/card_payment.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
-    </script>
+    <!-- Credential injection handled centrally by common-utils.js -->
     
 </body>
 </html>

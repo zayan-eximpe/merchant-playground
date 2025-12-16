@@ -51,19 +51,6 @@
         <h1 style="color: rgb(38, 168, 135);">Create Merchant</h1>
         <div class="subtitle">Register a new merchant account with detailed business information</div>
 
-        <div class="form-section">
-            <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <input type="text" id="clientId" name="client_id" value="" placeholder="Client ID" autocomplete="username">
-                    <div class="helper-text">Client ID from the Merchant Account</div>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="authKey" name="auth_key" value="" placeholder="Client Secret" autocomplete="off">
-                    <div class="helper-text">Client Secret from the Merchant Account</div>
-                </div>
-            </div>
-        </div>
 
         <form id="merchantForm" autocomplete="off">
             <div class="form-section">
@@ -183,17 +170,7 @@
     <!-- Page-specific logic -->
     <script src="../assets/js/create_merchant.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
-    </script>
+    <!-- Credential injection handled centrally by common-utils.js -->
     
 </body>
 </html>

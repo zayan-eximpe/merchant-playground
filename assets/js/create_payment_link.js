@@ -89,18 +89,9 @@ function clearCache() {
     if (!form) {
         return;
     }
-    const currentAuthKey = document.getElementById('authKey')?.value || '';
-    const currentClientId = document.getElementById('clientId')?.value || '';
 
     localStorage.removeItem('payment_link_form_data');
     form.reset();
-
-    if (document.getElementById('authKey')) {
-        document.getElementById('authKey').value = currentAuthKey;
-    }
-    if (document.getElementById('clientId')) {
-        document.getElementById('clientId').value = currentClientId;
-    }
 
     updateSummaryCard();
 }
@@ -191,21 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('linkForm');
     const createButton = document.getElementById('createButton');
     const btnText = document.getElementById('btnText');
-    const authKeyInput = document.getElementById('authKey');
-    const clientIdInput = document.getElementById('clientId');
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
     const modalOverlay = document.getElementById('modalOverlay');
     const modalCloseBtn = document.getElementById('modalCloseBtn');
-
-    const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-    if (savedAuthKey && authKeyInput) {
-        authKeyInput.value = savedAuthKey;
-    }
-    const savedClientId = localStorage.getItem('eximpe_client_id');
-    if (savedClientId && clientIdInput) {
-        clientIdInput.value = savedClientId;
-    }
 
     loadFormData();
     updateSummaryCard();
@@ -217,22 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     descriptionInput?.addEventListener('input', () => {
         saveFormData();
         updateSummaryCard();
-    });
-
-    authKeyInput?.addEventListener('change', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_auth_key', this.value);
-        } else {
-            localStorage.removeItem('eximpe_auth_key');
-        }
-    });
-
-    clientIdInput?.addEventListener('change', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_client_id', this.value);
-        } else {
-            localStorage.removeItem('eximpe_client_id');
-        }
     });
 
     modalCloseBtn?.addEventListener('click', hideModal);
@@ -249,8 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const amountValue = parseFloat(amountInput?.value || '');
             const descriptionValue = (descriptionInput?.value || '').trim();
-            const authKey = authKeyInput?.value.trim();
-            const clientId = clientIdInput?.value.trim();
 
             if (Number.isNaN(amountValue) || amountValue <= 0) {
                 showModal('error', 'Invalid Amount', 'Please enter a valid amount greater than zero.');
@@ -258,10 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (!descriptionValue) {
                 showModal('error', 'Description Missing', 'Please add a short description for the payment link.');
-                return;
-            }
-            if (!authKey || !clientId) {
-                showModal('error', 'Missing Credentials', 'Client ID and Client Secret are required.');
                 return;
             }
 
@@ -273,10 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(`${window.API_URL}/pg/payment-links/`, {
                     method: 'POST',
                     headers: {
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
+                        ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                     },
                     body: JSON.stringify({
                         amount: amountValue.toFixed(2),

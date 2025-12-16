@@ -37,8 +37,6 @@ function escapeHtml(text) {
             e.preventDefault();
 
             const orderId = document.getElementById('orderId').value;
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
             const resultContainer = document.getElementById('resultContainer');
             const resultContent = document.getElementById('resultContent');
 
@@ -47,23 +45,15 @@ function escapeHtml(text) {
                 showModal('error', 'Validation Error', 'Please enter an Order ID');
                 return;
             }
-            if (!clientId || !authKey) {
-                showModal('error', 'Validation Error', 'Please enter both Client ID and Client Secret');
-                return;
-            }
 
-            // Save to localStorage for convenience
-            if (clientId) localStorage.setItem('eximpe_client_id', clientId);
-            if (authKey) localStorage.setItem('eximpe_auth_key', authKey);
-            if (orderId) localStorage.setItem('last_used_order_id', orderId);
             try {
                 const response = await fetch(`/pg/orders/${orderId}/`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID')
                     }
                 });
                 const responseData = await response.json();
@@ -475,23 +465,6 @@ function escapeHtml(text) {
             }
         });
         document.addEventListener('DOMContentLoaded', function() {
-            const clientIdInput = document.getElementById('clientId');
-            const authKeyInput = document.getElementById('authKey');
-            const orderIdInput = document.getElementById('orderId');
-
-            // Load saved API credentials
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-            if (savedClientId) clientIdInput.value = savedClientId;
-            if (savedAuthKey) authKeyInput.value = savedAuthKey;
-
-            // Load last used order ID if available
-            const lastUsedOrderId = localStorage.getItem('last_used_order_id');
-            if (lastUsedOrderId) {
-                orderIdInput.value = lastUsedOrderId;
-                localStorage.setItem('last_used_order_id_in_order_details', lastUsedOrderId);
-            }
-
             // Add clear results functionality
             document.getElementById('clearResultsBtn').addEventListener('click', function() {
                 document.getElementById('orderId').value = '';

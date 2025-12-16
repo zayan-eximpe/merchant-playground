@@ -360,6 +360,29 @@ h1 {
     box-shadow: none;
 }
 
+/* Secondary button variant used in forms */
+.secondary-button {
+    background: white;
+    color: #1f2937;
+    border: 2px solid #e2e8f0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(44,62,80,0.08);
+}
+
+.small-btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
 .status-result {
     margin-top: 20px;
     padding: 16px;
@@ -479,4 +502,43 @@ h1 {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Credentials card styles (playground) */
+.credentials-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 6px 20px rgba(44,62,80,0.08);
+    border: 1px solid #eef2f6;
+    margin-bottom: 18px;
+}
+.credentials-card .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+}
+.credentials-card .section-title small {
+    display: block;
+    font-size: 13px;
+    color: #4a5568;
+    font-weight: 500;
+    margin-top: 4px;
+}
+.credentials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+.credentials-footer {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+.credentials-footer .form-input {
+    min-width: 220px;
 }

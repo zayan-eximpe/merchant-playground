@@ -100,55 +100,6 @@
                 </div>
             </div>
 
-            <!-- API Configuration Section -->
-            <div class="form-section">
-                <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
-                <div class="form-grid">
-                    <div class="form-group tooltip">
-                        <input type="text" id="clientId" name="client_id" value="7411846657" placeholder="Client ID">
-                        <span class="tooltiptext">
-                            <strong>Client ID</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            Your unique merchant identifier<br>
-                            Obtained from your merchant dashboard
-                        </span>
-                        <div class="helper-text">Client ID from the Merchant Account <span class="required">*</span></div>
-                    </div>
-                    <div class="form-group tooltip">
-                        <input type="password" id="authKey" name="auth_key" value="7A856E3CFC78D145AF54" placeholder="Client Secret">
-                        <span class="tooltiptext">
-                            <strong>Client Secret</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            Secret key for API authentication<br>
-                            Keep this confidential and secure
-                        </span>
-                        <div class="helper-text">Client Secret from the Merchant Account <span class="required">*</span></div>
-                    </div>
-                    <div class="form-group tooltip">
-                        <input type="text" id="merchantId" name="merchant_id" value="9399726811" placeholder="Merchant ID">
-                        <span class="tooltiptext">
-                            <strong>Merchant ID</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            Your merchant account identifier<br>
-                            Used for API authentication
-                        </span>
-                        <div class="helper-text">Merchant ID for API calls <span class="required">*</span></div>
-                    </div>
-                    <div class="form-group tooltip">
-                        <select id="mode" name="mode">
-                            <option value="sandbox" selected>Sandbox</option>
-                            <option value="production">Production</option>
-                        </select>
-                        <span class="tooltiptext">
-                            <strong>Mode</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            Select 'sandbox' for testing or 'production' for live validation.
-                        </span>
-                        <div class="helper-text">Choose environment mode <span class="required">*</span></div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Submit Button and Loading Spinner at the bottom -->
             <button type="submit" id="validateButton" class="main-action-btn" style="margin-top: 28px;">
                 <i class="fas fa-check"></i>
@@ -179,17 +130,7 @@
     <!-- Page-specific logic -->
     <script src="../assets/js/vpa_validation.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
-    </script>
+    <!-- Credential injection handled centrally by common-utils.js -->
     
 </body>
 </html>

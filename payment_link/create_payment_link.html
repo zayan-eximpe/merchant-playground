@@ -120,27 +120,6 @@
                 </div>
             </div>
 
-            <div class="form-section">
-                <div class="section-title">
-                    <i class="fa-solid fa-lock"></i>
-                    API Credentials
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="clientId">Client ID</label>
-                        <input type="text" id="clientId" name="client_id" placeholder="Enter your Client ID"
-                            autocomplete="off" required>
-                        <div class="helper-text">Stored locally in your browser</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="authKey">Client Secret</label>
-                        <input type="password" id="authKey" name="auth_key" placeholder="Enter your Client Secret"
-                            autocomplete="new-password" required>
-                        <div class="helper-text">Never shared with Eximpe. Used only for this request.</div>
-                    </div>
-                </div>
-            </div>
-
             <button type="submit" id="createButton" class="main-action-btn">
                 <i class="fas fa-link"></i>
                 <span id="btnText">Generate Payment Link</span>
@@ -159,17 +138,7 @@
     <!-- Page-specific logic -->
     <script src="../assets/js/create_payment_link.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
-    </script>
+    <!-- Credential injection handled centrally by common-utils.js -->
     
 </body>
 

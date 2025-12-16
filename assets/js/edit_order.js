@@ -31,41 +31,11 @@
             if (e.target === document.getElementById('modalOverlay')) hideModal();
         });
 
-        // --- Load API config from localStorage ---
-        document.addEventListener('DOMContentLoaded', function() {
-            const clientIdInput = document.getElementById('clientId');
-            const authKeyInput = document.getElementById('authKey');
-            const orderIdInput = document.getElementById('orderIdInput');
-
-            // Load saved API credentials
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-            if (savedClientId) clientIdInput.value = savedClientId;
-            if (savedAuthKey) authKeyInput.value = savedAuthKey;
-
-            const lastUsedOrderId = localStorage.getItem('last_used_order_id');
-            if (lastUsedOrderId) {
-                orderIdInput.value = lastUsedOrderId;
-            }
-
-            clientIdInput.addEventListener('change', function() {
-                if (this.value) localStorage.setItem('eximpe_client_id', this.value);
-                else localStorage.removeItem('eximpe_client_id');
-            });
-            authKeyInput.addEventListener('change', function() {
-                if (this.value) localStorage.setItem('eximpe_auth_key', this.value);
-                else localStorage.removeItem('eximpe_auth_key');
-            });
-        });
-
         // --- Fetch and populate order details for editable fields only ---
         async function fetchAndPopulateOrder() {
             const orderId = document.getElementById('orderIdInput').value.trim();
-            if (orderId) localStorage.setItem('last_used_order_id', orderId);
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
-            if (!orderId || !clientId || !authKey) {
-                showModal('error', 'Validation Error', 'Please enter Order ID, Client ID, and Client Secret.');
+            if (!orderId) {
+                showModal('error', 'Validation Error', 'Please enter Order ID');
                 return;
             }
             try {
@@ -73,8 +43,8 @@
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID')
                     }
                 });
                 const data = await response.json();
@@ -117,10 +87,8 @@
             e.preventDefault();
             hideModal();
             const orderId = document.getElementById('orderIdInput').value.trim();
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
-            if (!orderId || !clientId || !authKey) {
-                showModal('error', 'Validation Error', 'Please enter Order ID, Client ID, and Client Secret.');
+            if (!orderId) {
+                showModal('error', 'Validation Error', 'Please enter Order ID.');
                 return;
             }
             const updateButton = document.getElementById('updateButton');
@@ -154,8 +122,8 @@
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID')
                     },
                     body: JSON.stringify(requestData)
                 });
@@ -192,14 +160,9 @@
 
         function clearCache() {
             // Store current Client Secret, client ID, and order ID
-            const currentAuthKey = document.getElementById('authKey').value;
-            const currentClientId = document.getElementById('clientId').value;
             const currentOrderId = document.getElementById('orderIdInput').value;
             // Reset form
             document.getElementById('editOrderForm').reset();
-            // Restore Client Secret, client ID, and order ID
-            document.getElementById('authKey').value = currentAuthKey;
-            document.getElementById('clientId').value = currentClientId;
             document.getElementById('orderIdInput').value = currentOrderId;
         }
 

@@ -33,25 +33,6 @@ function escapeHtml(text) {
             if (e.target === document.getElementById('modalOverlay')) hideModal();
         });
 
-        // Load saved credentials on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const clientIdInput = document.getElementById('clientId');
-            const authKeyInput = document.getElementById('authKey');
-            const orderIdInput = document.getElementById('orderIdInput');
-
-            // Load saved API credentials
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-            if (savedClientId) clientIdInput.value = savedClientId;
-            if (savedAuthKey) authKeyInput.value = savedAuthKey;
-
-            // Load last used order ID if available
-            const lastUsedOrderId = localStorage.getItem('last_used_order_id');
-            if (lastUsedOrderId) {
-                orderIdInput.value = lastUsedOrderId;
-            }
-        });
-
         document.getElementById('verificationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const verifyButton = document.getElementById('verifyButton');
@@ -84,20 +65,13 @@ function escapeHtml(text) {
                 formData.append('document_type', documentType === 'invoice' ? 'invoice' : 'awb');
                 formData.append('file', documentFile);
 
-                const clientId = document.getElementById('clientId').value;
-                const authKey = document.getElementById('authKey').value;
-
-                // Save credentials to localStorage
-                if (clientId) localStorage.setItem('eximpe_client_id', clientId);
-                if (authKey) localStorage.setItem('eximpe_auth_key', authKey);
-
                 const response = await fetch(`${window.API_URL}/pg/orders/${orderId}/documents/`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                     },
                     body: formData
                 });

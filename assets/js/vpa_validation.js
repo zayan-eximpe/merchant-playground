@@ -36,20 +36,11 @@ function createSampleData() {
 }
 
 function clearCache() {
-    // Store current API credentials
-    const currentClientId = document.getElementById('clientId').value;
-    const currentAuthKey = document.getElementById('authKey').value;
-    const currentMerchantId = document.getElementById('merchantId').value;
 
     // Clear all form data
     clearFormData();
     // Reset form
     document.getElementById('vpaForm').reset();
-
-    // Restore API credentials
-    document.getElementById('clientId').value = currentClientId;
-    document.getElementById('authKey').value = currentAuthKey;
-    document.getElementById('merchantId').value = currentMerchantId;
 
     // Hide result section
     document.getElementById('resultSection').classList.remove('show');
@@ -121,70 +112,6 @@ document.addEventListener('DOMContentLoaded', function () {
             element.addEventListener('change', saveFormData);
         }
     }
-
-    // Load API credentials from local storage if they exist
-    const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-    if (savedAuthKey) {
-        document.getElementById('authKey').value = savedAuthKey;
-    }
-    const savedClientId = localStorage.getItem('eximpe_client_id');
-    if (savedClientId) {
-        document.getElementById('clientId').value = savedClientId;
-    }
-    const savedMerchantId = localStorage.getItem('eximpe_merchant_id');
-    if (savedMerchantId) {
-        document.getElementById('merchantId').value = savedMerchantId;
-    }
-
-    // Save API credentials to local storage when they change
-    document.getElementById('authKey').addEventListener('change', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_auth_key', this.value);
-        } else {
-            localStorage.removeItem('eximpe_auth_key');
-        }
-    });
-
-    document.getElementById('clientId').addEventListener('change', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_client_id', this.value);
-        } else {
-            localStorage.removeItem('eximpe_client_id');
-        }
-    });
-
-    document.getElementById('merchantId').addEventListener('change', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_merchant_id', this.value);
-        } else {
-            localStorage.removeItem('eximpe_merchant_id');
-        }
-    });
-
-    // Also add input event listeners for immediate saving
-    document.getElementById('authKey').addEventListener('input', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_auth_key', this.value);
-        } else {
-            localStorage.removeItem('eximpe_auth_key');
-        }
-    });
-
-    document.getElementById('clientId').addEventListener('input', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_client_id', this.value);
-        } else {
-            localStorage.removeItem('eximpe_client_id');
-        }
-    });
-
-    document.getElementById('merchantId').addEventListener('input', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_merchant_id', this.value);
-        } else {
-            localStorage.removeItem('eximpe_merchant_id');
-        }
-    });
 
     function escapeHtml(text) {
         const div = document.createElement('div');

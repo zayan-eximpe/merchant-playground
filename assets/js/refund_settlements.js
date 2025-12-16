@@ -3,31 +3,6 @@
  * Extracted from inline scripts for CSP compliance
  */
 
-// Load saved credentials on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedClientId = localStorage.getItem('eximpe_client_id');
-            const savedClientSecret = localStorage.getItem('eximpe_auth_key');
-
-            if (savedClientId) {
-                document.getElementById('clientId').value = savedClientId;
-            }
-            if (savedClientSecret) {
-                document.getElementById('clientSecret').value = savedClientSecret;
-            }
-
-            // Add event listeners to save credentials when they change
-            document.getElementById('clientId').addEventListener('change', function() {
-                if (this.value.trim()) {
-                    localStorage.setItem('eximpe_client_id', this.value);
-                }
-            });
-
-            document.getElementById('clientSecret').addEventListener('change', function() {
-                if (this.value.trim()) {
-                    localStorage.setItem('eximpe_auth_key', this.value);
-                }
-            });
-        });
 
         document.getElementById('refundSettlementForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -36,8 +11,6 @@
 
         async function searchRefundSettlements() {
             const refundId = document.getElementById('refundId').value;
-            const clientId = document.getElementById('clientId').value;
-            const clientSecret = document.getElementById('clientSecret').value;
 
             const loading = document.getElementById('loading');
             const errorMessage = document.getElementById('errorMessage');
@@ -50,15 +23,6 @@
                 errorMessage.classList.add('active');
                 return;
             }
-            if (!clientId.trim() || !clientSecret.trim()) {
-                errorMessage.textContent = 'Client ID and Client Secret are required.';
-                errorMessage.classList.add('active');
-                return;
-            }
-
-            // Save to localStorage for convenience
-            localStorage.setItem('eximpe_client_id', clientId);
-            localStorage.setItem('eximpe_auth_key', clientSecret);
 
             // Show loading
             loading.classList.add('active');
@@ -73,8 +37,8 @@
                     headers: {
                         'Accept': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': clientSecret,
-                        'X-Client-ID': clientId
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                     }
                 });
 

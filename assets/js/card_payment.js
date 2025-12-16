@@ -127,10 +127,6 @@ function populateSampleOrderFields() {
     }
     // Use window.API_URL with fallback to prevent undefined concatenation
     const apiUrl = window.API_URL || '';
-    const clientId = document.getElementById('clientId').value || localStorage.getItem('eximpe_client_id') || 'demo_client_id';
-    const authKey = document.getElementById('authKey').value || localStorage.getItem('eximpe_auth_key') || 'demo_secret';
-    const merchantId = document.getElementById('merchantId')?.value || localStorage.getItem('eximpe_merchant_id') || '';
-    const isPsp = document.getElementById('isPspCheckbox')?.checked || localStorage.getItem('eximpe_is_psp') === 'true';
     const sampleData = {
         amount: '1000.00',
         currency: 'INR',
@@ -153,10 +149,6 @@ function populateSampleOrderFields() {
         invoice_date: new Date().toISOString().split('T')[0],
         user_ip: '192.168.1.100',
         user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        client_id: clientId,
-        auth_key: authKey,
-        merchant_id: merchantId,
-        is_psp: isPsp,
     };
     document.getElementById('amount').value = sampleData.amount;
     document.getElementById('currency').value = sampleData.currency;
@@ -179,10 +171,6 @@ function populateSampleOrderFields() {
     document.getElementById('hsCodeDescription').value = sampleData.hs_code_description;
     document.getElementById('invoiceNumber').value = sampleData.invoice_number;
     document.getElementById('invoiceDate').value = sampleData.invoice_date;
-    document.getElementById('isPspCheckbox').checked = sampleData.is_psp;
-    document.getElementById('merchantId').value = sampleData.merchant_id;
-    document.getElementById('clientId').value = sampleData.client_id;
-    document.getElementById('authKey').value = sampleData.auth_key;
     saveFormData();
 }
 
@@ -228,20 +216,11 @@ function loadFormData() {
 
 function clearCache() {
     // Store current Client Secret, client ID, merchant ID, and PSP checkbox
-    const currentAuthKey = document.getElementById('authKey').value;
-    const currentClientId = document.getElementById('clientId').value;
-    const currentMerchantId = document.getElementById('merchantId')?.value;
-    const isPsp = document.getElementById('isPspCheckbox')?.checked;
     // Store Card Identifier value
     const currentCardIdentifier = document.getElementById('cardIdentifier').value;
     // Clear all form data
     setCardFieldsDisabled(false);
     document.getElementById('sessionForm').reset();
-    // Restore secret keys and merchant info
-    document.getElementById('authKey').value = currentAuthKey;
-    document.getElementById('clientId').value = currentClientId;
-    if (document.getElementById('merchantId')) document.getElementById('merchantId').value = currentMerchantId;
-    if (document.getElementById('isPspCheckbox')) document.getElementById('isPspCheckbox').checked = isPsp;
     // Restore Card Identifier value
     document.getElementById('cardIdentifier').value = currentCardIdentifier;
     // Re-enable card fields if they were disabled by saved card selection
@@ -261,61 +240,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     // Load Client Secret from local storage if it exists
-    const authKeyInput = document.getElementById('authKey');
-    const clientIdInput = document.getElementById('clientId');
-    const merchantIdInput = document.getElementById('merchantId');
-    const isPspCheckbox = document.getElementById('isPspCheckbox');
     const saveCardCheckbox = document.getElementById('saveCard');
     const merchantIdGroup = document.getElementById('merchantIdGroup');
-    const savedAuthKey = localStorage.getItem('eximpe_auth_key');
-    if (savedAuthKey) authKeyInput.value = savedAuthKey;
-    const savedClientId = localStorage.getItem('eximpe_client_id');
-    if (savedClientId) clientIdInput.value = savedClientId;
-    const savedIsPsp = localStorage.getItem('eximpe_is_psp');
-    if (savedIsPsp === 'true' && isPspCheckbox) {
-        isPspCheckbox.checked = true;
-        if (merchantIdGroup) merchantIdGroup.style.display = '';
-    }
     const savedMerchantId = localStorage.getItem('eximpe_merchant_id');
     if (savedMerchantId && merchantIdInput) merchantIdInput.value = savedMerchantId;
     const savedSaveCard = localStorage.getItem('eximpe_save_card');
     if (savedSaveCard === 'true' && saveCardCheckbox) {
         saveCardCheckbox.checked = true;
-    }
-    // Save Client Secret to local storage when it changes
-    if (authKeyInput) authKeyInput.addEventListener('change', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_auth_key', this.value);
-        } else {
-            localStorage.removeItem('eximpe_auth_key');
-        }
-    });
-    if (clientIdInput) clientIdInput.addEventListener('change', function () {
-        if (this.value) {
-            localStorage.setItem('eximpe_client_id', this.value);
-        } else {
-            localStorage.removeItem('eximpe_client_id');
-        }
-    });
-    if (isPspCheckbox) isPspCheckbox.addEventListener('change', function () {
-        localStorage.setItem('eximpe_is_psp', this.checked.toString());
-        if (merchantIdGroup) merchantIdGroup.style.display = this.checked ? '' : 'none';
-    });
-    if (merchantIdInput) {
-        merchantIdInput.addEventListener('change', function () {
-            if (this.value) {
-                localStorage.setItem('eximpe_merchant_id', this.value);
-            } else {
-                localStorage.removeItem('eximpe_merchant_id');
-            }
-        });
-        merchantIdInput.addEventListener('input', function () {
-            if (this.value) {
-                localStorage.setItem('eximpe_merchant_id', this.value);
-            } else {
-                localStorage.removeItem('eximpe_merchant_id');
-            }
-        });
     }
     if (saveCardCheckbox) {
         saveCardCheckbox.addEventListener('change', function () {
@@ -445,20 +376,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const cleanPayload = removeUndefined(payload);
             // Add save_card to payload (top-level)
             // Prepare headers
-            const authKey = document.getElementById('authKey').value;
-            const clientId = document.getElementById('clientId').value;
-            const isPsp = document.getElementById('isPspCheckbox').checked;
-            const merchantId = document.getElementById('merchantId').value;
             const headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Client-Secret': authKey,
-                'X-Client-ID': clientId,
-                'Cache-Control': 'no-cache'
+                'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                'X-Client-ID': getConfigValue('CLIENT_ID'),
+                'Cache-Control': 'no-cache',
+                ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
             };
-            if (isPsp && merchantId) {
-                headers['X-Merchant-ID'] = merchantId;
-            }
             // Make the API call
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -699,20 +624,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 deleteBtn.onclick = async function (e) {
                     e.stopPropagation();
                     // Prepare headers
-                    const clientId = document.getElementById('clientId').value;
-                    const authKey = document.getElementById('authKey').value;
-                    const merchantId = document.getElementById('merchantId').value;
-                    const isPsp = document.getElementById('isPspCheckbox').checked;
                     const headers = {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'X-Client-ID': clientId,
-                        'X-Client-Secret': authKey,
-                        'Cache-Control': 'no-cache'
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'Cache-Control': 'no-cache',
+                        ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
+
                     };
-                    if (isPsp && merchantId) {
-                        headers['X-Merchant-ID'] = merchantId;
-                    }
                     try {
                         // Send card_token and identifier in request body for security
                         const requestBody = {
@@ -813,16 +733,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             // Prepare headers
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
-            const merchantId = document.getElementById('merchantId').value;
-            const isPsp = document.getElementById('isPspCheckbox').checked;
             const headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Client-ID': clientId,
-                'X-Client-Secret': authKey,
-                'Cache-Control': 'no-cache'
+                'X-Client-ID': getConfigValue('CLIENT_ID'),
+                'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                'Cache-Control': 'no-cache',
+                ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
             };
             if (isPsp && merchantId) {
                 headers['X-Merchant-ID'] = merchantId;
@@ -945,16 +862,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const card_type = document.getElementById('cardType').value;
 
             // Client headers
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
-            const merchantId = document.getElementById('merchantId').value;
-            const isPsp = document.getElementById('isPspCheckbox').checked;
             const headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Client-ID': clientId,
-                'X-Client-Secret': authKey,
-                'Cache-Control': 'no-cache'
+                'X-Client-ID': getConfigValue('CLIENT_ID'),
+                'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                'Cache-Control': 'no-cache',
+                    ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
             };
             if (isPsp && merchantId) headers['X-Merchant-ID'] = merchantId;
 

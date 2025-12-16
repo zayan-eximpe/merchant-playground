@@ -228,3 +228,171 @@ if (document.readyState === 'loading') {
     ModalUtils.init();
     setupEventHandlers();
 }
+
+// --- Credential injection (per-environment) ---
+function getSelectedEnv() {
+    const envSwitcher = document.getElementById('env-switcher');
+    return localStorage.getItem('selected_env') || (window.Config && window.Config.CURRENT_ENV) || (envSwitcher && envSwitcher.value) || 'production';
+}
+
+function isEncryptedString(val) {
+    if (typeof val !== 'string') return false;
+    try { JSON.parse(val); return false; } catch (_) { return true; }
+}
+
+function getConfigValue(key) {
+    const env = getSelectedEnv();
+    const storedKey = 'eximpe_credentials_' + env;
+    const raw = localStorage.getItem(storedKey);
+
+    if (raw && !isEncryptedString(raw)) {
+        try {
+            const parsed = JSON.parse(raw || '{}');
+            if (parsed && parsed[key] !== undefined && parsed[key] !== '') {
+                return parsed[key];
+            }
+        } catch (e) {
+            // fall through to other options
+        }
+    }
+
+    if (window.Config && window.Config[key]) {
+        return window.Config[key];
+    }
+
+    return null;
+}
+
+
+function loadInjectedConfigs() {
+    const env = getSelectedEnv();
+    const storedKey = 'eximpe_credentials_' + env;
+    const raw = localStorage.getItem(storedKey);
+
+    document.querySelectorAll('[data-inject-config]').forEach(el => {
+        const key = el.dataset.injectConfig;
+        const suffix = el.dataset.injectSuffix || '';
+
+        // Priority: stored plain credentials > window.Config > leave existing value
+        if (raw && !isEncryptedString(raw)) {
+            try {
+                const parsed = JSON.parse(raw || '{}');
+                if (parsed && parsed[key] !== undefined && parsed[key] !== '') {
+                    el.value = parsed[key] + suffix;
+                    return;
+                }
+            } catch (e) {
+                // fall through to other options
+            }
+        }
+
+        if (window.Config && window.Config[key]) {
+            // only set if element is empty (don't overwrite intentional page values)
+            if (!el.value) {
+                el.value = window.Config[key] + suffix;
+            }
+        }
+    });
+
+    // Additionally populate commonly-used credential fields by id for compatibility
+    if (raw && !isEncryptedString(raw)) {
+        try {
+            const parsed = JSON.parse(raw || '{}');
+            if (parsed.CLIENT_ID || parsed.API_KEY) {
+                const cid = parsed.CLIENT_ID || parsed.API_KEY || '';
+                const el = document.getElementById('clientId');
+                if (el && !el.value) el.value = cid;
+            }
+            if (parsed.AUTH_KEY || parsed.MERCHANT_SECRET) {
+                const sk = parsed.AUTH_KEY || parsed.MERCHANT_SECRET || '';
+                const el = document.getElementById('authKey');
+                if (el && !el.value) el.value = sk;
+            }
+            if (parsed.MERCHANT_ID) {
+                const el = document.getElementById('merchantId');
+                if (el && !el.value) el.value = parsed.MERCHANT_ID;
+            }
+            // also populate window.Config so legacy pages that read window.Config pick up stored creds
+            window.Config = window.Config || {};
+            if (!window.Config.CLIENT_ID && (parsed.CLIENT_ID || parsed.API_KEY)) {
+                window.Config.CLIENT_ID = parsed.CLIENT_ID || parsed.API_KEY || '';
+            }
+            if (!window.Config.AUTH_KEY && (parsed.AUTH_KEY || parsed.MERCHANT_SECRET || parsed.CLIENT_SECRET)) {
+                window.Config.AUTH_KEY = parsed.AUTH_KEY || parsed.MERCHANT_SECRET || parsed.CLIENT_SECRET || '';
+            }
+            if (!window.Config.MERCHANT_ID && parsed.MERCHANT_ID) {
+                window.Config.MERCHANT_ID = parsed.MERCHANT_ID;
+            }
+            if (typeof parsed.IS_PSP !== 'undefined') {
+                const cb = document.getElementById('isPspCheckbox');
+                if (cb) cb.checked = parsed.IS_PSP ? true : false;
+                const merchantGroup = document.getElementById('merchantIdGroup');
+                if (merchantGroup) merchantGroup.style.display = cb && cb.checked ? 'block' : 'none';
+                // reflect to window.Config as well
+                window.Config.IS_PSP = parsed.IS_PSP ? true : false;
+            }
+        } catch (e) {
+            // ignore parse errors
+        }
+    } else if (raw && isEncryptedString(raw)) {
+        // If encrypted, don't overwrite fields — user must decrypt explicitly
+    } else {
+        // fallback to window.Config for common fields
+        const cidEl = document.getElementById('clientId');
+        if (cidEl && !cidEl.value && window.Config && (window.Config.CLIENT_ID || window.Config.API_KEY)) {
+            cidEl.value = window.Config.CLIENT_ID || window.Config.API_KEY || '';
+        }
+        const skEl = document.getElementById('authKey');
+        if (skEl && !skEl.value && window.Config && (window.Config.AUTH_KEY || window.Config.MERCHANT_SECRET || window.Config.CLIENT_SECRET)) {
+            skEl.value = window.Config.AUTH_KEY || window.Config.MERCHANT_SECRET || window.Config.CLIENT_SECRET || '';
+        }
+        const midEl = document.getElementById('merchantId');
+        if (midEl && !midEl.value && window.Config && window.Config.MERCHANT_ID) {
+            midEl.value = window.Config.MERCHANT_ID;
+        }
+    }
+
+    // If the stored value is encrypted, do not attempt to overwrite inputs.
+    if (raw && isEncryptedString(raw)) {
+        console.info('Encrypted credentials present for', env, '- use the playground to decrypt.');
+    }
+}
+
+// Run after all page scripts have executed so stored credentials can overwrite defaults.
+window.addEventListener('load', () => {
+    try { loadInjectedConfigs(); } catch (e) { console.error('Failed to load injected configs', e); }
+    try { showEncryptedBannerIfNeeded(); } catch (e) { /* ignore */ }
+    // retry injection a couple times to handle pages that set inputs after load
+    setTimeout(() => { try { loadInjectedConfigs(); } catch (e){} }, 200);
+    setTimeout(() => { try { loadInjectedConfigs(); } catch (e){} }, 600);
+    setTimeout(() => { try { loadInjectedConfigs(); } catch (e){} }, 1500);
+});
+
+// Show a small banner when encrypted credentials exist for the selected env
+function showEncryptedBannerIfNeeded() {
+    const env = getSelectedEnv();
+    const storedKey = 'eximpe_credentials_' + env;
+    const raw = localStorage.getItem(storedKey);
+    if (!raw || !isEncryptedString(raw)) return;
+    if (document.querySelector('.encrypted-creds-banner')) return;
+
+    // inject minimal styles
+    const style = document.createElement('style');
+    style.textContent = `
+    .encrypted-creds-banner { background: linear-gradient(90deg,#fffaf0,#fff2e8); border:1px solid #fde68a; padding:10px 14px; border-radius:8px; margin:12px auto; max-width:1000px; box-shadow:0 4px 12px rgba(44,62,80,0.06); font-size:13px; color:#92400e; }
+    .encrypted-creds-banner a{ color:#92400e; font-weight:600; text-decoration:underline; }
+    `;
+    document.head.appendChild(style);
+
+    const banner = document.createElement('div');
+    banner.className = 'encrypted-creds-banner';
+    banner.innerHTML = `Encrypted credentials are stored for <strong>${env}</strong>. <a href="../index.html">Open playground to decrypt and manage credentials</a>.`;
+
+    // insert before first .container or at top of body
+    const container = document.querySelector('.container');
+    if (container && container.parentNode) {
+        container.parentNode.insertBefore(banner, container);
+    } else {
+        document.body.insertBefore(banner, document.body.firstChild);
+    }
+}

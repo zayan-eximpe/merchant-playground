@@ -37,19 +37,7 @@
         <h1 style="color: rgb(38, 168, 135);">Merchant Details</h1>
         <div class="subtitle">View detailed information about the merchant account</div>
 
-        <div class="form-section">
-            <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <input type="text" id="clientId" name="client_id" value="" placeholder="Client ID">
-                    <div class="helper-text">Client ID from the Merchant Account</div>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="authKey" name="auth_key" value="" placeholder="Client Secret">
-                    <div class="helper-text">Client Secret from the Merchant Account</div>
-                </div>
-            </div>
-        </div>
+        <!-- API configuration moved to the playground dashboard (index.html) -->
 
         <div class="details-section" id="merchantIdForm">
             <h2 class="section-title"><i class="fas fa-search"></i> Enter Merchant ID</h2>
@@ -121,17 +109,7 @@
     <!-- Page-specific logic -->
     <script src="../assets/js/merchant_details.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
-    </script>
+    <!-- Credential injection handled centrally by common-utils.js -->
     
 </body>
 </html>

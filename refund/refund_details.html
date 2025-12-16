@@ -49,19 +49,6 @@
         <div class="subtitle">Get detailed information about a specific refund including status, amount, and transaction history.</div>
 
         <form id="refundDetailsForm" autocomplete="off">
-            <div class="form-section">
-                <div class="section-title"><i class="fas fa-cog"></i> API Configuration</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <input type="text" id="clientId" name="client_id" placeholder="Client ID">
-                        <div class="helper-text">Client ID from the Merchant Account</div>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" id="authKey" name="auth_key" placeholder="Client Secret">
-                        <div class="helper-text">Client Secret from the Merchant Account</div>
-                    </div>
-                </div>
-            </div>
 
             <div class="form-section">
                 <div class="section-title"><i class="fas fa-search"></i> Refund Information</div>
@@ -112,17 +99,7 @@
     <!-- Page-specific logic -->
     <script src="../assets/js/refund_details.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-inject-config]').forEach(el => {
-                const key = el.dataset.injectConfig;
-                const suffix = el.dataset.injectSuffix || '';
-                if (window.Config && window.Config[key]) {
-                    el.value = window.Config[key] + suffix;
-                }
-            });
-        });
-    </script>
+    <!-- Credential injection handled centrally by common-utils.js -->
     
 </body>
 </html>

@@ -14,6 +14,11 @@
             API_URL: 'https://api-pacb-uat.eximpe.com',
             CDN_URL: 'https://cdn.eximpe.com', // Assuming CDN is same or not specified, keeping default
             MERCHANT_PWA_URL: 'https://merchant-uat.eximpe.com'
+        },
+        'development': {
+            API_URL: 'http://localhost:8000',
+            CDN_URL: 'https://cdn.eximpe.com', // Assuming CDN is same or not specified, keeping default
+            MERCHANT_PWA_URL: 'http://localhost:5173'
         }
     };
 

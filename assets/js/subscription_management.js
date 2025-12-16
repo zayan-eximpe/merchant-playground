@@ -41,32 +41,12 @@ document.getElementById('modalOverlay').addEventListener('click', function (e) {
 
 // Prefill API configuration and last used subscription ID from localStorage
 document.addEventListener('DOMContentLoaded', function () {
-    const clientIdInput = document.getElementById('clientId');
-    const authKeyInput = document.getElementById('authKey');
     const subscriptionIdInput = document.getElementById('subscriptionId');
 
-    const savedClientId = localStorage.getItem('eximpe_client_id');
-    const savedAuthKey = localStorage.getItem('eximpe_auth_key');
     const lastSubscriptionId = localStorage.getItem('last_used_subscription_id');
 
-    if (savedClientId && clientIdInput) clientIdInput.value = savedClientId;
-    if (savedAuthKey && authKeyInput) authKeyInput.value = savedAuthKey;
     if (lastSubscriptionId && subscriptionIdInput) {
         subscriptionIdInput.value = lastSubscriptionId;
-    }
-
-    if (clientIdInput) {
-        clientIdInput.addEventListener('change', function () {
-            if (this.value) localStorage.setItem('eximpe_client_id', this.value);
-            else localStorage.removeItem('eximpe_client_id');
-        });
-    }
-
-    if (authKeyInput) {
-        authKeyInput.addEventListener('change', function () {
-            if (this.value) localStorage.setItem('eximpe_auth_key', this.value);
-            else localStorage.removeItem('eximpe_auth_key');
-        });
     }
 
     // No PSP / merchant config required for subscription lookup; reuse global client ID and auth key.
@@ -101,8 +81,6 @@ if (clearResultsBtn) {
 
 async function fetchSubscriptionDetails() {
     const subscriptionId = document.getElementById('subscriptionId').value;
-    const clientId = document.getElementById('clientId').value;
-    const authKey = document.getElementById('authKey').value;
     const resultContent = document.getElementById('resultContent');
     const resultContainer = document.getElementById('resultContainer');
 
@@ -111,14 +89,6 @@ async function fetchSubscriptionDetails() {
         showModal('error', 'Validation Error', 'Please enter a Subscription ID');
         return;
     }
-    if (!clientId || !authKey) {
-        showModal('error', 'Validation Error', 'Please enter both Client ID and Client Secret');
-        return;
-    }
-
-    // Save to localStorage for convenience
-    if (clientId) localStorage.setItem('eximpe_client_id', clientId);
-    if (authKey) localStorage.setItem('eximpe_auth_key', authKey);
     if (subscriptionId) localStorage.setItem('last_used_subscription_id', subscriptionId);
 
     try {
@@ -127,8 +97,8 @@ async function fetchSubscriptionDetails() {
             headers: {
                 Accept: 'application/json',
                 'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                'X-Client-Secret': authKey,
-                'X-Client-ID': clientId,
+                'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                'X-Client-ID': getConfigValue('CLIENT_ID'),
             },
         });
 
@@ -242,8 +212,6 @@ const recurringInvoiceDisplayNumberInput = document.getElementById('recurringInv
 if (btnGetStatus) {
     btnGetStatus.addEventListener('click', async function () {
         const subscriptionId = document.getElementById('subscriptionId').value;
-        const clientId = document.getElementById('clientId').value;
-        const authKey = document.getElementById('authKey').value;
 
         if (!subscriptionId) {
             showModal('error', 'Validation Error', 'Please enter a Subscription ID');
@@ -258,8 +226,8 @@ if (btnGetStatus) {
                     headers: {
                         Accept: 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                     },
                 }
             );
@@ -310,15 +278,9 @@ if (btnCloseUpdateMandate && updateMandatePanel) {
 if (btnSubmitUpdateMandate && updateMandatePanel) {
     btnSubmitUpdateMandate.addEventListener('click', async function () {
         const subscriptionId = document.getElementById('subscriptionId').value;
-        const clientId = document.getElementById('clientId').value;
-        const authKey = document.getElementById('authKey').value;
 
         if (!subscriptionId) {
             showModal('error', 'Validation Error', 'Please enter a Subscription ID');
-            return;
-        }
-        if (!clientId || !authKey) {
-            showModal('error', 'Validation Error', 'Please enter both Client ID and Client Secret');
             return;
         }
 
@@ -347,8 +309,8 @@ if (btnSubmitUpdateMandate && updateMandatePanel) {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                     },
                     body: JSON.stringify(payload),
                 }
@@ -406,15 +368,9 @@ if (btnClosePreDebit && preDebitPanel) {
 if (btnSubmitPreDebit && preDebitPanel) {
     btnSubmitPreDebit.addEventListener('click', async function () {
         const subscriptionId = document.getElementById('subscriptionId').value;
-        const clientId = document.getElementById('clientId').value;
-        const authKey = document.getElementById('authKey').value;
 
         if (!subscriptionId) {
             showModal('error', 'Validation Error', 'Please enter a Subscription ID');
-            return;
-        }
-        if (!clientId || !authKey) {
-            showModal('error', 'Validation Error', 'Please enter both Client ID and Client Secret');
             return;
         }
 
@@ -446,8 +402,8 @@ if (btnSubmitPreDebit && preDebitPanel) {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                     },
                     body: JSON.stringify(payload),
                 }
@@ -503,15 +459,9 @@ if (btnCloseRecurring && recurringPanel) {
 if (btnSubmitRecurring && recurringPanel) {
     btnSubmitRecurring.addEventListener('click', async function () {
         const subscriptionId = document.getElementById('subscriptionId').value;
-        const clientId = document.getElementById('clientId').value;
-        const authKey = document.getElementById('authKey').value;
 
         if (!subscriptionId) {
             showModal('error', 'Validation Error', 'Please enter a Subscription ID');
-            return;
-        }
-        if (!clientId || !authKey) {
-            showModal('error', 'Validation Error', 'Please enter both Client ID and Client Secret');
             return;
         }
 
@@ -547,8 +497,8 @@ if (btnSubmitRecurring && recurringPanel) {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                     },
                     body: JSON.stringify(payload),
                 }
@@ -580,8 +530,6 @@ if (btnSubmitRecurring && recurringPanel) {
 if (btnCancelMandate) {
     btnCancelMandate.addEventListener('click', async function () {
         const subscriptionId = document.getElementById('subscriptionId').value;
-        const clientId = document.getElementById('clientId').value;
-        const authKey = document.getElementById('authKey').value;
 
         if (!subscriptionId) {
             showModal('error', 'Validation Error', 'Please enter a Subscription ID');
@@ -601,8 +549,8 @@ if (btnCancelMandate) {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
                         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                        'X-Client-Secret': authKey,
-                        'X-Client-ID': clientId,
+                        'X-Client-Secret': getConfigValue('AUTH_KEY'),
+                        'X-Client-ID': getConfigValue('CLIENT_ID'),
                     },
                 }
             );
