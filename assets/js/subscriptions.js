@@ -741,8 +741,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-Client-ID': getConfigValue('CLIENT_ID')
                 };
 
-                if (isPspCheckbox && isPspCheckbox.checked && document.getElementById('merchantId')?.value) {
-                    headers['X-Merchant-ID'] = document.getElementById('merchantId').value;
+                // Add X-Merchant-ID header if PSP mode is enabled and merchant ID is provided
+                const isPsp = getConfigValue('IS_PSP');
+                const merchantId = getConfigValue('MERCHANT_ID');
+                
+                // Debug logging (can be removed in production)
+                console.log('PSP Check - IS_PSP:', isPsp, 'Type:', typeof isPsp);
+                console.log('PSP Check - MERCHANT_ID:', merchantId);
+                console.log('PSP Check - window.Config.IS_PSP:', window.Config?.IS_PSP);
+                console.log('PSP Check - window.Config.MERCHANT_ID:', window.Config?.MERCHANT_ID);
+                
+                // Check if PSP is enabled (handle boolean true, string "true", or window.Config fallback)
+                const isPspEnabled = isPsp === true || isPsp === 'true' || isPsp === 1 || 
+                                     (window.Config && (window.Config.IS_PSP === true || window.Config.IS_PSP === 'true'));
+                const finalMerchantId = merchantId || (window.Config && window.Config.MERCHANT_ID);
+                
+                console.log('PSP Check - isPspEnabled:', isPspEnabled, 'finalMerchantId:', finalMerchantId);
+                
+                if (isPspEnabled && finalMerchantId) {
+                    headers['X-Merchant-ID'] = finalMerchantId;
+                    console.log('Added X-Merchant-ID header:', finalMerchantId);
+                } else {
+                    console.log('X-Merchant-ID header NOT added - isPspEnabled:', isPspEnabled, 'finalMerchantId:', finalMerchantId);
                 }
 
                 const response = await fetch(apiUrl, {
