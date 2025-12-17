@@ -12,7 +12,7 @@ function escapeHtml(text) {
 
 // Modal management utilities
 const ModalUtils = {
-    show: function(type, title, message) {
+    show: function (type, title, message) {
         const overlay = document.getElementById('modalOverlay');
         const box = document.getElementById('modalBox');
         const icon = document.getElementById('modalIcon');
@@ -36,12 +36,12 @@ const ModalUtils = {
         if (overlay) overlay.classList.add('active');
     },
 
-    hide: function() {
+    hide: function () {
         const overlay = document.getElementById('modalOverlay');
         if (overlay) overlay.classList.remove('active');
     },
 
-    init: function() {
+    init: function () {
         const closeBtn = document.getElementById('modalCloseBtn');
         const overlay = document.getElementById('modalOverlay');
 
@@ -146,15 +146,15 @@ function setupEventHandlers() {
     document.querySelectorAll('[data-action="navigate-home"]').forEach(el => {
         el.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = '/sample-integration/';
+            window.location.href = '/index.html/';
         });
     });
 
     document.querySelectorAll('[data-action="navigate-create-session"]').forEach(el => {
         el.addEventListener('click', (e) => {
             e.preventDefault();
-            const apiUrl = window.API_URL || '';
-            window.location.href = `${apiUrl}/sample-integration/create-session/`;
+            const apiUrl = window.origin || '';
+            window.location.href = `${apiUrl}/checkout/create_session.html`;
         });
     });
 
@@ -363,9 +363,9 @@ window.addEventListener('load', () => {
     try { loadInjectedConfigs(); } catch (e) { console.error('Failed to load injected configs', e); }
     try { showEncryptedBannerIfNeeded(); } catch (e) { /* ignore */ }
     // retry injection a couple times to handle pages that set inputs after load
-    setTimeout(() => { try { loadInjectedConfigs(); } catch (e){} }, 200);
-    setTimeout(() => { try { loadInjectedConfigs(); } catch (e){} }, 600);
-    setTimeout(() => { try { loadInjectedConfigs(); } catch (e){} }, 1500);
+    setTimeout(() => { try { loadInjectedConfigs(); } catch (e) { } }, 200);
+    setTimeout(() => { try { loadInjectedConfigs(); } catch (e) { } }, 600);
+    setTimeout(() => { try { loadInjectedConfigs(); } catch (e) { } }, 1500);
 });
 
 // Show a small banner when encrypted credentials exist for the selected env

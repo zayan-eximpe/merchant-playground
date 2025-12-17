@@ -132,7 +132,7 @@ function populateSampleOrderFields() {
         currency: 'INR',
         type_of_goods: 'goods',
         reference_id: 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase(),
-        return_url: apiUrl + '/sample-integration/checkout/callback/',
+        return_url: apiUrl + '/checkout/payment_callback/',
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
         buyer_phone: '9876543210',
@@ -868,7 +868,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'X-Client-ID': getConfigValue('CLIENT_ID'),
                 'X-Client-Secret': getConfigValue('AUTH_KEY'),
                 'Cache-Control': 'no-cache',
-                    ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
+                ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
             };
             if (isPsp && merchantId) headers['X-Merchant-ID'] = merchantId;
 

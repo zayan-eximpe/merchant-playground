@@ -10,7 +10,7 @@ function createSampleData() {
         amount: '1000.00',
         currency: 'INR',
         reference_id: 'TEST' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-        return_url: window.API_URL + '/sample-integration/checkout/callback/',
+        return_url: window.API_URL + '/checkout/payment_callback.html',
         mop_type: 'UPI',
         type_of_goods: 'goods',
         buyer_name: 'John Doe',
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Validate and sanitize session_id to prevent XSS
                     const sessionId = data.data.session_id;
                     if (sessionId && typeof sessionId === 'string' && /^[a-zA-Z0-9_-]+$/.test(sessionId)) {
-                        window.location.href = `/sample-integration/checkout/?session_id=${encodeURIComponent(sessionId)}&mode=${encodeURIComponent(document.getElementById('mode').value)}`;
+                        window.location.href = `/checkout/checkout.html?session_id=${encodeURIComponent(sessionId)}`;
                     } else {
                         showModal('error', 'Invalid Session', 'Invalid session ID received from server.');
                     }
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     clearCache();
                     break;
                 case 'goHome':
-                    window.location.href = '/sample-integration/';
+                    window.location.href = '/checkout/create_session.html';
                     break;
             }
         });

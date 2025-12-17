@@ -140,7 +140,7 @@ function initializePayment() {
     } else {
         // Initialize the payment SDK
         const eximpe = new Eximpe({
-            apiUrl: window.location.origin,
+            apiUrl: window.API_URL,
             mode: mode
         });
 
