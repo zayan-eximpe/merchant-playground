@@ -132,7 +132,7 @@ function populateSampleOrderFields() {
         currency: 'INR',
         type_of_goods: 'goods',
         reference_id: 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase(),
-        return_url: apiUrl + '/checkout/payment_callback/',
+        return_url: window.location.origin + '/checkout/payment_callback.html',
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
         buyer_phone: '9876543210',

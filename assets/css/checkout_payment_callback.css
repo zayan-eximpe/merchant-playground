@@ -397,3 +397,33 @@ h2 {
 .mobile-overlay.active {
     display: block;
 }
+
+/* Transaction Details Styles */
+.transaction-details {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px dashed #e2e8f0;
+    text-align: left;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.detail-row span {
+    color: #718096;
+    font-weight: 500;
+}
+
+.detail-row strong {
+    color: #2d3748;
+    font-family: 'Monaco', 'Consolas', monospace;
+    background: #f7fafc;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+}

@@ -10,7 +10,7 @@ function createSampleData() {
         amount: '1000.00',
         currency: 'INR',
         reference_id: 'TEST' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-        return_url: window.API_URL + '/checkout/payment_callback.html',
+        return_url: window.location.origin + '/checkout/payment_callback.html',
         mop_type: 'UPI',
         type_of_goods: 'goods',
         buyer_name: 'John Doe',

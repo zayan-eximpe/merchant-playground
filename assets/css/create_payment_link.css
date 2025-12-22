@@ -11,13 +11,23 @@ body {
     align-items: center;
     color: #2d3748;
 }
+
 @keyframes gradientMove {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
+
 .container {
-    background: rgba(255,255,255,0.9);
+    background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 8px 32px rgba(44, 62, 80, 0.13), 0 1.5px 4px rgba(44, 62, 80, 0.04);
     border-radius: 22px;
     padding: 48px 36px 36px 36px;
@@ -27,6 +37,7 @@ body {
     position: relative;
     backdrop-filter: blur(8px);
 }
+
 .logo-circle {
     width: 70px;
     height: 70px;
@@ -38,6 +49,7 @@ body {
     margin: 0 auto 18px auto;
     box-shadow: 0 2px 12px rgba(44, 62, 80, 0.10);
 }
+
 h1 {
     color: #1a202c;
     margin: 0 0 8px 0;
@@ -46,6 +58,7 @@ h1 {
     text-align: center;
     letter-spacing: -0.5px;
 }
+
 .subtitle {
     color: #4a5568;
     text-align: center;
@@ -53,6 +66,7 @@ h1 {
     margin-bottom: 28px;
     line-height: 1.5;
 }
+
 .summary-card {
     background: #fff;
     padding: 20px;
@@ -61,6 +75,7 @@ h1 {
     margin-bottom: 24px;
     box-shadow: 0 4px 16px rgba(44, 62, 80, 0.05);
 }
+
 .summary-header {
     display: flex;
     align-items: center;
@@ -71,11 +86,13 @@ h1 {
     margin-bottom: 12px;
     gap: 12px;
 }
+
 .summary-header span {
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .summary-action {
     background: rgba(38, 168, 135, 0.1);
     border: none;
@@ -90,20 +107,24 @@ h1 {
     gap: 6px;
     transition: all 0.2s ease;
 }
+
 .summary-action:hover {
     background: rgba(38, 168, 135, 0.18);
 }
+
 .summary-amount {
     font-size: 36px;
     font-weight: 700;
     color: #1a202c;
 }
+
 .summary-description {
     margin-top: 8px;
     color: #4a5568;
     line-height: 1.5;
     font-size: 15px;
 }
+
 .form-section {
     background: #f6f8fa;
     border-radius: 16px;
@@ -111,19 +132,23 @@ h1 {
     margin-bottom: 22px;
     box-shadow: 0 1px 4px rgba(44, 62, 80, 0.04);
 }
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 }
+
 .form-grid.single-column {
     grid-template-columns: 1fr;
 }
+
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;
     }
 }
+
 .section-title {
     color: #2d3748;
     font-size: 16px;
@@ -134,24 +159,29 @@ h1 {
     gap: 8px;
     grid-column: 1 / -1;
 }
+
 .section-title i {
     color: #3498db;
     font-size: 18px;
 }
+
 .form-group {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
+
 .form-group label {
     font-size: 14px;
     font-weight: 600;
     color: #2d3748;
 }
+
 .input-wrapper {
     position: relative;
 }
+
 .input-prefix {
     position: absolute;
     left: 14px;
@@ -161,7 +191,9 @@ h1 {
     font-weight: 600;
     font-size: 15px;
 }
+
 input,
+select,
 textarea {
     width: 100%;
     padding: 13px 14px;
@@ -173,23 +205,29 @@ textarea {
     background: #fff;
     line-height: 22px;
 }
+
 .input-wrapper input {
     padding-left: 38px;
 }
+
 textarea {
     resize: vertical;
     min-height: 70px;
 }
+
 input:focus,
+select:focus,
 textarea:focus {
     outline: none;
     border-color: rgb(38, 168, 135);
     box-shadow: 0 0 0 1px rgba(38, 168, 135, 0.1);
 }
+
 .helper-text {
     font-size: 12px;
     color: #718096;
 }
+
 button.main-action-btn {
     width: 100%;
     padding: 16px 18px;
@@ -208,26 +246,34 @@ button.main-action-btn {
     justify-content: center;
     gap: 10px;
 }
+
 button.main-action-btn:disabled {
     background: #cbd5e0;
     cursor: not-allowed;
 }
+
 button.main-action-btn:hover:not(:disabled) {
     filter: brightness(0.97);
     transform: translateY(-1px) scale(1.01);
 }
+
 .modal-overlay {
     display: none;
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(44, 62, 80, 0.25);
     z-index: 1000;
     justify-content: center;
     align-items: center;
 }
+
 .modal-overlay.active {
     display: flex;
 }
+
 .modal {
     background: #fff;
     border-radius: 16px;
@@ -237,32 +283,46 @@ button.main-action-btn:hover:not(:disabled) {
     max-width: 90vw;
     text-align: center;
     position: relative;
-    animation: modalPop 0.2s cubic-bezier(.4,1.6,.6,1) 1;
+    animation: modalPop 0.2s cubic-bezier(.4, 1.6, .6, 1) 1;
 }
+
 @keyframes modalPop {
-    0% { transform: scale(0.95); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
+
 .modal .modal-icon {
     font-size: 38px;
     margin-bottom: 12px;
 }
+
 .modal.success .modal-icon {
     color: #26a887;
 }
+
 .modal.error .modal-icon {
     color: #e53e3e;
 }
+
 .modal .modal-title {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 8px;
 }
+
 .modal .modal-message {
     font-size: 15px;
     color: #4a5568;
     margin-bottom: 18px;
 }
+
 .modal .modal-close {
     position: absolute;
     top: 18px;
@@ -275,15 +335,18 @@ button.main-action-btn:hover:not(:disabled) {
     transition: color 0.2s;
     z-index: 2;
 }
+
 .modal .modal-close:hover {
     color: #3498db;
 }
+
 .modal-actions {
     display: flex;
     gap: 12px;
     justify-content: center;
     margin-top: 20px;
 }
+
 .modal-button {
     padding: 10px 20px;
     border-radius: 8px;
@@ -296,21 +359,26 @@ button.main-action-btn:hover:not(:disabled) {
     gap: 8px;
     border: none;
 }
+
 .modal-button.primary {
     background: rgb(38, 168, 135);
     color: white;
 }
+
 .modal-button.primary:hover {
     background: rgb(32, 142, 114);
 }
+
 .modal-button.secondary {
     background: #f6f8fa;
     color: #2d3748;
     border: 1px solid #e2e8f0;
 }
+
 .modal-button.secondary:hover {
     background: #edf2f7;
 }
+
 .modal-link {
     font-family: monospace;
     background: #f8fafc;
@@ -322,6 +390,7 @@ button.main-action-btn:hover:not(:disabled) {
     font-size: 14px;
     color: #2d3748;
 }
+
 @media (max-width: 600px) {
     .container {
         padding: 24px 16px;
@@ -331,13 +400,16 @@ button.main-action-btn:hover:not(:disabled) {
         border-radius: 0;
         min-height: 100vh;
     }
+
     h1 {
         font-size: 22px;
     }
+
     .subtitle {
         font-size: 13px;
     }
 }
+
 .right-actions {
     position: fixed;
     top: 0;
@@ -350,6 +422,7 @@ button.main-action-btn:hover:not(:disabled) {
     width: 250px;
     margin-right: 20px;
 }
+
 .help-block {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
@@ -358,6 +431,7 @@ button.main-action-btn:hover:not(:disabled) {
     border: 1px solid rgba(38, 168, 135, 0.1);
     backdrop-filter: blur(8px);
 }
+
 .help-block-title {
     color: rgb(38, 168, 135);
     font-size: 16px;
@@ -369,9 +443,11 @@ button.main-action-btn:hover:not(:disabled) {
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(38, 168, 135, 0.1);
 }
+
 .help-block-title i {
     font-size: 18px;
 }
+
 .header-button {
     background: white;
     color: rgb(38, 168, 135);
@@ -379,7 +455,7 @@ button.main-action-btn:hover:not(:disabled) {
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
     text-align: left;
     display: flex;
     align-items: center;
@@ -389,16 +465,19 @@ button.main-action-btn:hover:not(:disabled) {
     margin-bottom: 8px;
     font-size: 14px;
 }
+
 .header-button:last-child {
     margin-bottom: 0;
 }
+
 .header-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(44,62,80,0.12);
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.12);
     border-color: rgb(38, 168, 135);
     color: rgb(38, 168, 135);
     background: rgba(38, 168, 135, 0.05);
 }
+
 .header-button i {
     font-size: 16px;
     transition: transform 0.3s ease;
@@ -406,20 +485,24 @@ button.main-action-btn:hover:not(:disabled) {
     text-align: center;
     color: rgb(38, 168, 135);
 }
+
 .header-button:hover i {
     transform: scale(1.1);
 }
+
 @media (max-width: 600px) {
     .right-actions {
         display: none;
     }
 }
+
 .modal .error-list {
     text-align: left;
     margin: 16px 0;
     padding: 0;
     list-style: none;
 }
+
 .modal .error-list li {
     display: flex;
     align-items: center;
@@ -431,12 +514,15 @@ button.main-action-btn:hover:not(:disabled) {
     margin-bottom: 8px;
     color: #e53e3e;
 }
+
 .modal .error-list li:last-child {
     margin-bottom: 0;
 }
+
 .modal .error-list li i {
     font-size: 14px;
 }
+
 .mobile-quick-actions {
     display: none;
     position: fixed;
@@ -444,11 +530,13 @@ button.main-action-btn:hover:not(:disabled) {
     right: 20px;
     z-index: 1001;
 }
+
 @media (max-width: 600px) {
     .mobile-quick-actions {
         display: block;
     }
 }
+
 .mobile-fab {
     width: 56px;
     height: 56px;
@@ -463,9 +551,11 @@ button.main-action-btn:hover:not(:disabled) {
     align-items: center;
     justify-content: center;
 }
+
 .mobile-fab:hover {
     transform: scale(1.05);
 }
+
 .mobile-actions-menu {
     position: absolute;
     bottom: 70px;
@@ -479,13 +569,23 @@ button.main-action-btn:hover:not(:disabled) {
     animation: slideUp 0.3s ease-out;
     display: none;
 }
-.mobile-fab.active + .mobile-actions-menu {
+
+.mobile-fab.active+.mobile-actions-menu {
     display: block;
 }
+
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
 .mobile-action-item {
     display: flex;
     align-items: center;
@@ -504,19 +604,23 @@ button.main-action-btn:hover:not(:disabled) {
     font-size: 14px;
     font-weight: 600;
 }
+
 .mobile-action-item:last-child {
     margin-bottom: 0;
 }
+
 .mobile-action-item:hover {
     background: rgba(38, 168, 135, 0.1);
     color: rgb(38, 168, 135);
 }
+
 .mobile-action-item i {
     font-size: 16px;
     width: 20px;
     text-align: center;
     color: rgb(38, 168, 135);
 }
+
 .mobile-overlay {
     display: none;
     position: fixed;
@@ -527,6 +631,7 @@ button.main-action-btn:hover:not(:disabled) {
     z-index: 1000;
     background: rgba(0, 0, 0, 0.1);
 }
+
 .mobile-overlay.active {
     display: block;
 }

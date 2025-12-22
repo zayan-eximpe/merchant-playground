@@ -10,7 +10,7 @@ document.body.style.zoom = "90%";
                 amount: '1000.00',
                 currency: 'INR',
                 reference_id: 'S2SI' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-                return_url: `${window.API_URL}/sample-integration/checkout/callback/`,
+                return_url: `${window.location.origin}/checkout/payment_callback.html`,
                 type_of_goods: 'goods',
                 buyer_name: 'John Doe',
                 buyer_email: 'john.doe@example.com',

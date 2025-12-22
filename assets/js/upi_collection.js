@@ -12,7 +12,7 @@ function createSampleData() {
         reference_id: 'S2SC' + Math.random().toString(36).substring(2, 8).toUpperCase(),
         vpa: 'john.doe@payu',
         upi_app_name: 'others',
-        return_url: `${window.API_URL}/sample-integration/checkout/callback/`,
+        return_url: `${window.location.origin}/checkout/payment_callback.html`,
         type_of_goods: 'goods',
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
@@ -158,14 +158,6 @@ function copyToClipboard(text) {
 // Function to show payment status selection modal
 function simulateTransaction(orderId) {
     try {
-        // Check if in sandbox mode
-        const currentMode = document.getElementById('mode').value;
-        if (currentMode !== 'sandbox') {
-            showModal('error', 'Sandbox Mode Required',
-                'Transaction simulation is only available in sandbox mode. Please switch to sandbox mode to use this feature.');
-            return;
-        }
-
         // Show payment status selection modal
         const statusSelectionMessage = `
                     <div style="text-align: left; margin: 10px 0;">
@@ -218,7 +210,7 @@ async function confirmPaymentStatus(orderId, status, message) {
             'Content-Type': 'application/json',
             'X-Client-Secret': getConfigValue('AUTH_KEY'),
             'X-Client-ID': getConfigValue('CLIENT_ID'),
-                    ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
+            ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
         };
 
         const payload = {
@@ -327,7 +319,7 @@ async function fetchOrderDetailsAndShowResult(orderId, acsTemplate) {
                             <div style="color: #6c757d; font-size: 14px;">Transaction ID: <span style="font-family: monospace; color: #495057;">${orderIdPaymentId}</span></div>
                         </div>
 
-                        ${document.getElementById('mode').value === 'sandbox' ? `
+                        ${getSelectedEnv() != 'production' ? `
                         <div style="padding: 16px; background: #fff3cd; border-radius: 8px; border: 2px solid #ffc107;">
                             <div style="text-align: center; margin-bottom: 16px;">
                                 <div style="font-weight: 600; color: #856404; font-size: 16px; margin-bottom: 8px;">🧪 Complete Test Payment</div>

@@ -23,11 +23,16 @@ function formatAmountDisplay(value) {
     }).format(amount);
 }
 
+function toDatetimeLocalInput(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+}
+
 function updateSummaryCard() {
     const amountEl = document.getElementById('summaryAmount');
     const descriptionEl = document.getElementById('summaryDescription');
     const amountInput = document.getElementById('amount');
-    const descriptionInput = document.getElementById('description');
+    const descriptionInput = document.getElementById('productDescription');
 
     if (amountEl && amountInput) {
         amountEl.textContent = formatAmountDisplay(amountInput.value);
@@ -44,7 +49,19 @@ function updateSummaryCard() {
 function saveFormData() {
     const data = {
         amount: document.getElementById('amount')?.value || '',
-        description: document.getElementById('description')?.value || '',
+        productName: document.getElementById('productName')?.value || '',
+        typeOfGoods: document.getElementById('typeOfGoods')?.value || '',
+        productDescription: document.getElementById('productDescription')?.value || '',
+        buyerName: document.getElementById('buyerName')?.value || '',
+        buyerEmail: document.getElementById('buyerEmail')?.value || '',
+        buyerPhone: document.getElementById('buyerPhone')?.value || '',
+        buyerAddressLine1: document.getElementById('buyerAddressLine1')?.value || '',
+        buyerAddressLine2: document.getElementById('buyerAddressLine2')?.value || '',
+        buyerCity: document.getElementById('buyerCity')?.value || '',
+        buyerState: document.getElementById('buyerState')?.value || '',
+        buyerPostalCode: document.getElementById('buyerPostalCode')?.value || '',
+        invoiceNumber: document.getElementById('invoiceNumber')?.value || '',
+        expiryAt: document.getElementById('expiryAt')?.value || '',
     };
     localStorage.setItem('payment_link_form_data', JSON.stringify(data));
 }
@@ -71,13 +88,41 @@ function loadFormData() {
 
 function createSampleData() {
     const amountInput = document.getElementById('amount');
-    const descriptionInput = document.getElementById('description');
+    const descriptionInput = document.getElementById('productDescription');
 
     if (amountInput) {
         amountInput.value = '1250.00';
     }
     if (descriptionInput) {
         descriptionInput.value = 'Advance payment for sample order ' + Math.floor(Math.random() * 90000000000);
+    }
+    const typeOfGoodsInput = document.getElementById('typeOfGoods');
+    if (typeOfGoodsInput) {
+        typeOfGoodsInput.value = 'goods';
+    }
+    const productionNameInput = document.getElementById('productName');
+    const buyerName = document.getElementById('buyerName');
+    const buyerEmail = document.getElementById('buyerEmail');
+    const buyerPhone = document.getElementById('buyerPhone');
+    const buyerAddressLine1 = document.getElementById('buyerAddressLine1');
+    const buyerCity = document.getElementById('buyerCity');
+    const buyerState = document.getElementById('buyerState');
+    const buyerPostalCode = document.getElementById('buyerPostalCode');
+    const invoiceNumber = document.getElementById('invoiceNumber');
+    const expiryAt = document.getElementById('expiryAt');
+
+    if (productionNameInput) productionNameInput.value = 'Sample Product';
+    if (buyerName) buyerName.value = 'John Doe';
+    if (buyerEmail) buyerEmail.value = 'john.doe+' + Math.floor(Math.random() * 1000) + '@example.com';
+    if (buyerPhone) buyerPhone.value = '9876543210';
+    if (buyerAddressLine1) buyerAddressLine1.value = '123 Sample Street';
+    if (buyerCity) buyerCity.value = 'Mumbai';
+    if (buyerState) buyerState.value = 'MH';
+    if (buyerPostalCode) buyerPostalCode.value = '400001';
+    if (invoiceNumber) invoiceNumber.value = 'INV' + Math.floor(Math.random() * 900000 + 100000);
+    if (expiryAt) {
+        const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        expiryAt.value = toDatetimeLocalInput(d);
     }
 
     saveFormData();
@@ -183,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const createButton = document.getElementById('createButton');
     const btnText = document.getElementById('btnText');
     const amountInput = document.getElementById('amount');
-    const descriptionInput = document.getElementById('description');
+    const descriptionInput = document.getElementById('productDescription');
     const modalOverlay = document.getElementById('modalOverlay');
     const modalCloseBtn = document.getElementById('modalCloseBtn');
 
@@ -198,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveFormData();
         updateSummaryCard();
     });
+    document.getElementById('typeOfGoods')?.addEventListener('change', saveFormData);
 
     modalCloseBtn?.addEventListener('click', hideModal);
     modalOverlay?.addEventListener('click', (e) => {
@@ -227,7 +273,67 @@ document.addEventListener('DOMContentLoaded', () => {
             btnText.textContent = 'Generating...';
             referenceIdValue = Math.random().toString(36).substring(2, 15);
 
+            const buyerNameValue = (document.getElementById('buyerName')?.value || '').trim();
+            const buyerEmailValue = (document.getElementById('buyerEmail')?.value || '').trim();
+            const buyerPhoneValue = (document.getElementById('buyerPhone')?.value || '').trim();
+            const buyerAddressLine1Value = (document.getElementById('buyerAddressLine1')?.value || '').trim();
+            const buyerAddressLine2Value = (document.getElementById('buyerAddressLine2')?.value || '').trim();
+            const buyerCityValue = (document.getElementById('buyerCity')?.value || '').trim();
+            const buyerStateValue = (document.getElementById('buyerState')?.value || '').trim();
+            const buyerPostalCodeValue = (document.getElementById('buyerPostalCode')?.value || '').trim();
+            const invoiceNumberValue = (document.getElementById('invoiceNumber')?.value || '').trim();
+            const expiryAtValue = (document.getElementById('expiryAt')?.value || '').trim();
+            const productNameValue = (document.getElementById('productName')?.value || '').trim();
+            const typeOfGoodsValue = document.getElementById('typeOfGoods')?.value || '';
+
+            saveFormData();
+
             try {
+                function removeUndefined(obj) {
+                    if (Array.isArray(obj)) {
+                        return obj.map(removeUndefined).filter(item => item !== undefined);
+                    } else if (obj !== null && typeof obj === 'object') {
+                        const cleaned = {};
+                        for (const [key, value] of Object.entries(obj)) {
+                            const cleanedValue = removeUndefined(value);
+                            if (cleanedValue !== undefined) {
+                                cleaned[key] = cleanedValue;
+                            }
+                        }
+                        return Object.keys(cleaned).length > 0 ? cleaned : undefined;
+                    }
+                    return obj === '' ? undefined : obj;
+                }
+
+                const payload = {
+                    amount: amountValue.toFixed(2),
+                    reference_id: referenceIdValue,
+                    buyer: {
+                        name: buyerNameValue || undefined,
+                        email: buyerEmailValue || undefined,
+                        phone: buyerPhoneValue ? (buyerPhoneValue.startsWith('+') ? buyerPhoneValue : '+91' + buyerPhoneValue) : undefined,
+                        address: {
+                            line_1: buyerAddressLine1Value || undefined,
+                            line_2: buyerAddressLine2Value || undefined,
+                            city: buyerCityValue || undefined,
+                            state: buyerStateValue || undefined,
+                            postal_code: buyerPostalCodeValue || undefined,
+                        }
+                    },
+                    product: {
+                        name: productNameValue || undefined,
+                        description: descriptionValue || undefined,
+                        type_of_goods: typeOfGoodsValue || undefined,
+                    },
+                    invoice: {
+                        number: invoiceNumberValue || undefined,
+                        date: undefined
+                    },
+                    expiry_date: expiryAtValue ? new Date(expiryAtValue).toISOString() : undefined,
+                };
+
+                const cleanPayload = removeUndefined(payload);
+
                 const response = await fetch(`${window.API_URL}/pg/payment-links/`, {
                     method: 'POST',
                     headers: {
@@ -237,11 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json',
                         ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
                     },
-                    body: JSON.stringify({
-                        amount: amountValue.toFixed(2),
-                        description: descriptionValue,
-                        reference_id: referenceIdValue,
-                    }),
+                    body: JSON.stringify(cleanPayload),
                 });
 
                 const data = await response.json();
