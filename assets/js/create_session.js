@@ -7,7 +7,7 @@ document.body.style.zoom = "90%";
 
 function createSampleData() {
     const sampleData = {
-        amount: '1000.00',
+        amount: '1.00',
         currency: 'INR',
         reference_id: 'TEST' + Math.random().toString(36).substring(2, 8).toUpperCase(),
         return_url: window.location.origin + '/checkout/payment_callback.html',

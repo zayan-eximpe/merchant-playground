@@ -128,7 +128,7 @@ function populateSampleOrderFields() {
     // Use window.API_URL with fallback to prevent undefined concatenation
     const apiUrl = window.API_URL || '';
     const sampleData = {
-        amount: '1000.00',
+        amount: '1.00',
         currency: 'INR',
         type_of_goods: 'goods',
         reference_id: 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase(),
@@ -741,8 +741,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Cache-Control': 'no-cache',
                 ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
             };
-            if (isPsp && merchantId) {
-                headers['X-Merchant-ID'] = merchantId;
+            if (getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID')) {
+                headers['X-Merchant-ID'] = getConfigValue('MERCHANT_ID');
             }
             try {
                 const url = `/pg/tokens/?identifier=${encodeURIComponent(identifier)}`;
@@ -870,7 +870,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Cache-Control': 'no-cache',
                 ...(getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID') ? { 'X-Merchant-ID': getConfigValue('MERCHANT_ID') } : {})
             };
-            if (isPsp && merchantId) headers['X-Merchant-ID'] = merchantId;
+            if (getConfigValue('IS_PSP') && getConfigValue('MERCHANT_ID')) headers['X-Merchant-ID'] = getConfigValue('MERCHANT_ID');
 
             // Build payload
             const payload = {
