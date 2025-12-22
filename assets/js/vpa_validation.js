@@ -164,16 +164,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             const vpa = document.getElementById('vpa').value.trim();
-            const clientId = document.getElementById('clientId').value;
-            const authKey = document.getElementById('authKey').value;
-            const merchantId = document.getElementById('merchantId').value;
+            const clientId = getConfigValue('CLIENT_ID');
+            const authKey = getConfigValue('AUTH_KEY');
+            const merchantId = getConfigValue('MERCHANT_ID');
 
             if (!vpa) {
                 showModal('error', 'Validation Error', 'Please enter a VPA to validate.');
                 return;
             }
 
-            if (!clientId || !authKey || !merchantId) {
+            if (!clientId || !authKey) {
                 showModal('error', 'Configuration Error', 'Please fill in all API configuration fields (Client ID, Client Secret, Merchant ID).');
                 return;
             }
