@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/config.js?v=1.0.1"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
@@ -10,8 +10,9 @@
     <title>Subscriptions - EximPe Integrations</title>
     <script>loadCSS("../assets/css/fontawesome-all.min.css");</script>
     <script>loadCSS("../assets/css/upi_collection.css");</script>
-    
+
 </head>
+
 <body>
     <!-- Modal for error/success -->
     <div class="modal-overlay" id="modalOverlay">
@@ -75,7 +76,8 @@
         </div>
         <h1 style="color: rgb(38, 168, 135);">Subscriptions</h1>
         <div class="subtitle" style="text-wrap: balanced;">
-            Manage recurring subscriptions and billing cycles. Create, update, and track subscription lifecycle events including activation, renewal, cancellation, and payment failures.
+            Manage recurring subscriptions and billing cycles. Create, update, and track subscription lifecycle events
+            including activation, renewal, cancellation, and payment failures.
         </div>
 
         <div class="header-actions">
@@ -95,7 +97,8 @@
                         <span class="tooltiptext">
                             <strong>Payment Method</strong><br>
                             <span class="tooltip-required">Required</span><br>
-                            <strong>UPI Collection:</strong> Requires VPA upfront, returns ACS template for issuer UI<br>
+                            <strong>UPI Collection:</strong> Requires VPA upfront, returns ACS template for issuer
+                            UI<br>
                             <strong>UPI Intent:</strong> No VPA required, returns UPI deep link (intent_uri)<br>
                             <strong>Card:</strong> Credit or Debit card subscription with 3D Secure authentication
                         </span>
@@ -127,14 +130,16 @@
                         </span>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number" autocomplete="off">
+                        <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number"
+                            autocomplete="off">
                         <span class="tooltiptext">
                             <strong>Reference ID</strong><br>
                             <span class="tooltip-required">Required</span><br>
                             Unique identifier for this transaction<br>
                             Use alphanumeric characters, max 50 chars
                         </span>
-                        <div class="helper-text">Merchant's Unique identifier for the order <span class="required">*</span></div>
+                        <div class="helper-text">Merchant's Unique identifier for the order <span
+                                class="required">*</span></div>
                     </div>
                 </div>
             </div>
@@ -144,19 +149,14 @@
                 <div class="section-title"><i class="fas fa-mobile-alt"></i> UPI Payment Details</div>
                 <div class="form-grid">
                     <div class="form-group tooltip" id="vpaGroup">
-                        <input
-                            type="text"
-                            id="upiId"
-                            name="vpa"
-                            placeholder="UPI ID"
-                            autocomplete="off"
-                            value="9999999999@upi"
-                        >
+                        <input type="text" id="upiId" name="vpa" placeholder="UPI ID" autocomplete="off"
+                            value="9999999999@upi">
                         <span class="tooltiptext">
                             <strong>UPI ID</strong><br>
                             <span class="tooltip-required" id="vpaRequired">Required for Collection flow</span><br>
-                            <span id="vpaDescription">For sandbox subscriptions, use <code>9999999999@upi</code> for Collection flow.<br>
-                            Not required for Intent flow.</span>
+                            <span id="vpaDescription">For sandbox subscriptions, use <code>9999999999@upi</code> for
+                                Collection flow.<br>
+                                Not required for Intent flow.</span>
                         </span>
                         <div class="helper-text" id="vpaHelperText">Sandbox UPI ID (required for Collection flow)</div>
                     </div>
@@ -219,7 +219,8 @@
                         <div class="helper-text">Card Network <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip full-width">
-                        <input type="text" id="cardNumber" name="card_number" placeholder="Card Number" autocomplete="cc-number" maxlength="19">
+                        <input type="text" id="cardNumber" name="card_number" placeholder="Card Number"
+                            autocomplete="cc-number" maxlength="19">
                         <span class="tooltiptext">
                             <strong>Card Number</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -228,7 +229,8 @@
                         <div class="helper-text">Card Number <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip full-width">
-                        <input type="text" id="cardHolderName" name="cardholder_name" placeholder="Cardholder Name" autocomplete="cc-name">
+                        <input type="text" id="cardHolderName" name="cardholder_name" placeholder="Cardholder Name"
+                            autocomplete="cc-name">
                         <span class="tooltiptext">
                             <strong>Cardholder Name</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -271,7 +273,8 @@
                         <div class="helper-text">Expiry Year <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="text" id="cvv" name="cvv" placeholder="CVV" autocomplete="cc-csc" maxlength="4" inputmode="numeric">
+                        <input type="text" id="cvv" name="cvv" placeholder="CVV" autocomplete="cc-csc" maxlength="4"
+                            inputmode="numeric">
                         <span class="tooltiptext">
                             <strong>CVV</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -316,7 +319,8 @@
                     </div>
                     <div class="form-group tooltip">
                         <span class="phone-prefix">+91</span>
-                        <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input" placeholder="Buyer Phone">
+                        <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input"
+                            placeholder="Buyer Phone">
                         <span class="tooltiptext">
                             <strong>Phone Number</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -347,7 +351,8 @@
                         <div class="helper-text">End user's browser/device information</div>
                     </div>
                     <div class="form-group full-width tooltip">
-                        <input type="text" id="buyerAddressLine1" name="buyer_address_line_1" placeholder="Address Line 1">
+                        <input type="text" id="buyerAddressLine1" name="buyer_address_line_1"
+                            placeholder="Address Line 1">
                         <span class="tooltiptext">
                             <strong>Address Line 1</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -357,7 +362,8 @@
                         <div class="helper-text">Buyer Address Line 1 <span class="required">*</span></div>
                     </div>
                     <div class="form-group full-width tooltip">
-                        <input type="text" id="buyerAddressLine2" name="buyer_address_line_2" placeholder="Address Line 2">
+                        <input type="text" id="buyerAddressLine2" name="buyer_address_line_2"
+                            placeholder="Address Line 2">
                         <span class="tooltiptext">
                             <strong>Address Line 2</strong><br>
                             <span class="tooltip-optional">Optional</span><br>
@@ -424,10 +430,12 @@
                             Classify as physical goods or services<br>
                             Required for tax and compliance purposes
                         </span>
-                        <div class="helper-text">Specify whether this is goods or service<span class="required">*</span></div>
+                        <div class="helper-text">Specify whether this is goods or service<span class="required">*</span>
+                        </div>
                     </div>
                     <div class="form-group full-width tooltip">
-                        <input type="text" id="productDescription" name="product_description" placeholder="Product Description">
+                        <input type="text" id="productDescription" name="product_description"
+                            placeholder="Product Description">
                         <span class="tooltiptext">
                             <strong>Product Description</strong><br>
                             <span class="tooltip-optional">Optional</span><br>
@@ -445,7 +453,8 @@
                         </span>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="text" id="hsCodeDescription" name="hs_code_description" placeholder="HS Code Description">
+                        <input type="text" id="hsCodeDescription" name="hs_code_description"
+                            placeholder="HS Code Description">
                         <span class="tooltiptext">
                             <strong>HS Code Description</strong><br>
                             <span class="tooltip-optional">Optional</span><br>
@@ -486,17 +495,20 @@
                 <div class="section-title"><i class="fas fa-sync-alt"></i> Standing Instruction</div>
                 <div class="form-grid">
                     <div class="form-group tooltip">
-                        <input type="text" id="billingAmount" name="billing_amount" placeholder="Billing Amount" inputmode="decimal">
+                        <input type="text" id="billingAmount" name="billing_amount" placeholder="Billing Amount"
+                            inputmode="decimal">
                         <span class="tooltiptext">
                             <strong>Billing Amount</strong><br>
                             <span class="tooltip-required">Required</span><br>
                             The amount to be charged in each billing cycle<br>
                             Must be a positive decimal number (e.g., 100.00)
                         </span>
-                        <div class="helper-text">Amount to be charged per billing cycle <span class="required">*</span></div>
+                        <div class="helper-text">Amount to be charged per billing cycle <span class="required">*</span>
+                        </div>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="text" id="billingCurrency" name="billing_currency" value="INR" placeholder="Billing Currency">
+                        <input type="text" id="billingCurrency" name="billing_currency" value="INR"
+                            placeholder="Billing Currency">
                         <span class="tooltiptext">
                             <strong>Billing Currency</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -524,7 +536,8 @@
                         <div class="helper-text">Billing cycle frequency <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="number" id="billingInterval" name="billing_interval" placeholder="Billing Interval" min="1">
+                        <input type="number" id="billingInterval" name="billing_interval" placeholder="Billing Interval"
+                            min="1">
                         <span class="tooltiptext">
                             <strong>Billing Interval</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -532,10 +545,12 @@
                             For MONTHLY with interval 1 = monthly, interval 3 = every 3 months<br>
                             For DAILY with interval 3 = every 3 days
                         </span>
-                        <div class="helper-text">Billing interval (e.g., 1 for monthly, 3 for quarterly) <span class="required">*</span></div>
+                        <div class="helper-text">Billing interval (e.g., 1 for monthly, 3 for quarterly) <span
+                                class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="date" id="paymentStartDate" name="payment_start_date" placeholder="Payment Start Date">
+                        <input type="date" id="paymentStartDate" name="payment_start_date"
+                            placeholder="Payment Start Date">
                         <span class="tooltiptext">
                             <strong>Payment Start Date</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -555,7 +570,8 @@
                         <div class="helper-text">End date for recurring payments <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="number" id="billingDate" name="billing_date" placeholder="Billing Date" min="1" max="31">
+                        <input type="number" id="billingDate" name="billing_date" placeholder="Billing Date" min="1"
+                            max="31">
                         <span class="tooltiptext">
                             <strong>Billing Date</strong><br>
                             <span class="tooltip-optional">Optional - UPI Only</span><br>
@@ -624,7 +640,8 @@
                     <i class="fas fa-shield-alt" style="color:rgb(38,168,135);"></i>
                     <span style="font-weight:600; color:#2d3748;">Issuer Authentication (ACS)</span>
                 </div>
-                <div id="acsContent" style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; background:#f7fafc;"></div>
+                <div id="acsContent"
+                    style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; background:#f7fafc;"></div>
             </div>
         </div>
     </div>
@@ -637,7 +654,7 @@
     <script>
         window.API_URL = window.Config.API_URL;
         window.subscriptionsScriptLoaded = false;
-        window.addEventListener('error', function(e) {
+        window.addEventListener('error', function (e) {
             // Handle JavaScript errors silently
         });
     </script>
@@ -645,6 +662,7 @@
     <script>loadJS("../assets/js/subscriptions.js");</script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
-    
+
 </body>
+
 </html>

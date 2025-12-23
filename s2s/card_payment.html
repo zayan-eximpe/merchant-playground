@@ -1,16 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/config.js?v=1.0.1"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <title>Create S2S Card Payment</title>
     <script>loadCSS("../assets/css/fontawesome-all.min.css");</script>
     <script>loadCSS("../assets/css/card_payment.css");</script>
-    
+
 </head>
+
 <body>
     <!-- Modal -->
     <div class="modal-overlay" id="modalOverlay">
@@ -34,12 +35,15 @@
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
             </svg>
         </div>
         <h1>Create S2S Card Payment</h1>
         <div class="subtitle">
-            Process credit and debit card payments directly through your backend with complete control over the payment flow.
+            Process credit and debit card payments directly through your backend with complete control over the payment
+            flow.
         </div>
         <!-- Improved Order Summary Ecommerce Tile -->
         <div class="order-summary-tile-modern" id="orderSummaryTile">
@@ -48,7 +52,8 @@
             </div>
             <div class="order-summary-details-modern">
                 <div class="order-summary-product-modern" id="orderSummaryProductName">Sample Product</div>
-                <div class="order-summary-desc-modern" id="orderSummaryProductDesc">This is a sample product description</div>
+                <div class="order-summary-desc-modern" id="orderSummaryProductDesc">This is a sample product description
+                </div>
                 <div class="order-summary-meta-modern">
                     <span class="order-summary-price-modern" id="orderSummaryAmount">₹1000.00</span>
                     <span class="order-summary-currency-modern" id="orderSummaryCurrency">INR</span>
@@ -59,7 +64,8 @@
                     <i class="fas fa-envelope"></i> <span id="orderSummaryBuyerEmail">john.doe@example.com</span>
                 </div>
                 <div class="order-summary-ref-modern">
-                    <i class="fas fa-receipt"></i> <span>Order Ref:</span> <span id="orderSummaryReference">CARD_XXXXXX</span>
+                    <i class="fas fa-receipt"></i> <span>Order Ref:</span> <span
+                        id="orderSummaryReference">CARD_XXXXXX</span>
                 </div>
             </div>
         </div>
@@ -71,13 +77,16 @@
                 <div class="form-grid">
                     <!-- Card details fields follow -->
                     <div class="form-group tooltip">
-                        <input type="text" id="cardNumber" name="card_number" class="card-number-input" placeholder="Card Number" maxlength="19">
-                        <span class="tooltiptext"><strong>Card Number</strong><br><span class="tooltip-required">Required</span><br>16-digit card number</span>
+                        <input type="text" id="cardNumber" name="card_number" class="card-number-input"
+                            placeholder="Card Number" maxlength="19">
+                        <span class="tooltiptext"><strong>Card Number</strong><br><span
+                                class="tooltip-required">Required</span><br>16-digit card number</span>
                         <div class="helper-text">16-digit card number <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
                         <input type="text" id="cardHolderName" name="card_holder_name" placeholder="Name on Card">
-                        <span class="tooltiptext"><strong>Card Holder Name</strong><br><span class="tooltip-required">Required</span><br>Name as on card</span>
+                        <span class="tooltiptext"><strong>Card Holder Name</strong><br><span
+                                class="tooltip-required">Required</span><br>Name as on card</span>
                         <div class="helper-text">Name as on card <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
@@ -101,17 +110,20 @@
                                 <option value="">YYYY</option>
                             </select>
                         </div>
-                        <span class="tooltiptext"><strong>Expiry Date</strong><br><span class="tooltip-required">Required</span><br>Card expiry month and year</span>
+                        <span class="tooltiptext"><strong>Expiry Date</strong><br><span
+                                class="tooltip-required">Required</span><br>Card expiry month and year</span>
                         <div class="helper-text">Expiry date <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip" id="cvvField">
                         <input type="password" id="cvv" name="cvv" class="cvv-input" placeholder="CVV" maxlength="4">
-                        <span class="tooltiptext"><strong>CVV</strong><br><span class="tooltip-required">Required</span><br>3 or 4 digit security code</span>
+                        <span class="tooltiptext"><strong>CVV</strong><br><span
+                                class="tooltip-required">Required</span><br>3 or 4 digit security code</span>
                         <div class="helper-text">Security code <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
                         <input type="text" id="cardNickname" name="card_nickname" placeholder="Card Nickname">
-                        <span class="tooltiptext"><strong>Card Nickname</strong><br><span class="tooltip-required">Required</span><br>Nickname for the card</span>
+                        <span class="tooltiptext"><strong>Card Nickname</strong><br><span
+                                class="tooltip-required">Required</span><br>Nickname for the card</span>
                         <div class="helper-text">Nickname for the card</div>
                     </div>
                     <div class="form-group tooltip">
@@ -120,7 +132,8 @@
                             <option value="credit_card">Credit Card</option>
                             <option value="debit_card">Debit Card</option>
                         </select>
-                        <span class="tooltiptext"><strong>Card Type</strong><br><span class="tooltip-required">Required</span><br>Credit or Debit</span>
+                        <span class="tooltiptext"><strong>Card Type</strong><br><span
+                                class="tooltip-required">Required</span><br>Credit or Debit</span>
                         <div class="helper-text">Credit or Debit <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
@@ -134,24 +147,33 @@
                             <option value="amex">AMEX</option>
                             <option value="diners">DINERS</option>
                         </select>
-                        <span class="tooltiptext"><strong>Card Network</strong><br><span class="tooltip-required">Required</span><br>Select the card network (e.g., VISA, MASTERCARD, etc.)</span>
+                        <span class="tooltiptext"><strong>Card Network</strong><br><span
+                                class="tooltip-required">Required</span><br>Select the card network (e.g., VISA,
+                            MASTERCARD, etc.)</span>
                         <div class="helper-text">Card Network <span class="required">*</span></div>
                     </div>
                     <!-- Authorization Reference Number (for AMEX/RUPAY) -->
                     <div class="form-group tooltip" id="arnField" style="display:none;">
-                        <input type="text" id="authorizationRefNumber" name="authorization_reference_number" placeholder="Authorization Reference Number (AMEX/RUPAY only)">
-                        <span class="tooltiptext"><strong>Authorization Reference Number</strong><br><span class="tooltip-optional">Conditional</span><br>Required for AMEX and RUPAY networks.</span>
+                        <input type="text" id="authorizationRefNumber" name="authorization_reference_number"
+                            placeholder="Authorization Reference Number (AMEX/RUPAY only)">
+                        <span class="tooltiptext"><strong>Authorization Reference Number</strong><br><span
+                                class="tooltip-optional">Conditional</span><br>Required for AMEX and RUPAY
+                            networks.</span>
                         <div class="helper-text">Required for AMEX / RUPAY</div>
                     </div>
                     <!-- Save Card as per RBI guidelines -->
                     <div class="form-group tooltip full-width" style="margin-top: 8px;">
-                        <span class="tooltiptext"><strong>Save Card</strong><br><span class="tooltip-optional">Optional</span><br>If checked, your card will be securely saved as per RBI regulations for future transactions. You may be required to authenticate as per RBI rules.</span>
+                        <span class="tooltiptext"><strong>Save Card</strong><br><span
+                                class="tooltip-optional">Optional</span><br>If checked, your card will be securely saved
+                            as per RBI regulations for future transactions. You may be required to authenticate as per
+                            RBI rules.</span>
                         <div class="helper-text">Card will be saved securely as per RBI rules (optional)</div>
                     </div>
 
                     <!-- Save Card Button (tokens API) -->
                     <div class="form-group full-width">
-                        <button type="button" id="saveCardDetailsBtn" class="main-action-btn outline-btn" style="width:100%; margin-bottom: 8px;">
+                        <button type="button" id="saveCardDetailsBtn" class="main-action-btn outline-btn"
+                            style="width:100%; margin-bottom: 8px;">
                             <i class="fas fa-save"></i> Save Card for Future Use
                         </button>
                         <div class="helper-text" style="text-align: center; color: #718096; font-style: italic;">
@@ -162,13 +184,18 @@
                     <!-- Card Identifier -->
                     <div class="form-group tooltip full-width">
                         <div class="input-with-icon">
-                            <input type="text" id="cardIdentifier" name="card_identifier" placeholder="Card Identifier (buyer_id, device_id, etc.)">
+                            <input type="text" id="cardIdentifier" name="card_identifier"
+                                placeholder="Card Identifier (buyer_id, device_id, etc.)">
                             <button type="button" id="searchSavedCardsBtn" tabindex="-1">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
-                        <span class="tooltiptext"><strong>Card Identifier</strong><br><span class="tooltip-required">Required</span><br>Unique identifier for the card, such as buyer id, device ID, or any other identifier. Used for card tokenization and future reference.</span>
-                        <div class="helper-text">Card Identifier (buyer_id, device_id, etc.) <span class="tooltip-required">(required)</span></div>
+                        <span class="tooltiptext"><strong>Card Identifier</strong><br><span
+                                class="tooltip-required">Required</span><br>Unique identifier for the card, such as
+                            buyer id, device ID, or any other identifier. Used for card tokenization and future
+                            reference.</span>
+                        <div class="helper-text">Card Identifier (buyer_id, device_id, etc.) <span
+                                class="tooltip-required">(required)</span></div>
                     </div>
                 </div>
             </div>
@@ -260,6 +287,7 @@
     <script>loadJS("../assets/js/card_payment.js");</script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
-    
+
 </body>
+
 </html>

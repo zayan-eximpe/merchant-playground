@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/config.js?v=1.0.1"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
@@ -10,8 +10,9 @@
     <title>Create UPI Intent Request</title>
     <script>loadCSS("../assets/css/fontawesome-all.min.css");</script>
     <script>loadCSS("../assets/css/upi_intent.css");</script>
-    
+
 </head>
+
 <body>
     <!-- Modal for error/success -->
     <div class="modal-overlay" id="modalOverlay">
@@ -68,12 +69,17 @@
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z" fill="white"/>
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
             </svg>
         </div>
         <h1 style="color: rgb(38, 168, 135);">Create S2S UPI Intent Request</h1>
         <div class="subtitle" style="text-wrap: balanced;">
-            This page demonstrates Server-to-Server (S2S) payment integration. Create UPI intent requests from your backend and get the UPI intent URI that can be used to initiate payments. Features enhanced security with user IP tracking and device information. Perfect for applications where payment intent URIs are generated server-side.
+            This page demonstrates Server-to-Server (S2S) payment integration. Create UPI intent requests from your
+            backend and get the UPI intent URI that can be used to initiate payments. Features enhanced security with
+            user IP tracking and device information. Perfect for applications where payment intent URIs are generated
+            server-side.
         </div>
 
         <div class="header-actions">
@@ -103,14 +109,16 @@
                         </span>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number" autocomplete="off">
+                        <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number"
+                            autocomplete="off">
                         <span class="tooltiptext">
                             <strong>Reference ID</strong><br>
                             <span class="tooltip-required">Required</span><br>
                             Unique identifier for this transaction<br>
                             Use alphanumeric characters, max 50 chars
                         </span>
-                        <div class="helper-text">Merchant's Unique identifier for the order <span class="required">*</span></div>
+                        <div class="helper-text">Merchant's Unique identifier for the order <span
+                                class="required">*</span></div>
                     </div>
                 </div>
             </div>
@@ -140,7 +148,8 @@
                     </div>
                     <div class="form-group tooltip">
                         <span class="phone-prefix">+91</span>
-                        <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input" placeholder="Buyer Phone">
+                        <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input"
+                            placeholder="Buyer Phone">
                         <span class="tooltiptext">
                             <strong>Phone Number</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -171,7 +180,8 @@
                         <div class="helper-text">End user's browser/device information</div>
                     </div>
                     <div class="form-group full-width tooltip">
-                        <input type="text" id="buyerAddressLine1" name="buyer_address_line_1" placeholder="Address Line 1">
+                        <input type="text" id="buyerAddressLine1" name="buyer_address_line_1"
+                            placeholder="Address Line 1">
                         <span class="tooltiptext">
                             <strong>Address Line 1</strong><br>
                             <span class="tooltip-required">Required</span><br>
@@ -181,7 +191,8 @@
                         <div class="helper-text">Buyer Address Line 1 <span class="required">*</span></div>
                     </div>
                     <div class="form-group full-width tooltip">
-                        <input type="text" id="buyerAddressLine2" name="buyer_address_line_2" placeholder="Address Line 2">
+                        <input type="text" id="buyerAddressLine2" name="buyer_address_line_2"
+                            placeholder="Address Line 2">
                         <span class="tooltiptext">
                             <strong>Address Line 2</strong><br>
                             <span class="tooltip-optional">Optional</span><br>
@@ -248,10 +259,12 @@
                             Classify as physical goods or services<br>
                             Required for tax and compliance purposes
                         </span>
-                        <div class="helper-text">Specify whether this is goods or service<span class="required">*</span></div>
+                        <div class="helper-text">Specify whether this is goods or service<span class="required">*</span>
+                        </div>
                     </div>
                     <div class="form-group full-width tooltip">
-                        <input type="text" id="productDescription" name="product_description" placeholder="Product Description">
+                        <input type="text" id="productDescription" name="product_description"
+                            placeholder="Product Description">
                         <span class="tooltiptext">
                             <strong>Product Description</strong><br>
                             <span class="tooltip-optional">Optional</span><br>
@@ -269,7 +282,8 @@
                         </span>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="text" id="hsCodeDescription" name="hs_code_description" placeholder="HS Code Description">
+                        <input type="text" id="hsCodeDescription" name="hs_code_description"
+                            placeholder="HS Code Description">
                         <span class="tooltiptext">
                             <strong>HS Code Description</strong><br>
                             <span class="tooltip-optional">Optional</span><br>
@@ -325,6 +339,7 @@
     <script>loadJS("../assets/js/upi_intent.js");</script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
-    
+
 </body>
+
 </html>
