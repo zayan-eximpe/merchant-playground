@@ -8,8 +8,8 @@
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Create UPI Collection Request</title>
-    <script>loadCSS("../assets/css/fontawesome-all.min.css");</script>
-    <script>loadCSS("../assets/css/upi_collection.css");</script>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.1">
+    <link rel="stylesheet" href="../assets/css/upi_collection.css?v=1.0.1">
 
 </head>
 
@@ -360,14 +360,14 @@
 
     <!-- Common utilities -->
     <!-- Trusted Types Policy (must load first) -->
-    <script>loadJS("../assets/js/trusted-types-policy.js");</script>
-    <script>loadJS("../assets/js/common-utils.js");</script>
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.1"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.1"></script>
     <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
     <!-- Page-specific logic -->
-    <script>loadJS("../assets/js/upi_collection.js");</script>
+    <script src="../assets/js/upi_collection.js?v=1.0.1"></script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
 
