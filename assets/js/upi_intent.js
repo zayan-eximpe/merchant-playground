@@ -206,12 +206,12 @@ function openUpiApp(intentUri, appType, button) {
                 },
                 'jupiter': {
                     scheme: 'jupiter',
-                    package: 'money.jupiter.app',
+                    package: 'money.jupiter',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=money.jupiter.app'
                 },
                 'slice': {
                     scheme: 'slice',
-                    package: 'com.sliceit.app',
+                    package: 'indwin.c3.shareapp',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.sliceit.app'
                 },
                 'generalintent': {
