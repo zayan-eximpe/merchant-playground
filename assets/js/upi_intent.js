@@ -153,49 +153,126 @@ function copyToClipboard(text, button) {
     });
 }
 
+// Function to detect if the device is Android
+function isAndroid() {
+    return /Android/i.test(navigator.userAgent);
+}
+
 // Function to open UPI app with intent URI
 function openUpiApp(intentUri, appType, button) {
     const originalContent = button.innerHTML;
 
     try {
-        let prefix = "";
-        switch (appType) {
-            case 'bhim':
-                prefix = "bhim://upi/pay?";
-                break;
-            case 'paytm':
-                prefix = "paytm://upi:/pay?";
-                break;
-            case 'phonepe':
-                prefix = "phonepe://upi:/pay?";
-                break;
-            case 'gpay':
-                prefix = "gpay://upi:/pay?";
-                break;
-            case 'amazonpay':
-                prefix = "amazonpay://upi/pay?";
-                break;
-            case 'whatsapp':
-                prefix = "whatsapp://upi/pay?";
-                break;
-            case 'fimoney':
-                prefix = "fi://upi/pay?";
-                break;
-            case 'jupiter':
-                prefix = "jupiter://upi/pay?";
-                break;
-            case 'slice':
-                prefix = "slice://upi/pay?";
-                break;
-            case 'generalintent':
-                prefix = "intent://pay?";
-                break;
-            default:
-                prefix = "upi://pay?";
-                break;
-        }
+        let url = "";
 
-        const url = prefix + intentUri;
+        // Check if the device is Android
+        if (isAndroid()) {
+            // Android app configuration mapping
+            const androidAppConfig = {
+                'bhim': {
+                    scheme: 'upi',
+                    package: 'in.org.npci.upiapp',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=in.org.npci.upiapp'
+                },
+                'paytm': {
+                    scheme: 'paytmmp',
+                    package: 'net.one97.paytm',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=net.one97.paytm'
+                },
+                'phonepe': {
+                    scheme: 'phonepe',
+                    package: 'com.phonepe.app',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.phonepe.app'
+                },
+                'gpay': {
+                    scheme: 'gpay',
+                    package: 'com.google.android.apps.nbu.paisa.user',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.google.android.apps.nbu.paisa.user'
+                },
+                'amazonpay': {
+                    scheme: 'amazonpay',
+                    package: 'in.amazon.mShop.android.shopping',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=in.amazon.mShop.android.shopping'
+                },
+                'whatsapp': {
+                    scheme: 'whatsapp',
+                    package: 'com.whatsapp',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.whatsapp'
+                },
+                'fimoney': {
+                    scheme: 'fi',
+                    package: 'com.fi.money',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.fi.money'
+                },
+                'jupiter': {
+                    scheme: 'jupiter',
+                    package: 'money.jupiter.app',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=money.jupiter.app'
+                },
+                'slice': {
+                    scheme: 'slice',
+                    package: 'com.sliceit.app',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.sliceit.app'
+                },
+                'generalintent': {
+                    scheme: 'upi',
+                    package: 'com.google.android.apps.nbu.paisa.user',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.google.android.apps.nbu.paisa.user'
+                },
+                'generalupi': {
+                    scheme: 'upi',
+                    package: 'in.org.npci.upiapp',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=in.org.npci.upiapp'
+                }
+            };
+
+            // Get the configuration for the selected app
+            const appConfig = androidAppConfig[appType] || androidAppConfig['generalupi'];
+
+            // Build Android intent URL
+            // Format: intent://<path-and-params>#Intent;scheme=<scheme>;package=<package>;S.browser_fallback_url=<fallback_url>;end;
+            url = `intent://pay?${intentUri}#Intent;scheme=${appConfig.scheme};package=${appConfig.package};S.browser_fallback_url=${encodeURIComponent(appConfig.playStoreUrl)};end;`;
+
+        } else {
+            // iOS app URL scheme mapping
+            let prefix = "";
+            switch (appType) {
+                case 'bhim':
+                    prefix = "bhim://upi/pay?";
+                    break;
+                case 'paytm':
+                    prefix = "paytm://upi:/pay?";
+                    break;
+                case 'phonepe':
+                    prefix = "phonepe://upi:/pay?";
+                    break;
+                case 'gpay':
+                    prefix = "gpay://upi:/pay?";
+                    break;
+                case 'amazonpay':
+                    prefix = "amazonpay://upi/pay?";
+                    break;
+                case 'whatsapp':
+                    prefix = "whatsapp://upi/pay?";
+                    break;
+                case 'fimoney':
+                    prefix = "fi://upi/pay?";
+                    break;
+                case 'jupiter':
+                    prefix = "jupiter://upi/pay?";
+                    break;
+                case 'slice':
+                    prefix = "slice://upi/pay?";
+                    break;
+                case 'generalintent':
+                    prefix = "intent://pay?";
+                    break;
+                default:
+                    prefix = "upi://pay?";
+                    break;
+            }
+            url = prefix + intentUri;
+        }
 
         // Create a temporary anchor element to trigger the custom URL scheme
         // This is more reliable than window.location for custom schemes

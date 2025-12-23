@@ -40,7 +40,7 @@ document.getElementById('subMerchantForm').addEventListener('submit', async func
     const resultDiv = document.getElementById('result');
     resultDiv.textContent = 'Submitting...';
     try {
-        const response = await fetch('/merchant/sub_merchants/', {
+        const response = await fetch(`${window.API_URL}/merchant/sub_merchants/`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json, text/plain, */*',

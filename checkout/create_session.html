@@ -2,14 +2,15 @@
 <html lang="en">
 
 <head>
+    <script src="../assets/js/config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Create Payment Session</title>
-    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="../assets/css/checkout_create_session.css">
-    <script src="../assets/js/config.js"></script>
+    <script>loadCSS("../assets/css/fontawesome-all.min.css");</script>
+    <script>loadCSS("../assets/css/checkout_create_session.css");</script>
+    
 </head>
 
 <body>
@@ -335,8 +336,8 @@
 
     <!-- Common utilities -->
     <!-- Trusted Types Policy (must load first) -->
-    <script src="../assets/js/trusted-types-policy.js"></script>
-    <script src="../assets/js/common-utils.js"></script>
+    <script>loadJS("../assets/js/trusted-types-policy.js");</script>
+    <script>loadJS("../assets/js/common-utils.js");</script>
 
     <!-- Pass Django variables to JavaScript -->
     <script>
@@ -344,7 +345,7 @@
     </script>
 
     <!-- Page-specific logic -->
-    <script src="../assets/js/create_session.js"></script>
+    <script>loadJS("../assets/js/create_session.js");</script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
 

@@ -2,15 +2,16 @@
 <html lang="en">
 
 <head>
+    <script src="../assets/js/config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Eximpe Payment Integration</title>
-    <link rel="stylesheet" href="../assets/css/inter-font.css">
-    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="../assets/css/checkout_checkout.css">
-    <script src="../assets/js/config.js"></script>
+    <script>loadCSS("../assets/css/inter-font.css");</script>
+    <script>loadCSS("../assets/css/fontawesome-all.min.css");</script>
+    <script>loadCSS("../assets/css/checkout_checkout.css");</script>
+    
 </head>
 
 <body>
@@ -81,15 +82,15 @@
     </div>
 
     <!-- Trusted Types Policy (must load first) -->
-    <script src="../assets/js/trusted-types-policy.js"></script>
+    <script>loadJS("../assets/js/trusted-types-policy.js");</script>
     <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
     <!-- Include the Eximpe SDK from local static files (served via STATICFILES_DIRS -> sdk/) -->
-    <script src="https://cdn.eximpe.com/sdk/eximpe-sdk.min.js"></script>
+    <script>loadJS("https://cdn.eximpe.com/sdk/eximpe-sdk.min.js");</script>
     <!-- Checkout payment logic -->
-    <script src="../assets/js/checkout-payment.js"></script>
+    <script>loadJS("../assets/js/checkout-payment.js");</script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
 

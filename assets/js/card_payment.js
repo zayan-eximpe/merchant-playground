@@ -639,7 +639,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             card_token: card.card_token,
                             identifier: document.getElementById('cardIdentifier').value
                         };
-                        const url = `/pg/tokens/delete/`;
+                        const url = `${window.API_URL}/pg/tokens/delete/`;
                         const response = await fetch(url, {
                             method: 'DELETE',
                             headers: headers,
@@ -745,7 +745,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers['X-Merchant-ID'] = getConfigValue('MERCHANT_ID');
             }
             try {
-                const url = `/pg/tokens/?identifier=${encodeURIComponent(identifier)}`;
+                const url = `${window.API_URL}/pg/tokens/?identifier=${encodeURIComponent(identifier)}`;
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: headers
@@ -817,7 +817,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const get = id => document.getElementById(id)?.value || '';
         document.getElementById('orderSummaryProductName').textContent = get('productName') || 'Sample Product';
         document.getElementById('orderSummaryProductDesc').textContent = get('productDescription') || 'This is a sample product description';
-        document.getElementById('orderSummaryAmount').textContent = (get('amount') ? '₹' + get('amount') : '₹1000.00');
+        document.getElementById('orderSummaryAmount').textContent = (get('amount') ? '₹' + get('amount') : '₹1.00');
         document.getElementById('orderSummaryCurrency').textContent = get('currency') || 'INR';
         document.getElementById('orderSummaryBuyerName').textContent = get('buyerName') || 'John Doe';
         document.getElementById('orderSummaryBuyerEmail').textContent = get('buyerEmail') || 'john.doe@example.com';
@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             // Call tokens API
             try {
-                const url = `/pg/tokens/`;
+                const url = `${window.API_URL}/pg/tokens/`;
                 const response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
                 const data = await response.json();
                 if (response.ok && data.success) {
