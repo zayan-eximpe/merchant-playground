@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../assets/js/config.js?v=1.0.2"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Share Payment Link - EximPe Integrations</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.2">
+    <link rel="stylesheet" href="../assets/css/order_order_details.css?v=1.0.2">
+    <link rel="stylesheet" href="../assets/css/payment_link_shared.css?v=1.0.2">
+
+</head>
+
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+    <div class="right-actions">
+        <div class="help-block">
+            <div class="help-block-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </div>
+            <a href="../index.html" class="header-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <button id="setSampleDataBtn" class="header-button" style="width: 100%;">
+                <i class="fas fa-magic"></i>
+                Set Sample Data
+            </button>
+            <button id="clearFormBtn" class="header-button" style="width: 100%;">
+                <i class="fas fa-eraser"></i>
+                Clear Form
+            </button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <h1>Share Payment Link</h1>
+        <div class="subtitle">
+            Send payment links directly to customers via email or SMS.<br>
+            You can send to multiple recipients by adding comma-separated values.
+        </div>
+        <div class="form-container">
+            <form id="sharePaymentLinkForm">
+
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-link"></i> Payment Link ID</div>
+                    <input type="text" id="paymentLinkId" name="payment_link_id"
+                        placeholder="Enter Payment Link ID (e.g., PR2794309840)" required
+                        style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                    <div class="helper-text">Enter the Payment Link ID you want to share</div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-envelope"></i> Email Recipients</div>
+                    <div id="emailContainer">
+                        <div class="recipient-input-group">
+                            <input type="email" class="email-input" placeholder="recipient@example.com"
+                                style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                            <button type="button" class="remove-recipient-btn remove-email" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" id="addEmailBtn" class="header-button" style="margin-top: 8px;">
+                        <i class="fas fa-plus"></i> Add Another Email
+                    </button>
+                    <div class="helper-text">Add one or more email addresses to send the payment link</div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-mobile-alt"></i> Phone Recipients</div>
+                    <div id="phoneContainer">
+                        <div class="recipient-input-group">
+                            <input type="tel" class="phone-input" placeholder="+917736644990"
+                                style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                            <button type="button" class="remove-recipient-btn remove-phone" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" id="addPhoneBtn" class="header-button" style="margin-top: 8px;">
+                        <i class="fas fa-plus"></i> Add Another Phone
+                    </button>
+                    <div class="helper-text">Add one or more phone numbers (with country code, e.g., +91) to send SMS
+                    </div>
+                </div>
+
+                <button type="submit" class="header-button"
+                    style="width: 100%; margin-top: 20px; padding: 14px; font-size: 16px;">
+                    <i class="fas fa-share-alt"></i>
+                    Share Payment Link
+                </button>
+            </form>
+        </div>
+        <div class="result-container" id="resultContainer">
+            <div class="result-card"
+                style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);">
+                <div class="result-header"
+                    style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+                    <i class="fas fa-check-circle" style="color: rgb(38, 168, 135);"></i>
+                    <h2 class="result-title" style="font-size: 18px; font-weight: 600; color: #2d3748; margin: 0;">Share
+                        Result</h2>
+                </div>
+                <div class="result-content" id="resultContent">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.2"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.2"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/share_payment_link.js?v=1.0.2"></script>
+
+    <!-- Credential injection handled centrally by common-utils.js -->
+
+</body>
+
+</html>
