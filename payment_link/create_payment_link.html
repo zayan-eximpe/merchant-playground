@@ -114,11 +114,13 @@
                 <div class="section-title"><i class="fas fa-box"></i> Product Details</div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <input type="text" id="productName" name="product_name" placeholder="Product Name">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" name="product_name" placeholder="Product Name" required>
                         <div class="helper-text">Product Name<span class="required">*</span></div>
                     </div>
                     <div class="form-group">
-                        <select id="typeOfGoods" name="type_of_goods">
+                        <label for="typeOfGoods">Type of Goods</label>
+                        <select id="typeOfGoods" name="type_of_goods" required>
                             <option value="">Select Type of Goods</option>
                             <option value="goods">Goods</option>
                             <option value="service">Service</option>
@@ -126,8 +128,10 @@
                         <div class="helper-text">Type of Goods<span class="required">*</span></div>
                     </div>
                     <div class="form-group">
+                        <label for="productDescription">Product Description</label>
                         <input type="text" id="productDescription" name="product_description"
-                            placeholder="Product Description">
+                            placeholder="Product Description" required>
+                        <div class="helper-text">Brief description of the product<span class="required">*</span></div>
                     </div>
                 </div>
             </div>
@@ -140,14 +144,15 @@
                 <div class="form-grid single-column">
                     <div class="form-group">
                         <label for="buyerName">Buyer Name</label>
-                        <input type="text" id="buyerName" name="buyer_name" placeholder="Full name">
-                        <div class="helper-text">Full name of the buyer</div>
+                        <input type="text" id="buyerName" name="buyer_name" placeholder="Full name" required>
+                        <div class="helper-text">Full name of the buyer<span class="required">*</span></div>
                     </div>
 
                     <div class="form-group">
                         <label for="buyerEmail">Buyer Email</label>
-                        <input type="email" id="buyerEmail" name="buyer_email" placeholder="user@example.com">
-                        <div class="helper-text">Email address for receipts and notifications</div>
+                        <input type="email" id="buyerEmail" name="buyer_email" placeholder="user@example.com" required>
+                        <div class="helper-text">Email address for receipts and notifications<span
+                                class="required">*</span></div>
                     </div>
 
                     <div class="form-group">
@@ -155,16 +160,17 @@
                         <div class="input-wrapper">
                             <span class="input-prefix">+91</span>
                             <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input"
-                                placeholder="9876543210">
+                                placeholder="9876543210" required>
                         </div>
-                        <div class="helper-text">10-digit phone number (without country code)</div>
+                        <div class="helper-text">10-digit phone number (without country code)<span
+                                class="required">*</span></div>
                     </div>
 
                     <div class="form-group">
                         <label for="buyerAddressLine1">Address Line 1</label>
                         <input type="text" id="buyerAddressLine1" name="buyer_address_line_1"
-                            placeholder="Street, building, apartment">
-                        <div class="helper-text">Street address or building name</div>
+                            placeholder="Street, building, apartment" required>
+                        <div class="helper-text">Street address or building name<span class="required">*</span></div>
                     </div>
 
                     <div class="form-group">
@@ -176,21 +182,21 @@
 
                     <div class="form-group">
                         <label for="buyerCity">City</label>
-                        <input type="text" id="buyerCity" name="buyer_city" placeholder="City">
-                        <div class="helper-text">City or town</div>
+                        <input type="text" id="buyerCity" name="buyer_city" placeholder="City" required>
+                        <div class="helper-text">City or town<span class="required">*</span></div>
                     </div>
 
                     <div class="form-group">
                         <label for="buyerState">State</label>
-                        <input type="text" id="buyerState" name="buyer_state" placeholder="State">
-                        <div class="helper-text">State or province</div>
+                        <input type="text" id="buyerState" name="buyer_state" placeholder="State" required>
+                        <div class="helper-text">State or province<span class="required">*</span></div>
                     </div>
 
                     <div class="form-group">
                         <label for="buyerPostalCode">Postal Code</label>
-                        <input type="text" id="buyerPostalCode" name="buyer_postal_code"
-                            placeholder="Postal / PIN code">
-                        <div class="helper-text">Postal or ZIP code</div>
+                        <input type="text" id="buyerPostalCode" name="buyer_postal_code" placeholder="Postal / PIN code"
+                            required>
+                        <div class="helper-text">Postal or ZIP code<span class="required">*</span></div>
                     </div>
                 </div>
             </div>
@@ -203,8 +209,9 @@
                 <div class="form-grid single-column">
                     <div class="form-group">
                         <label for="invoiceNumber">Invoice Number</label>
-                        <input type="text" id="invoiceNumber" name="invoice_number" placeholder="INV12345">
-                        <div class="helper-text">Optional invoice or reference number for your records</div>
+                        <input type="text" id="invoiceNumber" name="invoice_number" placeholder="INV12345" required>
+                        <div class="helper-text">Invoice or reference number for your records<span
+                                class="required">*</span></div>
                     </div>
 
                     <div class="form-group">

@@ -91,7 +91,7 @@ function createSampleData() {
     const descriptionInput = document.getElementById('productDescription');
 
     if (amountInput) {
-        amountInput.value = '1250.00';
+        amountInput.value = '1.00';
     }
     if (descriptionInput) {
         descriptionInput.value = 'Advance payment for sample order ' + Math.floor(Math.random() * 90000000000);
