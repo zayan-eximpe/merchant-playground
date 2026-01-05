@@ -225,6 +225,16 @@ function openUpiApp(intentUri, appType, button) {
                     package: 'indwin.c3.shareapp',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.sliceit.app'
                 },
+                'cred': {
+                    scheme: 'upi',
+                    package: 'com.dreamplug.androidapp',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.dreamplug.androidapp'
+                },
+                'supermoney': {
+                    scheme: 'upi',
+                    package: 'money.super.payments',
+                    playStoreUrl: 'https://play.google.com/store/apps/details?id=money.super.payments'
+                },
                 'generalintent': {
                     scheme: 'upi',
                     package: 'com.google.android.apps.nbu.paisa.user',
@@ -277,6 +287,12 @@ function openUpiApp(intentUri, appType, button) {
                     break;
                 case 'slice':
                     prefix = "slice://upi/pay?";
+                    break;
+                case 'cred':
+                    prefix = "credpay://upi/pay?";
+                    break;
+                case 'supermoney':
+                    prefix = "super://pay?";
                     break;
                 default:
                     prefix = "upi://pay?";
@@ -690,11 +706,25 @@ document.addEventListener('DOMContentLoaded', function () {
                                             </div>
                                             <span class="upi-app-name">Amazon Pay</span>
                                         </button>
+                                        ${!isAndroid() ? `
                                         <button data-action="openUpiApp" data-uri="${intentUri}" data-app="whatsapp" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/WHATSAPP.svg" alt="WhatsApp" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">WhatsApp</span>
+                                        </button>
+                                        ` : ''}
+                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="cred" class="upi-app-button">
+                                            <div class="upi-app-icon" style="background: white; padding: 8px;">
+                                                <img src="https://web-assets.payu.in/web/images/assets/upiLogo/CRED.svg" alt="CRED" style="width: 32px; height: 32px; object-fit: contain;">
+                                            </div>
+                                            <span class="upi-app-name">CRED</span>
+                                        </button>
+                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="supermoney" class="upi-app-button">
+                                            <div class="upi-app-icon" style="background: white; padding: 8px;">
+                                                <img src="https://web-assets.payu.in/web/images/assets/upiLogo/SUPERMONEY.svg" alt="Supermoney" style="width: 32px; height: 32px; object-fit: contain;">
+                                            </div>
+                                            <span class="upi-app-name">Supermoney</span>
                                         </button>
                                         <button data-action="openUpiApp" data-uri="${intentUri}" data-app="fimoney" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
@@ -726,7 +756,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                             </div>
                                             <span class="upi-app-name">General Intent</span>
                                         </button>
-
                                     </div>
                                 </div>
                             </div>
