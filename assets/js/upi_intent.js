@@ -165,9 +165,20 @@ function openUpiApp(intentUri, appType, button) {
     try {
         let url = "";
 
+        // Clean the intentUri - it often comes as a full upi://pay?... string
+        // We need just the query parameters for the intent:// format
+        let cleanedParams = intentUri;
+        if (cleanedParams.includes('upi://pay?')) {
+            cleanedParams = cleanedParams.split('upi://pay?')[1];
+        } else if (cleanedParams.includes('?')) {
+            cleanedParams = cleanedParams.split('?')[1];
+        }
+
         // Check if the device is Android
         if (isAndroid()) {
             // Android app configuration mapping
+            // For UPI payments, the scheme should generally be 'upi'
+            // targeting the specific package name.
             const androidAppConfig = {
                 'bhim': {
                     scheme: 'upi',
@@ -175,42 +186,42 @@ function openUpiApp(intentUri, appType, button) {
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=in.org.npci.upiapp'
                 },
                 'paytm': {
-                    scheme: 'paytmmp',
+                    scheme: 'upi',
                     package: 'net.one97.paytm',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=net.one97.paytm'
                 },
                 'phonepe': {
-                    scheme: 'phonepe',
+                    scheme: 'upi',
                     package: 'com.phonepe.app',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.phonepe.app'
                 },
                 'gpay': {
-                    scheme: 'gpay',
+                    scheme: 'upi',
                     package: 'com.google.android.apps.nbu.paisa.user',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.google.android.apps.nbu.paisa.user'
                 },
                 'amazonpay': {
-                    scheme: 'amazonpay',
+                    scheme: 'upi',
                     package: 'in.amazon.mShop.android.shopping',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=in.amazon.mShop.android.shopping'
                 },
                 'whatsapp': {
-                    scheme: 'whatsapp',
+                    scheme: 'upi',
                     package: 'com.whatsapp',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.whatsapp'
                 },
                 'fimoney': {
-                    scheme: 'fi',
+                    scheme: 'upi',
                     package: 'com.fi.money',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.fi.money'
                 },
                 'jupiter': {
-                    scheme: 'jupiter',
+                    scheme: 'upi',
                     package: 'money.jupiter',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=money.jupiter.app'
                 },
                 'slice': {
-                    scheme: 'slice',
+                    scheme: 'upi',
                     package: 'indwin.c3.shareapp',
                     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.sliceit.app'
                 },
@@ -230,24 +241,27 @@ function openUpiApp(intentUri, appType, button) {
             const appConfig = androidAppConfig[appType] || androidAppConfig['generalupi'];
 
             // Build Android intent URL
-            // Format: intent://<path-and-params>#Intent;scheme=<scheme>;package=<package>;S.browser_fallback_url=<fallback_url>;end;
-            url = `intent://pay?${intentUri}#Intent;scheme=${appConfig.scheme};package=${appConfig.package};S.browser_fallback_url=${encodeURIComponent(appConfig.playStoreUrl)};end;`;
+            // Format: intent://pay?<params>#Intent;scheme=upi;package=<package>;S.browser_fallback_url=<fallback_url>;end;
+            url = `intent://pay?${cleanedParams}#Intent;scheme=upi;package=${appConfig.package};S.browser_fallback_url=${encodeURIComponent(appConfig.playStoreUrl)};end;`;
 
         } else {
             // iOS app URL scheme mapping
+            // For iOS, we use the full intentUri (upi://pay?...) or prefix it
             let prefix = "";
+            const fullUri = intentUri.includes('upi://pay?') ? intentUri : `upi://pay?${intentUri}`;
+
             switch (appType) {
                 case 'bhim':
                     prefix = "bhim://upi/pay?";
                     break;
                 case 'paytm':
-                    prefix = "paytm://upi:/pay?";
+                    prefix = "paytmmp://upi/pay?";
                     break;
                 case 'phonepe':
-                    prefix = "phonepe://upi:/pay?";
+                    prefix = "phonepe://upi/pay?";
                     break;
                 case 'gpay':
-                    prefix = "gpay://upi:/pay?";
+                    prefix = "gpay://upi/pay?";
                     break;
                 case 'amazonpay':
                     prefix = "amazonpay://upi/pay?";
@@ -264,24 +278,29 @@ function openUpiApp(intentUri, appType, button) {
                 case 'slice':
                     prefix = "slice://upi/pay?";
                     break;
-                case 'generalintent':
-                    prefix = "intent://pay?";
-                    break;
                 default:
                     prefix = "upi://pay?";
                     break;
             }
-            url = prefix + intentUri;
+
+            // If we have a specific prefix, we need to use the cleaned params
+            url = (appType === 'generalupi' || appType === 'generalintent') ? fullUri : (prefix + cleanedParams);
         }
 
-        // Create a temporary anchor element to trigger the custom URL scheme
-        // This is more reliable than window.location for custom schemes
-        const link = document.createElement('a');
-        link.href = url;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        console.log('Attempting to open UPI URL:', url);
+
+        // For Android Intents, window.location.href is often more reliable in Chrome
+        if (isAndroid()) {
+            window.location.href = url;
+        } else {
+            // Create a temporary anchor element for iOS/Others
+            const link = document.createElement('a');
+            link.href = url;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         // Show success feedback with styled loading state
         const successHtml = `
