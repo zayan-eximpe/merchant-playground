@@ -656,7 +656,7 @@ button.secondary-btn i {
 }
 
 .mobile-action-item {
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: 12px;
     padding: 12px;
