@@ -706,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                             </div>
                                             <span class="upi-app-name">Amazon Pay</span>
                                         </button>
-                                        ${!isAndroid() ? `
+                                        ${isAndroid() ? `
                                         <button data-action="openUpiApp" data-uri="${intentUri}" data-app="whatsapp" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/WHATSAPP.svg" alt="WhatsApp" style="width: 32px; height: 32px; object-fit: contain;">
