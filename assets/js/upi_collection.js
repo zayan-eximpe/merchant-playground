@@ -461,14 +461,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showModal(type, title, message) {
-        modalBox.className = 'modal ' + type;
-        modalIcon.textContent = type === 'success'
-            ? '✅'
-            : '❌';
-        modalTitle.textContent = title;
-        modalTitle.style.color = type === 'success' ? 'rgb(38, 168, 135)' : 'red';
-        TrustedTypes.setInnerHTML(modalMessage, message);
-        modalOverlay.classList.add('active');
+        if (typeof ModalUtils !== 'undefined') {
+            ModalUtils.show(type, title, message);
+        } else {
+            // Fallback if ModalUtils is not loaded
+            modalBox.className = 'modal ' + type;
+            modalIcon.textContent = type === 'success' ? '✅' : '❌';
+            modalTitle.textContent = title;
+            if (window.TrustedTypes && typeof window.TrustedTypes.setInnerHTML === 'function') {
+                window.TrustedTypes.setInnerHTML(modalMessage, message);
+            } else {
+                modalMessage.innerHTML = message;
+            }
+            modalOverlay.classList.add('active');
+        }
     }
 
     function hideModal() {

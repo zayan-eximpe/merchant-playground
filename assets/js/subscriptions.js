@@ -4,7 +4,7 @@
  */
 
 // Mark script as loaded
-(function() {
+(function () {
     'use strict';
     window.subscriptionsScriptLoaded = true;
 })();
@@ -240,7 +240,7 @@ function clearCache() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('subscriptionsForm');
     if (!form) {
         return;
@@ -521,14 +521,14 @@ document.addEventListener('DOMContentLoaded', function() {
         modalCloseBtn.addEventListener('click', closeModal);
     }
     if (modalOverlay) {
-        modalOverlay.addEventListener('click', function(e) {
+        modalOverlay.addEventListener('click', function (e) {
             if (e.target === modalOverlay) closeModal();
         });
     }
 
     // Floating label for select
-    document.querySelectorAll('select').forEach(function(select) {
-        select.addEventListener('change', function() {
+    document.querySelectorAll('select').forEach(function (select) {
+        select.addEventListener('change', function () {
             if (select.value) {
                 select.classList.add('has-value');
             } else {
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Event delegation for quick actions buttons
-    document.body.addEventListener('click', function(e) {
+    document.body.addEventListener('click', function (e) {
         const target = e.target.closest('[data-action]');
         if (!target) return;
 
@@ -579,7 +579,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form submission handler
     if (form && createButton) {
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -744,20 +744,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add X-Merchant-ID header if PSP mode is enabled and merchant ID is provided
                 const isPsp = getConfigValue('IS_PSP');
                 const merchantId = getConfigValue('MERCHANT_ID');
-                
+
                 // Debug logging (can be removed in production)
                 console.log('PSP Check - IS_PSP:', isPsp, 'Type:', typeof isPsp);
                 console.log('PSP Check - MERCHANT_ID:', merchantId);
                 console.log('PSP Check - window.Config.IS_PSP:', window.Config?.IS_PSP);
                 console.log('PSP Check - window.Config.MERCHANT_ID:', window.Config?.MERCHANT_ID);
-                
+
                 // Check if PSP is enabled (handle boolean true, string "true", or window.Config fallback)
-                const isPspEnabled = isPsp === true || isPsp === 'true' || isPsp === 1 || 
-                                     (window.Config && (window.Config.IS_PSP === true || window.Config.IS_PSP === 'true'));
+                const isPspEnabled = isPsp === true || isPsp === 'true' || isPsp === 1 ||
+                    (window.Config && (window.Config.IS_PSP === true || window.Config.IS_PSP === 'true'));
                 const finalMerchantId = merchantId || (window.Config && window.Config.MERCHANT_ID);
-                
+
                 console.log('PSP Check - isPspEnabled:', isPspEnabled, 'finalMerchantId:', finalMerchantId);
-                
+
                 if (isPspEnabled && finalMerchantId) {
                     headers['X-Merchant-ID'] = finalMerchantId;
                     console.log('Added X-Merchant-ID header:', finalMerchantId);
@@ -820,20 +820,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div style="color: #6c757d; font-size: 14px; margin-top: 8px;">Subscription ID: <span style="font-family: monospace; color: #495057;">${subscriptionId}</span></div>
                                 </div>
                                 ${qrImageMarkup}
-                                <p style="margin-top: 16px;"><strong>Intent URI:</strong></p>
-                                <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; border-left: 4px solid rgb(38, 168, 135); word-break: break-all; font-family: monospace; font-size: 13px;">
-                                    ${escapeHtml(intentUri)}
-                                </div>
-                                <div style="margin: 15px 0; display: flex; gap: 10px; flex-wrap: wrap;">
-                                    <button data-action="copyIntent" data-uri="${escapeHtml(intentUri)}" style="padding: 8px 16px; background: rgb(38, 168, 135); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                                        📋 Copy Intent URI
-                                    </button>
-                                </div>
                             </div>
                         `;
 
                         clearCache();
-                        showModal('success', 'Subscription Created Successfully!', successMessage);
+                        showModal('minimal', '', successMessage);
                     } else {
                         // COLLECTION flow: Show simple message with ACS template
                         let successMessage = `<strong>Subscription Created Successfully!</strong><br><br>`;

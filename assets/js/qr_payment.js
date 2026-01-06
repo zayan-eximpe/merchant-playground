@@ -241,26 +241,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showModal(type, title, message) {
-        modalBox.className = 'modal ' + type;
-
-        if (type === 'minimal') {
-            modalIcon.textContent = '';
-            modalIcon.style.display = 'none';
-            modalTitle.textContent = '';
-            modalTitle.style.color = '';
-            modalTitle.style.display = 'none';
+        if (typeof ModalUtils !== 'undefined') {
+            ModalUtils.show(type, title, message);
         } else {
-            modalIcon.style.display = '';
-            modalIcon.textContent = type === 'success'
-                ? '✅'
-                : '❌';
-            modalTitle.style.display = '';
-            modalTitle.textContent = title;
-            modalTitle.style.color = type === 'success' ? 'rgb(38, 168, 135)' : 'red';
+            // Fallback if ModalUtils is not loaded
+            modalBox.className = 'modal ' + type;
+            if (type === 'minimal') {
+                modalIcon.style.display = 'none';
+                modalTitle.style.display = 'none';
+            } else {
+                modalIcon.style.display = 'flex';
+                modalIcon.textContent = type === 'success' ? '✅' : '❌';
+                modalTitle.style.display = 'block';
+                modalTitle.textContent = title;
+            }
+            if (window.TrustedTypes && typeof window.TrustedTypes.setInnerHTML === 'function') {
+                window.TrustedTypes.setInnerHTML(modalMessage, message);
+            } else {
+                modalMessage.innerHTML = message;
+            }
+            modalOverlay.classList.add('active');
         }
-
-        TrustedTypes.setInnerHTML(modalMessage, message);
-        modalOverlay.classList.add('active');
     }
 
     function hideModal() {
@@ -627,7 +628,11 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (action === 'openUpiApp') {
             const uri = target.getAttribute('data-uri');
             const app = target.getAttribute('data-app');
-            openUpiApp(uri, app);
+            if (typeof UPIUtils !== 'undefined') {
+                UPIUtils.openApp(uri, app, target);
+            } else {
+                console.error('UPIUtils not found');
+            }
         } else if (action === 'checkStatus') {
             handleStatusCheck();
         }

@@ -153,227 +153,9 @@ function copyToClipboard(text, button) {
     });
 }
 
-// Function to detect if the device is Android
-function isAndroid() {
-    return /Android/i.test(navigator.userAgent);
-}
-
-// Function to open UPI app with intent URI
-function openUpiApp(intentUri, appType, button) {
-    const originalContent = button.innerHTML;
-
-    try {
-        let url = "";
-
-        // Clean the intentUri - it often comes as a full upi://pay?... string
-        // We need just the query parameters for the intent:// format
-        let cleanedParams = intentUri;
-        if (cleanedParams.includes('upi://pay?')) {
-            cleanedParams = cleanedParams.split('upi://pay?')[1];
-        } else if (cleanedParams.includes('?')) {
-            cleanedParams = cleanedParams.split('?')[1];
-        }
-
-        // Check if the device is Android
-        if (isAndroid()) {
-            // Android app configuration mapping
-            // For UPI payments, the scheme should generally be 'upi'
-            // targeting the specific package name.
-            const androidAppConfig = {
-                'bhim': {
-                    scheme: 'upi',
-                    package: 'in.org.npci.upiapp',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=in.org.npci.upiapp'
-                },
-                'paytm': {
-                    scheme: 'upi',
-                    package: 'net.one97.paytm',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=net.one97.paytm'
-                },
-                'phonepe': {
-                    scheme: 'upi',
-                    package: 'com.phonepe.app',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.phonepe.app'
-                },
-                'gpay': {
-                    scheme: 'upi',
-                    package: 'com.google.android.apps.nbu.paisa.user',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.google.android.apps.nbu.paisa.user'
-                },
-                'amazonpay': {
-                    scheme: 'upi',
-                    package: 'in.amazon.mShop.android.shopping',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=in.amazon.mShop.android.shopping'
-                },
-                'whatsapp': {
-                    scheme: 'upi',
-                    package: 'com.whatsapp',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.whatsapp'
-                },
-                'fimoney': {
-                    scheme: 'upi',
-                    package: 'com.fi.money',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.fi.money'
-                },
-                'jupiter': {
-                    scheme: 'upi',
-                    package: 'money.jupiter',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=money.jupiter.app'
-                },
-                'slice': {
-                    scheme: 'upi',
-                    package: 'indwin.c3.shareapp',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.sliceit.app'
-                },
-                'cred': {
-                    scheme: 'upi',
-                    package: 'com.dreamplug.androidapp',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.dreamplug.androidapp'
-                },
-                'supermoney': {
-                    scheme: 'upi',
-                    package: 'money.super.payments',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=money.super.payments'
-                },
-                'generalintent': {
-                    scheme: 'upi',
-                    package: 'com.google.android.apps.nbu.paisa.user',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.google.android.apps.nbu.paisa.user'
-                },
-                'generalupi': {
-                    scheme: 'upi',
-                    package: 'in.org.npci.upiapp',
-                    playStoreUrl: 'https://play.google.com/store/apps/details?id=in.org.npci.upiapp'
-                }
-            };
-
-            // Get the configuration for the selected app
-            const appConfig = androidAppConfig[appType] || androidAppConfig['generalupi'];
-
-            // Build Android intent URL
-            // Format: intent://pay?<params>#Intent;scheme=upi;package=<package>;S.browser_fallback_url=<fallback_url>;end;
-            url = `intent://pay?${cleanedParams}#Intent;scheme=upi;package=${appConfig.package};S.browser_fallback_url=${encodeURIComponent(appConfig.playStoreUrl)};end;`;
-
-        } else {
-            // iOS app URL scheme mapping
-            // For iOS, we use the full intentUri (upi://pay?...) or prefix it
-            let prefix = "";
-            const fullUri = intentUri.includes('upi://pay?') ? intentUri : `upi://pay?${intentUri}`;
-
-            switch (appType) {
-                case 'bhim':
-                    prefix = "bhim://upi/pay?";
-                    break;
-                case 'paytm':
-                    prefix = "paytmmp://upi/pay?";
-                    break;
-                case 'phonepe':
-                    prefix = "phonepe://upi/pay?";
-                    break;
-                case 'gpay':
-                    prefix = "gpay://upi/pay?";
-                    break;
-                case 'amazonpay':
-                    prefix = "amazonpay://upi/pay?";
-                    break;
-                case 'whatsapp':
-                    prefix = "whatsapp://upi/pay?";
-                    break;
-                case 'fimoney':
-                    prefix = "fi://upi/pay?";
-                    break;
-                case 'jupiter':
-                    prefix = "jupiter://upi/pay?";
-                    break;
-                case 'slice':
-                    prefix = "slice://upi/pay?";
-                    break;
-                case 'cred':
-                    prefix = "credpay://upi/pay?";
-                    break;
-                case 'supermoney':
-                    prefix = "super://pay?";
-                    break;
-                default:
-                    prefix = "upi://pay?";
-                    break;
-            }
-
-            // If we have a specific prefix, we need to use the cleaned params
-            url = (appType === 'generalupi' || appType === 'generalintent') ? fullUri : (prefix + cleanedParams);
-        }
-
-        console.log('Attempting to open UPI URL:', url);
-
-        // For Android Intents, window.location.href is often more reliable in Chrome
-        if (isAndroid()) {
-            window.location.href = url;
-        } else {
-            // Create a temporary anchor element for iOS/Others
-            const link = document.createElement('a');
-            link.href = url;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Show success feedback with styled loading state
-        const successHtml = `
-                    <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                            <path d="M20 6L9 17l-5-5"/>
-                        </svg>
-                    </div>
-                    <span style="font-size: 12px; font-weight: 500; color: #374151;">Launched!</span>
-                `;
-        TrustedTypes.setInnerHTML(button, successHtml);
-        button.style.transform = 'scale(0.95)';
-
-        setTimeout(() => {
-            TrustedTypes.setInnerHTML(button, originalContent);
-            button.style.transform = 'scale(1)';
-        }, 2000);
-
-    } catch (err) {
-        console.error('Failed to open UPI app: ', err);
-
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(intentUri).then(() => {
-            const copiedHtml = `
-                        <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #4f46e5); display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                            </svg>
-                        </div>
-                        <span style="font-size: 12px; font-weight: 500; color: #374151;">Copied!</span>
-                    `;
-            TrustedTypes.setInnerHTML(button, copiedHtml);
-            button.style.transform = 'scale(0.95)';
-
-            setTimeout(() => {
-                TrustedTypes.setInnerHTML(button, originalContent);
-                button.style.transform = 'scale(1)';
-            }, 3000);
-        }).catch(() => {
-            const failedHtml = `
-                        <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #ef4444, #dc2626); display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                                <path d="M18 6L6 18M6 6l12 12"/>
-                            </svg>
-                        </div>
-                        <span style="font-size: 12px; font-weight: 500; color: #374151;">Failed</span>
-                    `;
-            TrustedTypes.setInnerHTML(button, failedHtml);
-            button.style.transform = 'scale(0.95)';
-
-            setTimeout(() => {
-                TrustedTypes.setInnerHTML(button, originalContent);
-                button.style.transform = 'scale(1)';
-            }, 3000);
-        });
-    }
+// Function to clear saved form data
+function clearFormData() {
+    localStorage.removeItem('eximpe_form_data');
 }
 
 function clearCache() {
@@ -477,14 +259,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showModal(type, title, message) {
-        modalBox.className = 'modal ' + type;
-        modalIcon.textContent = type === 'success'
-            ? '✅'
-            : '❌';
-        modalTitle.textContent = title;
-        modalTitle.style.color = type === 'success' ? 'rgb(38, 168, 135)' : 'red';
-        TrustedTypes.setInnerHTML(modalMessage, message);
-        modalOverlay.classList.add('active');
+        if (typeof ModalUtils !== 'undefined') {
+            ModalUtils.show(type, title, message);
+        } else {
+            // Fallback if ModalUtils is not loaded
+            modalBox.className = 'modal ' + type;
+            modalIcon.textContent = type === 'success' ? '✅' : '❌';
+            modalTitle.textContent = title;
+            if (window.TrustedTypes && typeof window.TrustedTypes.setInnerHTML === 'function') {
+                window.TrustedTypes.setInnerHTML(modalMessage, message);
+            } else {
+                modalMessage.innerHTML = message;
+            }
+            modalOverlay.classList.add('active');
+        }
     }
 
     function hideModal() {
@@ -653,19 +441,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 const orderId = data.data.order_id;
 
                 // Create a message with the intent URI and UPI app options
+                const upiPayUri = intentUri.includes('upi://pay?') ? intentUri : `upi://pay?${intentUri}`;
+                const isDesktop = typeof UPIUtils !== 'undefined' && UPIUtils.isDesktop();
+
                 const successMessage = `
                             <div style="text-align: left; margin: 10px 0;">
-                                <p><strong>Order ID:</strong> ${orderId}</p>
-                                <p><strong>Intent URI:</strong></p>
-                                <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; border-left: 4px solid rgb(38, 168, 135); word-break: break-all; font-family: monospace; font-size: 13px;">
-                                    ${intentUri}
+                                ${isDesktop ? `
+                                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0; text-align: center;">
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                                        <i class="fas fa-qrcode" style="color: #4a5568;"></i>
+                                        <span style="font-weight: 500; color: #4a5568; font-size: 14px;">SCAN TO PAY</span>
+                                    </div>
+                                    <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                        <img src="${UPIUtils.getQRCodeUrl(upiPayUri)}" alt="UPI QR Code" style="width: 180px; height: 180px; display: block;">
+                                    </div>
+                                    <p style="margin-top: 12px; color: #64748b; font-size: 12px;">Scan with any UPI app to complete payment</p>
                                 </div>
-                                <div style="margin: 15px 0; display: flex; gap: 10px; flex-wrap: wrap;">
-                                    <button data-action="copyIntent" data-uri="${intentUri}" style="padding: 8px 16px; background: rgb(38, 168, 135); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                                        📋 Copy Intent URI
-                                    </button>
-                                </div>
-
+                                ` : `
                                 <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -706,14 +498,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                             </div>
                                             <span class="upi-app-name">Amazon Pay</span>
                                         </button>
-                                        ${isAndroid() ? `
                                         <button data-action="openUpiApp" data-uri="${intentUri}" data-app="whatsapp" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/WHATSAPP.svg" alt="WhatsApp" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">WhatsApp</span>
                                         </button>
-                                        ` : ''}
                                         <button data-action="openUpiApp" data-uri="${intentUri}" data-app="cred" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/CRED.svg" alt="CRED" style="width: 32px; height: 32px; object-fit: contain;">
@@ -758,11 +548,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                         </button>
                                     </div>
                                 </div>
+                                `}
                             </div>
                         `;
 
                 clearCache();
-                showModal('success', 'UPI Intent Request Created Successfully!', successMessage);
+                showModal('minimal', '', successMessage);
                 localStorage.setItem('last_used_order_id', orderId);
             } else {
                 // Build error message with validation errors if present
@@ -820,7 +611,11 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (action === 'openUpiApp') {
             const uri = target.getAttribute('data-uri');
             const app = target.getAttribute('data-app');
-            openUpiApp(uri, app, target);
+            if (typeof UPIUtils !== 'undefined') {
+                UPIUtils.openApp(uri, app, target);
+            } else {
+                console.error('UPIUtils not found');
+            }
         }
     });
 });
