@@ -313,7 +313,7 @@ function setupEventHandlers() {
     document.querySelectorAll('[data-action="navigate-home"]').forEach(el => {
         el.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = '/index.html/';
+            window.location.href = '/index.html';
         });
     });
 

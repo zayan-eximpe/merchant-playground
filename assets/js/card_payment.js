@@ -42,6 +42,26 @@ function setCardFieldsDisabled(disabled) {
     }
 }
 
+// Helper to show/hide card fields
+function setCardFieldsVisibility(visible) {
+    const ids = [
+        'cardNumber', 'cardHolderName', 'expiryMonth',
+        'cardType', 'cardNickname', 'cardNetwork'
+    ];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            const group = el.closest('.form-group');
+            if (group) {
+                group.style.display = visible ? '' : 'none';
+            }
+        }
+    });
+    // Handle CVV field
+    const cvvField = document.getElementById('cvvField');
+    if (cvvField) cvvField.style.display = visible ? '' : 'none';
+}
+
 // Format card number with spaces
 function formatCardNumber(input) {
     let value = input.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
@@ -132,7 +152,6 @@ function populateSampleOrderFields() {
         currency: 'INR',
         type_of_goods: 'goods',
         reference_id: 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase(),
-        return_url: window.location.origin + '/checkout/payment_callback.html',
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
         buyer_phone: '9876543210',
@@ -153,7 +172,6 @@ function populateSampleOrderFields() {
     document.getElementById('amount').value = sampleData.amount;
     document.getElementById('currency').value = sampleData.currency;
     document.getElementById('referenceId').value = sampleData.reference_id;
-    document.getElementById('returnUrl').value = sampleData.return_url;
     document.getElementById('buyerName').value = sampleData.buyer_name;
     document.getElementById('buyerEmail').value = sampleData.buyer_email;
     document.getElementById('buyerPhone').value = sampleData.buyer_phone;
@@ -220,6 +238,7 @@ function clearCache() {
     const currentCardIdentifier = document.getElementById('cardIdentifier').value;
     // Clear all form data
     setCardFieldsDisabled(false);
+    setCardFieldsVisibility(true);
     document.getElementById('sessionForm').reset();
     // Restore Card Identifier value
     document.getElementById('cardIdentifier').value = currentCardIdentifier;
@@ -228,6 +247,8 @@ function clearCache() {
 
 document.addEventListener('DOMContentLoaded', function () {
     populateExpiryYears();
+    // Initialize sample data (unless overwritten by saved data)
+    populateSampleOrderFields();
     // Load saved form data
     loadFormData();
     // Add event listeners to save form data on input changes
@@ -291,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // --- END: Card validation ---
         // Populate the rest of the sample order fields before submit
-        populateSampleOrderFields();
+        // populateSampleOrderFields(); // Removed to prevent overwriting user edits
         try {
             const apiUrl = `${window.API_URL}/pg/orders/`;
             // Get form values
@@ -320,7 +341,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     expiry_year: document.getElementById('expiryYear').value,
                     cvv: document.getElementById('cvv').value,
                     network: document.getElementById('cardNetwork').value,
-                    identifier: document.getElementById('cardIdentifier').value || undefined
+                    identifier: document.getElementById('cardIdentifier').value || undefined,
+                    save_card: document.getElementById('saveCard').checked
                 };
             }
             const payload = {
@@ -329,7 +351,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 mop_type: document.getElementById('cardType').value,
                 currency: document.getElementById('currency').value,
                 reference_id: document.getElementById('referenceId').value || undefined,
-                return_url: document.getElementById('returnUrl').value || undefined,
                 card_details: card_details,
                 buyer: {
                     name: document.getElementById('buyerName').value,
@@ -392,13 +413,31 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             const data = await response.json();
             if (data.success) {
-                // Show success modal with order ID and any relevant info
+                // Directly render and submit ACS template
                 const orderId = data.data.order_id;
                 clearCache();
                 setCardFieldsDisabled(false);
                 const acsTemplate = data.data.acs_template;
-                showModal('success', 'Card Payment Order Created!', `<div style='text-align:left;'><b>Order ID:</b> ${orderId}</div>`, acsTemplate);
                 localStorage.setItem('last_used_order_id', orderId);
+
+                // Decode and submit ACS form
+                const html = decodeBase64(acsTemplate);
+                try {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const form = doc.querySelector('form');
+
+                    if (form) {
+                        document.body.appendChild(form);
+                        form.submit();
+                    } else {
+                        console.error('No form found in ACS template');
+                        showModal('error', 'Authentication Error', 'Could not process the authentication page.');
+                    }
+                } catch (e) {
+                    console.error('Error parsing ACS template:', e);
+                    showModal('error', 'Authentication Error', 'An error occurred while processing authentication.');
+                }
             } else {
                 // Build error message with validation errors if present
                 let errorMsg = '';
@@ -586,26 +625,35 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target === modalOverlay) closeModal();
     });
 
-    // Saved Cards Modal logic
+    // Saved Cards Inline Logic
     const searchSavedCardsBtn = document.getElementById('searchSavedCardsBtn');
-    const savedCardsModalOverlay = document.getElementById('savedCardsModalOverlay');
-    const savedCardsModal = document.getElementById('savedCardsModal');
-    const closeSavedCardsModalBtn = document.getElementById('closeSavedCardsModalBtn');
-    const savedCardsList = document.getElementById('savedCardsList');
+    const savedCardsContainer = document.getElementById('savedCardsContainer');
 
     // Track selected card token and identifier globally
     let selectedCardToken = null;
     let selectedCardIdentifier = null;
 
-    function showSavedCardsModal(cards) {
-        savedCardsList.textContent = '';
+    function showSavedCardsInline(cards) {
+        savedCardsContainer.textContent = '';
+        savedCardsContainer.style.display = 'block';
+
         if (!cards || cards.length === 0) {
-            TrustedTypes.setInnerHTML(savedCardsList, '<div style="color:#e53e3e;">No saved cards found for this identifier.</div>');
+            TrustedTypes.setInnerHTML(savedCardsContainer, `
+                <div style="text-align: center; padding: 24px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1; color: #64748b;">
+                    <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px; color: #94a3b8;"></i>
+                    <div style="font-size: 14px; font-weight: 500;">No saved cards found</div>
+                    <div style="font-size: 12px; margin-top: 4px;">Try a different identifier</div>
+                </div>
+            `);
         } else {
+            const listTitle = document.createElement('div');
+            listTitle.style.cssText = 'font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;';
+            listTitle.textContent = 'Select a saved card:';
+            savedCardsContainer.appendChild(listTitle);
+
             cards.forEach(card => {
                 const cardDiv = document.createElement('div');
                 cardDiv.className = 'saved-card-row';
-                cardDiv.style = 'padding: 12px 90px 12px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f6f8fa; position: relative; cursor: pointer;';
                 const nickname = escapeHtml(card.nickname || 'Card');
                 const network = escapeHtml(card.network);
                 const maskedPan = escapeHtml(card.masked_pan);
@@ -613,14 +661,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 const expiryYear = escapeHtml(card.expiry_year);
 
                 TrustedTypes.setInnerHTML(cardDiv, `
-                            <div class="saved-card-title"><b>${nickname}</b> (${network})</div>
-                            <div class="saved-card-details"><span>${maskedPan}</span> | Exp: ${expiryMonth}/${expiryYear}</div>
+                            <div class="saved-card-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="saved-card-info">
+                                <div class="saved-card-title">${nickname} <span class="saved-card-network">${network}</span></div>
+                                <div class="saved-card-details">${maskedPan} • ${expiryMonth}/${expiryYear}</div>
+                            </div>
                         `);
                 // Add Delete button
                 const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'saved-card-delete';
                 TrustedTypes.setInnerHTML(deleteBtn, '<i class="fas fa-trash"></i>');
                 deleteBtn.title = 'Delete';
-                deleteBtn.style = 'position: absolute; top: 12px; right: 12px; border: none; background: none; color: #e53e3e; border-radius: 6px; padding: 6px 12px; font-size: 18px; cursor: pointer;';
                 deleteBtn.onclick = async function (e) {
                     e.stopPropagation();
                     // Prepare headers
@@ -647,7 +700,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                         if (response.ok) {
                             cardDiv.remove();
-                            //showModal('success', 'Card Deleted', 'The saved card has been deleted successfully.');
+                            if (savedCardsContainer.querySelectorAll('.saved-card-row').length === 0) {
+                                savedCardsContainer.style.display = 'none';
+                            }
                         } else {
                             const data = await response.json();
                             showModal('error', 'Delete Failed', data.error?.message || 'Failed to delete the card.');
@@ -673,23 +728,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     // Disable card detail fields except identifier and network
                     setCardFieldsDisabled(true);
+                    setCardFieldsVisibility(false);
                     document.getElementById('cardIdentifier').disabled = false;
                     document.getElementById('cardNetwork').disabled = false;
-                    // Hide CVV field
-                    var cvvField = document.getElementById('cvvField');
-                    if (cvvField) cvvField.style.display = 'none';
                     // Show 'Use another card' button
                     showUseAnotherCardBtn();
                     // Track selected card token and identifier
                     selectedCardToken = card.card_token;
                     selectedCardIdentifier = document.getElementById('cardIdentifier').value;
-                    // Hide modal
-                    savedCardsModalOverlay.style.display = 'none';
+                    // Hide inline list
+                    savedCardsContainer.style.display = 'none';
                 };
-                savedCardsList.appendChild(cardDiv);
+                savedCardsContainer.appendChild(cardDiv);
             });
         }
-        savedCardsModalOverlay.style.display = 'flex';
     }
 
     // Update selectedCardIdentifier if user edits identifier after selecting a card
@@ -709,24 +761,50 @@ document.addEventListener('DOMContentLoaded', function () {
             btn = document.createElement('button');
             btn.id = 'useAnotherCardBtn';
             btn.type = 'button';
-            btn.className = 'main-action-btn outline-btn';
-            btn.style.margin = '18px 0 0 0';
-            TrustedTypes.setInnerHTML(btn, '<i class="fas fa-plus"></i> Use another card');
+            // Styled as a small text link/button
+            btn.style.cssText = 'background: none; border: none; color: #26a887; font-size: 13px; font-weight: 500; cursor: pointer; padding: 4px 0; margin-top: 8px; display: flex; align-items: center; gap: 6px;';
+            TrustedTypes.setInnerHTML(btn, '<i class="fas fa-arrow-left"></i> Use a different card');
+
             btn.onclick = function () {
                 setCardFieldsDisabled(false);
+                setCardFieldsVisibility(true);
                 btn.remove();
-                // Show CVV field again
-                var cvvField = document.getElementById('cvvField');
-                if (cvvField) cvvField.style.display = '';
+                // Clear the selection
+                selectedCardToken = null;
+                selectedCardIdentifier = null;
+                // Clear fields
+                document.getElementById('cardNumber').value = '';
+                document.getElementById('cardHolderName').value = '';
+                document.getElementById('expiryMonth').value = '';
+                document.getElementById('expiryYear').value = '';
+                document.getElementById('cvv').value = '';
+                document.getElementById('cardNickname').value = '';
+                document.getElementById('cardType').value = '';
+                document.getElementById('cardNetwork').value = '';
             };
-            // Insert after card details section
-            const cardSection = document.querySelector('.section-title i.fa-credit-card').parentElement.parentElement;
-            cardSection.appendChild(btn);
+
+            // Insert inside the card identifier group, below the input/button row
+            const cardIdentifierGroup = document.getElementById('cardIdentifier').closest('.form-group');
+            if (cardIdentifierGroup) {
+                // Insert before the helper text
+                const helperText = cardIdentifierGroup.querySelector('.helper-text');
+                if (helperText) {
+                    cardIdentifierGroup.insertBefore(btn, helperText);
+                } else {
+                    cardIdentifierGroup.appendChild(btn);
+                }
+            }
         }
     }
 
     if (searchSavedCardsBtn) {
         searchSavedCardsBtn.addEventListener('click', async function () {
+            // Toggle visibility if already open
+            if (savedCardsContainer.style.display === 'block') {
+                savedCardsContainer.style.display = 'none';
+                return;
+            }
+
             const identifier = document.getElementById('cardIdentifier').value.trim();
             if (!identifier) {
                 showModal('error', 'Missing Identifier', 'Please enter a Card Identifier to search.');
@@ -752,24 +830,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 const data = await response.json();
                 if (data.success && data.data && Array.isArray(data.data)) {
-                    showSavedCardsModal(data.data);
+                    showSavedCardsInline(data.data);
                 } else {
-                    showSavedCardsModal([]);
+                    showSavedCardsInline([]);
                 }
             } catch (err) {
-                showSavedCardsModal([]);
+                showSavedCardsInline([]);
             }
-        });
-    }
-
-    if (closeSavedCardsModalBtn) {
-        closeSavedCardsModalBtn.addEventListener('click', function () {
-            savedCardsModalOverlay.style.display = 'none';
-        });
-    }
-    if (savedCardsModalOverlay) {
-        savedCardsModalOverlay.addEventListener('click', function (e) {
-            if (e.target === savedCardsModalOverlay) savedCardsModalOverlay.style.display = 'none';
         });
     }
 
@@ -819,8 +886,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('orderSummaryProductDesc').textContent = get('productDescription') || 'This is a sample product description';
         document.getElementById('orderSummaryAmount').textContent = (get('amount') ? '₹' + get('amount') : '₹1.00');
         document.getElementById('orderSummaryCurrency').textContent = get('currency') || 'INR';
-        document.getElementById('orderSummaryBuyerName').textContent = get('buyerName') || 'John Doe';
-        document.getElementById('orderSummaryBuyerEmail').textContent = get('buyerEmail') || 'john.doe@example.com';
+        // Buyer Name and Email are now inputs on the left, so no need to update text content
         document.getElementById('orderSummaryReference').textContent = get('referenceId') || 'CARD_XXXXXX';
         // Optionally, set product image if you have a URL field
         // document.getElementById('orderSummaryProductImg').src = get('productImageUrl') || 'https://via.placeholder.com/80x80?text=Product';
