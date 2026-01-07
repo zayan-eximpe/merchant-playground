@@ -1,0 +1,146 @@
+/* Dark Blue & White Modal Theme (No Red) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    padding: 40px 32px;
+    width: 90%;
+    max-width: 400px;
+    min-width: 320px;
+    position: relative;
+    transform: scale(0.95);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 4px solid #1e293b;
+}
+
+.modal-overlay.active .modal {
+    transform: scale(1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: #1e293b;
+}
+
+.modal-icon {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
+    height: 64px;
+    background: #f8fafc;
+    border-radius: 16px;
+}
+
+.modal.success .modal-icon {
+    background: #f0fdf4;
+}
+
+.modal.error .modal-icon {
+    background: #f1f5f9;
+    /* Neutral background for error instead of red */
+}
+
+.modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1e293b;
+}
+
+.modal-message {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Button Styles - Dark Blue Theme */
+.modal .main-action-btn {
+    padding: 12px 24px;
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 140px;
+}
+
+.modal .main-action-btn:hover {
+    background: #0f172a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+}
+
+.modal .outline-btn {
+    background: transparent;
+    color: #1e293b;
+    border: 2px solid #1e293b;
+}
+
+.modal .outline-btn:hover {
+    background: rgba(30, 41, 59, 0.05);
+}
+
+/* Success Override */
+.modal.success {
+    border-top-color: #10b981;
+}
+
+/* Error Override - No Red */
+.modal.error {
+    border-top-color: #1e293b;
+}

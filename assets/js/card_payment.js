@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Remove the acsContainer.textContent = '';
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        hideModal();
+        ModalUtils.hide();
         createButton.disabled = true;
         btnText.textContent = 'Creating Card Payment...';
         // --- BEGIN: Card validation for only two allowed cards ---
@@ -413,30 +413,27 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             const data = await response.json();
             if (data.success) {
-                // Directly render and submit ACS template
                 const orderId = data.data.order_id;
-                clearCache();
-                setCardFieldsDisabled(false);
                 const acsTemplate = data.data.acs_template;
                 localStorage.setItem('last_used_order_id', orderId);
+                clearCache();
+                setCardFieldsDisabled(false);
 
-                // Decode and submit ACS form
+                // Decode and submit ACS form directly
                 const html = decodeBase64(acsTemplate);
                 try {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     const form = doc.querySelector('form');
-
                     if (form) {
                         document.body.appendChild(form);
                         form.submit();
                     } else {
-                        console.error('No form found in ACS template');
-                        showModal('error', 'Authentication Error', 'Could not process the authentication page.');
+                        ModalUtils.show('error', 'Authentication Error', 'Could not process the authentication page.');
                     }
                 } catch (e) {
                     console.error('Error parsing ACS template:', e);
-                    showModal('error', 'Authentication Error', 'An error occurred while processing authentication.');
+                    ModalUtils.show('error', 'Authentication Error', 'An error occurred while processing authentication.');
                 }
             } else {
                 // Build error message with validation errors if present
@@ -464,141 +461,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     errorMsg = 'An unexpected error occurred. Please try again.';
                 }
-                showModal('error', data.error?.message || 'Validation Error', errorMsg);
+                ModalUtils.show('error', data.error?.message || 'Validation Error', errorMsg);
             }
         } catch (error) {
             // Graceful fetch/network error handler
             console.error('Error in card payment submission:', error);
             console.error('Error stack:', error.stack);
-            showModal('error', 'Network Error', 'Could not connect to the server. Please try again later.');
+            ModalUtils.show('error', 'Network Error', 'Could not connect to the server. Please try again later.');
         } finally {
             createButton.disabled = false;
             btnText.textContent = 'Initiate Card Payment';
         }
     });
 
-    // Modal functions
-    function showModal(type, title, message, acsTemplate) {
-        const modalBox = document.getElementById('modalBox');
-        const modalIcon = document.getElementById('modalIcon');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
-        const modalOverlay = document.getElementById('modalOverlay');
-
-        modalBox.className = 'modal ' + type;
-        if (type === 'success') {
-            TrustedTypes.setInnerHTML(modalIcon, '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#26a887"/><path d="M34 18L21.5 30.5L14 23" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-            modalTitle.style.color = '#26a887';
-        } else {
-            TrustedTypes.setInnerHTML(modalIcon, '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#e53e3e"/><path d="M16 16L32 32M32 16L16 32" stroke="white" stroke-width="3.5" stroke-linecap="round"/></svg>');
-            modalTitle.style.color = '#e53e3e';
-        }
-        modalTitle.textContent = title;
-        TrustedTypes.setInnerHTML(modalMessage, message);
-        // If acsTemplate is provided, add the button inside the modal
-        let acsBtn = document.getElementById('modalAcsButton');
-        if (acsBtn) acsBtn.remove();
-        if (type === 'success' && acsTemplate) {
-            const btn = document.createElement('button');
-            btn.id = 'modalAcsButton';
-            btn.className = 'main-action-btn';
-            btn.style.marginTop = '18px';
-            TrustedTypes.setInnerHTML(btn, '<i class="fas fa-lock"></i> <span>Proceed with Card Authentication</span>');
-            btn.onclick = function () {
-                // Decode the ACS template
-                const html = decodeBase64(acsTemplate);
-
-                try {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const form = doc.querySelector('form');
-
-                    if (form) {
-                        document.body.appendChild(form);
-                        form.submit();
-                    } else {
-                        console.error('No form found in ACS template');
-                        showModal('error', 'Authentication Error', 'Could not process the authentication page.');
-                    }
-                } catch (e) {
-                    console.error('Error parsing ACS template:', e);
-                    showModal('error', 'Authentication Error', 'An error occurred while processing authentication.');
-                }
-            };
-            modalBox.appendChild(btn);
-        }
-        modalOverlay.classList.add('active');
-        // Center modal and add spacing
-        modalBox.style.display = 'flex';
-        modalBox.style.flexDirection = 'column';
-        modalBox.style.alignItems = 'center';
-        modalBox.style.justifyContent = 'center';
-        modalBox.style.padding = '48px 32px 32px 32px';
-        modalBox.style.minWidth = '320px';
-    }
-
-    function hideModal() {
-        document.getElementById('modalOverlay').classList.remove('active');
-        // Remove dynamically added ACS button if present
-        let acsBtn = document.getElementById('modalAcsButton');
-        if (acsBtn) acsBtn.remove();
-    }
-
-    // Custom confirm modal
-    function showConfirmModal(message) {
-        return new Promise((resolve) => {
-            const modalBox = document.getElementById('modalBox');
-            const modalIcon = document.getElementById('modalIcon');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-            const modalOverlay = document.getElementById('modalOverlay');
-
-            modalBox.className = 'modal confirm';
-            TrustedTypes.setInnerHTML(modalIcon, '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#3182ce"/><path d="M24 16V28" stroke="white" stroke-width="3.5" stroke-linecap="round"/><circle cx="24" cy="34" r="2" fill="white"/></svg>');
-            modalTitle.style.color = '#3182ce';
-            modalTitle.textContent = 'Confirm Action';
-            TrustedTypes.setInnerHTML(modalMessage, message);
-
-            // Remove any previous confirm buttons
-            let yesBtn = document.getElementById('modalYesButton');
-            let noBtn = document.getElementById('modalNoButton');
-            if (yesBtn) yesBtn.remove();
-            if (noBtn) noBtn.remove();
-
-            // Create Yes button
-            yesBtn = document.createElement('button');
-            yesBtn.id = 'modalYesButton';
-            yesBtn.className = 'main-action-btn';
-            yesBtn.style.marginTop = '18px';
-            TrustedTypes.setInnerHTML(yesBtn, '<i class="fas fa-check"></i> Yes');
-            yesBtn.onclick = function () {
-                closeModal();
-                resolve(true);
-            };
-            // Create No button
-            noBtn = document.createElement('button');
-            noBtn.id = 'modalNoButton';
-            noBtn.className = 'main-action-btn outline-btn';
-            noBtn.style.marginTop = '18px';
-            noBtn.style.marginLeft = '10px';
-            TrustedTypes.setInnerHTML(noBtn, '<i class="fas fa-times"></i> No');
-            noBtn.onclick = function () {
-                closeModal();
-                resolve(false);
-            };
-            // Add buttons to modal
-            modalBox.appendChild(yesBtn);
-            modalBox.appendChild(noBtn);
-            modalOverlay.classList.add('active');
-        });
-    }
-
     // Make functions available globally
     window.createSampleData = function () { toggleSampleCard(); };
     window.toggleSampleCard = toggleSampleCard;
     window.populateSampleOrderFields = populateSampleOrderFields;
-    window.showModal = showModal;
-    window.hideModal = hideModal;
 
     // Utility to decode base64 to string
     function decodeBase64(str) {
@@ -608,22 +487,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return window.atob(str);
         }
     }
-
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalBox = document.getElementById('modalBox');
-    // Attach close event
-    function closeModal() {
-        modalOverlay.classList.remove('active');
-        // Remove dynamically added ACS button if present
-        let acsBtn = document.getElementById('modalAcsButton');
-        if (acsBtn) acsBtn.remove();
-    }
-    modalCloseBtn.addEventListener('click', closeModal);
-    // Optional: close modal when clicking outside the modal box
-    modalOverlay.addEventListener('click', function (e) {
-        if (e.target === modalOverlay) closeModal();
-    });
 
     // Saved Cards Inline Logic
     const searchSavedCardsBtn = document.getElementById('searchSavedCardsBtn');
@@ -705,10 +568,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         } else {
                             const data = await response.json();
-                            showModal('error', 'Delete Failed', data.error?.message || 'Failed to delete the card.');
+                            ModalUtils.show('error', 'Delete Failed', data.error?.message || 'Failed to delete the card.');
                         }
                     } catch (err) {
-                        showModal('error', 'Network Error', 'Could not connect to the server. Please try again later.');
+                        ModalUtils.show('error', 'Network Error', 'Could not connect to the server. Please try again later.');
                     }
                 };
                 cardDiv.appendChild(deleteBtn);
@@ -807,7 +670,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const identifier = document.getElementById('cardIdentifier').value.trim();
             if (!identifier) {
-                showModal('error', 'Missing Identifier', 'Please enter a Card Identifier to search.');
+                ModalUtils.show('error', 'Missing Identifier', 'Please enter a Card Identifier to search.');
                 return;
             }
             // Prepare headers
@@ -915,7 +778,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveCardDetailsBtn = document.getElementById('saveCardDetailsBtn');
     if (saveCardDetailsBtn) {
         saveCardDetailsBtn.addEventListener('click', async function () {
-            hideModal();
+            ModalUtils.hide();
             // Gather and validate fields per CreateSavedCardDetailsSerializer
             const identifier = document.getElementById('cardIdentifier').value.trim();
             const card_number = document.getElementById('cardNumber').value.trim();
@@ -958,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const netUpper = (network || '').toUpperCase();
             if ((netUpper === 'AMEX' || netUpper === 'RUPAY') && !authorization_reference_number) missing.push('authorization_reference_number');
             if (missing.length) {
-                showModal('error', 'Missing Fields', 'Please fill: ' + missing.join(', '));
+                ModalUtils.show('error', 'Missing Fields', 'Please fill: ' + missing.join(', '));
                 return;
             }
             // Call tokens API
@@ -967,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    showModal('success', 'Card Saved', 'Your card has been saved successfully.');
+                    ModalUtils.show('success', 'Card Saved', 'Your card has been saved successfully.');
                 } else {
                     let errorMsg = escapeHtml(data.error?.message || 'Failed to save the card.');
                     if (data.error?.details) {
@@ -978,10 +841,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                         errorMsg += '</ul>';
                     }
-                    showModal('error', 'Save Failed', errorMsg);
+                    ModalUtils.show('error', 'Save Failed', errorMsg);
                 }
             } catch (err) {
-                showModal('error', 'Network Error', 'Could not connect to the server. Please try again later.');
+                ModalUtils.show('error', 'Network Error', 'Could not connect to the server. Please try again later.');
             }
         });
     }

@@ -48,15 +48,8 @@
 </head>
 
 <body>
-    <!-- Modal -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal" id="modalBox">
-            <button class="modal-close" id="modalCloseBtn">&times;</button>
-            <div class="modal-icon" id="modalIcon"></div>
-            <div class="modal-title" id="modalTitle"></div>
-            <div class="modal-message" id="modalMessage"></div>
-        </div>
-    </div>
+    <!-- Modal injected by common-utils.js -->
+
 
     <!-- Saved Cards Container (Inline) -->
     <!-- Removed modal -->
@@ -294,27 +287,7 @@
         </div>
     </div>
 
-    <!-- Quick Actions (FAB) -->
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-    <div class="mobile-quick-actions" style="display: block;">
-        <button class="mobile-fab" id="mobileFab">
-            <i class="fas fa-bolt"></i>
-        </button>
-        <div class="mobile-actions-menu" id="mobileActionsMenu">
-            <button type="button" data-action="navigate-home" class="mobile-action-item">
-                <i class="fas fa-home"></i>
-                <span>Back to Home</span>
-            </button>
-            <button type="button" data-action="create-sample-data" class="mobile-action-item">
-                <i class="fas fa-magic"></i>
-                <span>Set Sample Data</span>
-            </button>
-            <button type="button" data-action="clear-cache" class="mobile-action-item">
-                <i class="fas fa-broom"></i>
-                <span>Clear Fields</span>
-            </button>
-        </div>
-    </div>
+
 
     <!-- Common utilities -->
     <script src="../assets/js/trusted-types-policy.js?v=1.0.9.5"></script>

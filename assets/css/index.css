@@ -1054,12 +1054,6 @@ h1 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar-nav a.active {
-    background: rgb(38, 168, 135);
-    color: white;
-    box-shadow: 0 4px 12px rgba(38, 168, 135, 0.2);
-}
-
 .sidebar-nav i {
     width: 20px;
     text-align: center;

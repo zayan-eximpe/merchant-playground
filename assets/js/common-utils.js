@@ -12,31 +12,44 @@ function escapeHtml(text) {
 
 // Modal management utilities
 const ModalUtils = {
-    show: function (type, title, message) {
+    show: function (type, title, message, options = {}) {
+        if (!document.getElementById('modalOverlay')) {
+            this.init();
+        }
         const overlay = document.getElementById('modalOverlay');
         const box = document.getElementById('modalBox');
         const icon = document.getElementById('modalIcon');
         const titleElem = document.getElementById('modalTitle');
         const messageElem = document.getElementById('modalMessage');
 
-        if (box) box.className = 'modal ' + type;
+        if (!overlay || !box) return;
 
+        // Reset modal state
+        box.className = 'modal ' + type;
         if (icon) {
-            if (type === 'minimal') {
-                icon.style.display = 'none';
+            icon.style.display = 'flex';
+            let iconHtml = '';
+            if (type === 'success') {
+                iconHtml = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#10b981"/><path d="M34 18L21.5 30.5L14 23" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                if (titleElem) titleElem.style.color = '#1e293b';
+            } else if (type === 'error') {
+                iconHtml = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#1e293b"/><path d="M16 16L32 32M32 16L16 32" stroke="white" stroke-width="3.5" stroke-linecap="round"/></svg>';
+                if (titleElem) titleElem.style.color = '#1e293b';
+            } else if (type === 'confirm') {
+                iconHtml = '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#1e293b"/><path d="M24 16V28" stroke="white" stroke-width="3.5" stroke-linecap="round"/><circle cx="24" cy="34" r="2" fill="white"/></svg>';
+                if (titleElem) titleElem.style.color = '#1e293b';
+            }
+
+            if (window.TrustedTypes && typeof window.TrustedTypes.setInnerHTML === 'function') {
+                window.TrustedTypes.setInnerHTML(icon, iconHtml);
             } else {
-                icon.style.display = 'flex';
-                icon.textContent = type === 'success' ? '✅' : '❌';
+                icon.innerHTML = iconHtml;
             }
         }
 
         if (titleElem) {
-            titleElem.textContent = title;
-            if (type === 'minimal' || !title) {
-                titleElem.style.display = 'none';
-            } else {
-                titleElem.style.display = 'block';
-            }
+            titleElem.textContent = title || '';
+            titleElem.style.display = title ? 'block' : 'none';
         }
 
         if (messageElem) {
@@ -46,28 +59,88 @@ const ModalUtils = {
                 messageElem.innerHTML = message;
             }
         }
-        if (overlay) overlay.classList.add('active');
+
+        // Handle custom actions (buttons)
+        const existingActions = box.querySelectorAll('.modal-actions');
+        existingActions.forEach(el => el.remove());
+
+        if (options.actions && options.actions.length > 0) {
+            const actionsContainer = document.createElement('div');
+            actionsContainer.className = 'modal-actions';
+
+            options.actions.forEach(action => {
+                const btn = document.createElement('button');
+                btn.className = action.className || 'main-action-btn';
+                if (action.style) btn.style.cssText += action.style;
+
+                if (window.TrustedTypes && typeof window.TrustedTypes.setInnerHTML === 'function') {
+                    window.TrustedTypes.setInnerHTML(btn, action.label);
+                } else {
+                    btn.innerHTML = action.label;
+                }
+
+                btn.onclick = () => {
+                    if (action.onClick) action.onClick();
+                    if (action.closeOnClick !== false) this.hide();
+                };
+                actionsContainer.appendChild(btn);
+            });
+            box.appendChild(actionsContainer);
+        }
+
+        overlay.classList.add('active');
     },
+
 
     hide: function () {
         const overlay = document.getElementById('modalOverlay');
         if (overlay) overlay.classList.remove('active');
+        // Clean up any dynamic buttons
+        const box = document.getElementById('modalBox');
+        if (box) {
+            const actions = box.querySelector('.modal-actions');
+            if (actions) actions.remove();
+        }
     },
 
     init: function () {
+        if (!document.getElementById('modalOverlay')) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'modalOverlay';
+            overlay.innerHTML = `
+                <div class="modal" id="modalBox">
+                    <button class="modal-close" id="modalCloseBtn">&times;</button>
+                    <div class="modal-icon" id="modalIcon"></div>
+                    <div class="modal-title" id="modalTitle"></div>
+                    <div class="modal-message" id="modalMessage"></div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
         const closeBtn = document.getElementById('modalCloseBtn');
         const overlay = document.getElementById('modalOverlay');
 
         if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.hide());
+            closeBtn.onclick = () => this.hide();
         }
         if (overlay) {
-            overlay.addEventListener('click', (e) => {
+            overlay.onclick = (e) => {
                 if (e.target === overlay) this.hide();
-            });
+            };
         }
     }
 };
+
+// Compatibility layer for legacy showModal/hideModal calls
+window.showModal = function (type, title, message, options = {}) {
+    ModalUtils.show(type, title, message, options);
+};
+window.hideModal = function () {
+    ModalUtils.hide();
+};
+
 
 // API request helper
 async function makeApiRequest(url, options = {}) {
@@ -370,18 +443,116 @@ function setupEventHandlers() {
     const mobileActionsMenu = document.getElementById('mobileActionsMenu');
     const mobileOverlay = document.getElementById('mobileOverlay');
 
+    const closeMobileMenu = () => {
+        const fab = document.getElementById('mobileFab');
+        const menu = document.getElementById('mobileActionsMenu');
+        const overlay = document.getElementById('mobileOverlay');
+
+        if (fab) fab.classList.remove('active');
+        if (menu) menu.style.display = 'none';
+        if (overlay) overlay.classList.remove('active');
+    };
+
     if (mobileFab && mobileActionsMenu && mobileOverlay) {
-        mobileFab.addEventListener('click', () => {
-            mobileFab.classList.toggle('active');
+        // Remove existing listeners to avoid duplicates if called multiple times
+        const newFab = mobileFab.cloneNode(true);
+        mobileFab.parentNode.replaceChild(newFab, mobileFab);
+
+        newFab.addEventListener('click', (e) => {
+            e.stopPropagation();
+            newFab.classList.toggle('active');
             mobileActionsMenu.style.display = mobileActionsMenu.style.display === 'block' ? 'none' : 'block';
             mobileOverlay.classList.toggle('active');
         });
 
-        mobileOverlay.addEventListener('click', () => {
-            mobileFab.classList.remove('active');
-            mobileActionsMenu.style.display = 'none';
-            mobileOverlay.classList.remove('active');
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+
+        // Close menu when any action item is clicked
+        mobileActionsMenu.querySelectorAll('.mobile-action-item').forEach(item => {
+            item.addEventListener('click', closeMobileMenu);
         });
+    }
+}
+
+// Inject Quick Actions FAB if not present
+function injectQuickActions() {
+    if (document.getElementById('mobileFab')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'mobile-overlay';
+    overlay.id = 'mobileOverlay';
+    document.body.appendChild(overlay);
+
+    const container = document.createElement('div');
+    container.className = 'mobile-quick-actions';
+
+    // Determine if we are in a subfolder or root
+    const isSubfolder = window.location.pathname.includes('/s2s/') ||
+        window.location.pathname.includes('/checkout/') ||
+        window.location.pathname.includes('/payment_link/') ||
+        window.location.pathname.includes('/order/') ||
+        window.location.pathname.includes('/subscription/') ||
+        window.location.pathname.includes('/refund/') ||
+        window.location.pathname.includes('/settlements/') ||
+        window.location.pathname.includes('/merchant/');
+
+    const homePath = isSubfolder ? '../index.html' : 'index.html';
+    const checkoutPath = isSubfolder ? '../checkout/create_session.html' : 'checkout/create_session.html';
+
+    container.innerHTML = `
+        <button class="mobile-fab" id="mobileFab">
+            <i class="fas fa-bolt"></i>
+        </button>
+        <div class="mobile-actions-menu" id="mobileActionsMenu">
+            <button type="button" onclick="window.location.href='${homePath}'" class="mobile-action-item">
+                <i class="fas fa-home"></i>
+                <span>Back to Home</span>
+            </button>
+            <button type="button" onclick="window.location.href='${checkoutPath}'" class="mobile-action-item">
+                <i class="fas fa-plus-circle"></i>
+                <span>Create Checkout</span>
+            </button>
+            <button type="button" data-action="create-sample-data" class="mobile-action-item">
+                <i class="fas fa-magic"></i>
+                <span>Set Sample Data</span>
+            </button>
+            <button type="button" data-action="clear-cache" class="mobile-action-item">
+                <i class="fas fa-broom"></i>
+                <span>Clear Fields</span>
+            </button>
+        </div>
+    `;
+    document.body.appendChild(container);
+
+    // Re-run setup to bind events to new elements
+    setupEventHandlers();
+}
+
+function injectCommonStyles() {
+    const isSubfolder = window.location.pathname.includes('/s2s/') ||
+        window.location.pathname.includes('/checkout/') ||
+        window.location.pathname.includes('/payment_link/') ||
+        window.location.pathname.includes('/order/') ||
+        window.location.pathname.includes('/subscription/') ||
+        window.location.pathname.includes('/refund/') ||
+        window.location.pathname.includes('/settlements/') ||
+        window.location.pathname.includes('/merchant/');
+
+    const quickActionsCss = isSubfolder ? '../assets/css/quick-actions.css' : 'assets/css/quick-actions.css';
+    const modalsCss = isSubfolder ? '../assets/css/modals.css' : 'assets/css/modals.css';
+
+    if (!document.querySelector(`link[href*="quick-actions.css"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = quickActionsCss + '?v=' + (window.Config?.VERSION || '1.0.9.5');
+        document.head.appendChild(link);
+    }
+
+    if (!document.querySelector(`link[href*="modals.css"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = modalsCss + '?v=' + (window.Config?.VERSION || '1.0.9.5');
+        document.head.appendChild(link);
     }
 }
 
@@ -389,10 +560,14 @@ function setupEventHandlers() {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         ModalUtils.init();
+        injectCommonStyles();
+        injectQuickActions();
         setupEventHandlers();
     });
 } else {
     ModalUtils.init();
+    injectCommonStyles();
+    injectQuickActions();
     setupEventHandlers();
 }
 
