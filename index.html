@@ -529,8 +529,6 @@
                         document.getElementById('isPspCheckbox').checked = parsed.IS_PSP ? true : false;
                         const _cbEl3 = document.getElementById('cred-callback-url');
                         if (_cbEl3) _cbEl3.value = parsed.CALLBACK_URL || '';
-                        const _vEl = document.getElementById('assetVersion');
-                        if (_vEl) _vEl.value = parsed.VERSION || '';
                         statusEl.textContent = 'Loaded credentials for ' + env;
                     } catch (e) {
                         statusEl.textContent = 'Failed to parse stored credentials for ' + env;
@@ -549,8 +547,7 @@
                     AUTH_KEY: document.getElementById('authKey').value || '',
                     IS_PSP: document.getElementById('isPspCheckbox').checked ? true : false,
                     MERCHANT_ID: document.getElementById('merchantId').value || '',
-                    CALLBACK_URL: (document.getElementById('cred-callback-url') ? document.getElementById('cred-callback-url').value : '') || '',
-                    VERSION: document.getElementById('assetVersion').value || ''
+                    CALLBACK_URL: (document.getElementById('cred-callback-url') ? document.getElementById('cred-callback-url').value : '') || ''
                 };
 
                 if (encryptToggle.checked) {
