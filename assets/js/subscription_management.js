@@ -203,6 +203,7 @@ const btnClosePreDebit = document.getElementById('btnClosePreDebit');
 const btnSubmitPreDebit = document.getElementById('btnSubmitPreDebit');
 const preDebitAmountInput = document.getElementById('preDebitAmount');
 const preDebitDateInput = document.getElementById('preDebitDate');
+const preDebitInvoiceDisplayNumberInput = document.getElementById('preDebitInvoiceDisplayNumber');
 const recurringPanel = document.getElementById('recurringPanel');
 const btnCloseRecurring = document.getElementById('btnCloseRecurring');
 const btnSubmitRecurring = document.getElementById('btnSubmitRecurring');
@@ -352,6 +353,7 @@ if (btnPreDebit && preDebitPanel) {
         // Reset fields
         if (preDebitAmountInput) preDebitAmountInput.value = '';
         if (preDebitDateInput) preDebitDateInput.value = '';
+        if (preDebitInvoiceDisplayNumberInput) preDebitInvoiceDisplayNumberInput.value = '';
 
         preDebitPanel.style.display = 'block';
     });
@@ -376,6 +378,7 @@ if (btnSubmitPreDebit && preDebitPanel) {
 
         const debitDate = preDebitDateInput ? preDebitDateInput.value.trim() : '';
         const amount = preDebitAmountInput ? preDebitAmountInput.value.trim() : '';
+        const invoiceDisplayNumber = preDebitInvoiceDisplayNumberInput ? preDebitInvoiceDisplayNumberInput.value.trim() : '';
 
         if (!debitDate) {
             showModal(
@@ -392,6 +395,9 @@ if (btnSubmitPreDebit && preDebitPanel) {
             };
             if (amount) {
                 payload.amount = amount;
+            }
+            if (invoiceDisplayNumber) {
+                payload.invoice_display_number = invoiceDisplayNumber;
             }
 
             const response = await fetch(
