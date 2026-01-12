@@ -34,7 +34,7 @@ function createSampleData() {
         card_number: '4111111111111111',
         cardholder_name: 'John Doe',
         expiry_month: '12',
-        expiry_year: '2025',
+        expiry_year: '2029',
         cvv: '123',
         card_nickname: 'My Credit Card',
 
@@ -353,6 +353,14 @@ document.addEventListener('DOMContentLoaded', function () {
             // Card selected - show card section, hide UPI section
             if (upiPaymentSection) upiPaymentSection.style.display = 'none';
             if (cardPaymentSection) cardPaymentSection.style.display = 'block';
+            
+            // Set default expiry year to 2029 when card is selected
+            const expiryYearSelect = document.getElementById('expiryYear');
+            if (expiryYearSelect && !expiryYearSelect.value) {
+                expiryYearSelect.value = '2029';
+                // Trigger change event to update visual state
+                expiryYearSelect.dispatchEvent(new Event('change'));
+            }
         } else {
             // UPI selected (collection or intent) - show UPI section, hide card section
             if (upiPaymentSection) upiPaymentSection.style.display = 'block';
@@ -453,8 +461,11 @@ document.addEventListener('DOMContentLoaded', function () {
         let acsBtn = document.getElementById('modalAcsButton');
         if (acsBtn) acsBtn.remove();
 
-        // Add ACS button for success + template, same as card flow
+        // Add ACS button for success + template
+        console.log('showModal called - type:', type, 'acsTemplate:', acsTemplate ? 'Present' : 'Missing', acsTemplate);
+        // Show button for success modals when acsTemplate is provided
         if (type === 'success' && acsTemplate) {
+            console.log('Adding ACS button to modal');
             const btn = document.createElement('button');
             btn.id = 'modalAcsButton';
             btn.className = 'main-action-btn';
@@ -465,15 +476,43 @@ document.addEventListener('DOMContentLoaded', function () {
                 btn.innerHTML = '<i class="fas fa-lock"></i> <span>Proceed with Authentication</span>';
             }
 
+            // Container is no longer needed since we redirect instead of showing in modal
+
             btn.onclick = function () {
+                // Check if acsTemplate is available
+                if (!acsTemplate) {
+                    showModal('error', 'Authentication Error', 'ACS template is not available. Please try again.');
+                    return;
+                }
+                
+                // Close the modal first
+                closeModal();
+                
+                // Decode and parse the ACS template
                 const html = decodeBase64(acsTemplate);
-                const encodedHtml = encodeURIComponent(html);
-                const dataUrl = 'data:text/html;charset=utf-8,' + encodedHtml;
-                const newTab = window.open(dataUrl, '_blank', 'noopener,noreferrer');
-                if (newTab) {
-                    closeModal();
-                } else {
-                    showModal('error', 'Popup Blocked', 'Popup blocked! Please allow popups for this site.');
+                
+                try {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const form = doc.querySelector('form');
+                    
+                    if (form) {
+                        // Clone the form to avoid issues
+                        const clonedForm = form.cloneNode(true);
+                        clonedForm.style.display = 'none';
+                        
+                        // Append form to body and submit (this will redirect to the ACS URL)
+                        document.body.appendChild(clonedForm);
+                        
+                        // Submit the form which will redirect to the ACS authentication page
+                        clonedForm.submit();
+                    } else {
+                        // If no form found, try to extract URL from HTML or use data URL
+                        showModal('error', 'Authentication Error', 'Could not process the authentication form.');
+                    }
+                } catch (e) {
+                    console.error('Error parsing ACS template:', e);
+                    showModal('error', 'Authentication Error', 'An error occurred while processing authentication.');
                 }
             };
 
@@ -484,9 +523,12 @@ document.addEventListener('DOMContentLoaded', function () {
         modalBox.style.display = 'flex';
         modalBox.style.flexDirection = 'column';
         modalBox.style.alignItems = 'center';
-        modalBox.style.justifyContent = 'center';
+        modalBox.style.justifyContent = 'flex-start';
         modalBox.style.padding = '48px 32px 32px 32px';
         modalBox.style.minWidth = '320px';
+        modalBox.style.maxWidth = '90%';
+        modalBox.style.maxHeight = '90vh';
+        modalBox.style.overflowY = 'auto';
     }
 
     function closeModal() {
@@ -778,22 +820,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     const subscriptionId = data.data.subscription_id;
                     const message = data.data.message || 'Subscription created successfully';
                     const paymentLink = data.data.payment_link; // intent_uri for INTENT flow
-                    const acsTemplate = data.data.acstemplate; // For COLLECTION and CARD flows
+                    // Check for acsTemplate in multiple possible field names
+                    const acsTemplate = data.data.acs_template || data.data.acstemplate || data.data.acsTemplate || data.data.acs_form; // For COLLECTION and CARD flows
                     const isIntentFlow = upiFlowType === 'intent';
                     const isCardFlow = upiFlowType === 'card';
+
+                    // Debug logging
+                    console.log('Subscription created - acsTemplate:', acsTemplate ? 'Present' : 'Missing');
+                    console.log('Flow type - isCardFlow:', isCardFlow, 'isIntentFlow:', isIntentFlow);
 
                     // Persist latest subscription ID for use in Subscription Management page
                     if (subscriptionId) {
                         localStorage.setItem('last_used_subscription_id', subscriptionId);
                     }
 
-                    if (isCardFlow && acsTemplate) {
-                        // CARD flow: Show message with ACS template for 3D Secure authentication
+                    if (isCardFlow) {
+                        // CARD flow: Show success modal with ACS template button
+                        clearCache();
                         let successMessage = `<strong>Card Subscription Created Successfully!</strong><br><br>`;
                         successMessage += `<strong>Order ID:</strong> ${orderId}<br>`;
                         successMessage += `<strong>Subscription ID:</strong> ${subscriptionId}<br>`;
                         successMessage += `<br>${escapeHtml(message)}<br><br>`;
-                        successMessage += `<strong>Note:</strong> Please complete the 3D Secure authentication using the button below.`;
+                        if (acsTemplate) {
+                            successMessage += `<strong>Note:</strong> Please complete the 3D Secure authentication using the button below.`;
+                        }
                         showModal('success', 'Card Subscription Created', successMessage, acsTemplate);
                     } else if (isIntentFlow && paymentLink) {
                         // INTENT flow: Show card-style display with QR code (same as S2S QR payment)
@@ -826,7 +876,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         clearCache();
                         showModal('minimal', '', successMessage);
                     } else {
-                        // COLLECTION flow: Show simple message with ACS template
+                        // COLLECTION flow: Show success modal with ACS template button
+                        clearCache();
                         let successMessage = `<strong>Subscription Created Successfully!</strong><br><br>`;
                         successMessage += `<strong>Order ID:</strong> ${orderId}<br>`;
                         successMessage += `<strong>Subscription ID:</strong> ${subscriptionId}<br>`;
@@ -834,7 +885,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             successMessage += `<strong>Payment Link:</strong> <a href="${escapeHtml(paymentLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(paymentLink)}</a><br>`;
                         }
                         successMessage += `<br>${escapeHtml(message)}`;
-                        showModal('success', 'Subscription Created', successMessage, acsTemplate);
+                        // Check for acsTemplate in multiple possible field names
+                        const template = acsTemplate || data.data.acstemplate || data.data.acsTemplate || data.data.acs_form;
+                        console.log('Collection flow - Full response data:', JSON.stringify(data.data, null, 2));
+                        console.log('Collection flow - acsTemplate value:', template);
+                        showModal('success', 'Subscription Created', successMessage, template);
                     }
                 } else {
                     // Build error message with validation errors if present
