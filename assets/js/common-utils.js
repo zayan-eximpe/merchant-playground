@@ -509,16 +509,16 @@ function injectQuickActions() {
                 <span>Back to Home</span>
             </button>
             <button type="button" onclick="window.location.href='${checkoutPath}'" class="mobile-action-item">
-                <i class="fas fa-plus-circle"></i>
-                <span>Create Checkout</span>
+                <i class="fas fa-rocket"></i>
+                <span>Launch Checkout Demo</span>
             </button>
             <button type="button" data-action="create-sample-data" class="mobile-action-item">
                 <i class="fas fa-magic"></i>
-                <span>Set Sample Data</span>
+                <span>Auto-fill Demo Data</span>
             </button>
             <button type="button" data-action="clear-cache" class="mobile-action-item">
-                <i class="fas fa-broom"></i>
-                <span>Clear Fields</span>
+                <i class="fas fa-undo"></i>
+                <span>Reset Form</span>
             </button>
         </div>
     `;

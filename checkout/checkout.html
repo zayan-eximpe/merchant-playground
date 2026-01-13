@@ -2,67 +2,492 @@
 <html lang="en">
 
 <head>
-    <script src="../assets/js/config.js?v=1.0.9.7"></script>
+    <script src="../assets/js/config.js?v=1.0.9.8"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Eximpe Payment Integration</title>
-    <link rel="stylesheet" href="../assets/css/inter-font.css?v=1.0.9.7">
-    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.7">
-    <link rel="stylesheet" href="../assets/css/checkout_checkout.css?v=1.0.9.7">
+    <title>Checkout | Eximpe Secure Payment</title>
+    <link rel="stylesheet" href="../assets/css/inter-font.css?v=1.0.9.8">
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.8">
+    <link rel="stylesheet" href="../assets/css/checkout_checkout.css?v=1.0.9.8">
+    <style>
+        :root {
+            --primary-color: #26A887;
+            --primary-hover: #1f8a6d;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
 
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .checkout-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 0;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Left Side: Order Summary */
+        .order-summary {
+            padding: 48px;
+            background: #fff;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .order-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .order-id {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .item-list {
+            margin-bottom: 32px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+
+        .item-name {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .item-price {
+            font-weight: 600;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 24px 0;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .total-amount {
+            font-size: 28px;
+            color: var(--primary-color);
+        }
+
+        /* Right Side: Payment Action */
+        .payment-section {
+            padding: 48px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .payment-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 24px;
+        }
+
+        .payment-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .payment-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        #renderBtn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 18px 32px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 10px 15px -3px rgba(38, 168, 135, 0.3);
+        }
+
+        #renderBtn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(38, 168, 135, 0.4);
+        }
+
+        #renderBtn:active {
+            transform: translateY(0);
+        }
+
+        .security-badges {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0.6;
+            filter: grayscale(1);
+            transition: opacity 0.3s;
+        }
+
+        .security-badges:hover {
+            opacity: 1;
+            filter: grayscale(0);
+        }
+
+        .badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .checkout-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .order-summary {
+                padding: 32px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .payment-section {
+                padding: 32px;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .modal-message {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <h2 style="color: rgb(38, 168, 135);">Initiate Payment</h2>
-        <div class="modal-overlay" id="modalOverlay">
-            <div class="modal" id="modalBox">
-                <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
-                <div class="modal-icon" id="modalIcon"></div>
-                <div class="modal-title" id="modalTitle"></div>
-                <div class="modal-message" id="modalMessage"></div>
+    <div class="checkout-wrapper">
+        <!-- Left: Order Summary -->
+        <div class="order-summary">
+            <div class="brand-header">
+                <div class="brand-logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="brand-name">Eximpe Demo Store</div>
+            </div>
+
+            <h1 class="order-title">Order Summary</h1>
+            <div class="order-id" id="order-id-display">Order ID: #---</div>
+
+            <div class="item-list">
+                <div class="item-row">
+                    <span class="item-name">Premium Service Subscription</span>
+                    <span class="item-price" id="subtotal-display">₹0.00</span>
+                </div>
+                <div class="item-row">
+                    <span class="item-name">Processing Fee</span>
+                    <span class="item-price">₹0.00</span>
+                </div>
+                <div class="item-row" style="color: var(--text-muted); font-size: 13px;">
+                    <span class="item-name">Taxes & Levies</span>
+                    <span class="item-price">Included</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="total-row">
+                <span>Total Amount</span>
+                <div class="total-amount" id="total-display">₹0.00</div>
             </div>
         </div>
-        <div id="amount-display" class="amount-display" style="display: none;">
-            <div class="amount">₹0.00</div>
-            <div class="currency">INR</div>
-        </div>
-        <button id="renderBtn">Pay Now</button>
-        <div id="payment-container"></div>
-        <div id="loading" class="loading-overlay" style="display: none;">
-            <div class="loader-container">
-                <div class="brand-loader">
-                    <div class="spinner-track"></div>
-                    <div class="spinner-active"></div>
-                    <svg class="logo" width="28" height="32" viewBox="0 0 28 32" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
-                            fill="#26A887" />
-                    </svg>
+
+        <!-- Right: Payment Action -->
+        <div class="payment-section">
+            <div class="payment-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="payment-title">Secure Checkout</h2>
+            <p class="payment-desc">
+                Your payment is secured with 256-bit encryption. Choose your preferred method on the next step.
+            </p>
+
+            <button id="renderBtn">
+                <i class="fas fa-credit-card"></i>
+                Pay Securely Now
+            </button>
+
+            <div class="security-badges">
+                <div class="badge-item">
+                    <i class="fab fa-cc-visa"></i>
+                    <span>Verified</span>
+                </div>
+                <div class="badge-item">
+                    <i class="fas fa-shield-check"></i>
+                    <span>PCI-DSS</span>
+                </div>
+                <div class="badge-item">
+                    <i class="fas fa-lock"></i>
+                    <span>SSL</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Trusted Types Policy (must load first) -->
-    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.7"></script>
-    <!-- Pass Django variables to JavaScript -->
+    <!-- Modals & Overlays -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.8"></script>
     <script>
         window.API_URL = window.Config.API_URL;
+
+        // Update UI with session data
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+
+            if (sessionId) {
+                // 1. Try to get data from localStorage for instant population
+                const storedSession = localStorage.getItem('eximpe_current_session');
+                if (storedSession) {
+                    try {
+                        const data = JSON.parse(storedSession);
+                        // Only use if the sessionId matches
+                        if (data.sessionId === sessionId) {
+                            console.log('Populating UI from localStorage');
+                            if (data.amount) {
+                                const formatted = new Intl.NumberFormat('en-IN', {
+                                    style: 'currency',
+                                    currency: data.currency || 'INR',
+                                    minimumFractionDigits: 2
+                                }).format(data.amount);
+                                document.getElementById('total-display').textContent = formatted;
+                                document.getElementById('subtotal-display').textContent = formatted;
+                            }
+                            if (data.orderId) {
+                                document.getElementById('order-id-display').textContent = `Order ID: #${data.orderId}`;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error parsing stored session:', e);
+                    }
+                }
+
+                // 2. Fallback/Sync: Fetch latest transaction details using the SDK
+                const checkStatus = () => {
+                    if (typeof Eximpe !== 'undefined' && Eximpe.checkPaymentStatus) {
+                        Eximpe.checkPaymentStatus(sessionId, (response) => {
+                            if (response.success && response.data) {
+                                const data = response.data;
+
+                                // Update Amount
+                                if (data.amount) {
+                                    const formatted = new Intl.NumberFormat('en-IN', {
+                                        style: 'currency',
+                                        currency: data.currency || 'INR',
+                                        minimumFractionDigits: 2
+                                    }).format(data.amount);
+
+                                    document.getElementById('total-display').textContent = formatted;
+                                    document.getElementById('subtotal-display').textContent = formatted;
+                                }
+
+                                // Update Order ID if available
+                                if (data.order_id) {
+                                    document.getElementById('order-id-display').textContent = `Order ID: #${data.order_id}`;
+                                }
+                            }
+                        });
+                    } else {
+                        // Retry if SDK not yet ready
+                        setTimeout(checkStatus, 100);
+                    }
+                };
+
+                checkStatus();
+            }
+        });
     </script>
-    <!-- Include the Eximpe SDK from local static files (served via STATICFILES_DIRS -> sdk/) -->
-    <script src="https://cdn.eximpe.com/sdk/eximpe-sdk-1.0.0.min.js"
-        integrity="sha384-qdh+Nx5ZnVyo4n6LOLYPySpx2UDRduvTJ22+vVxzL+K6Df3tGgd96P925G0+6tpz"
+
+    <!-- Eximpe SDK -->
+    <script src="https://cdn.eximpe.com/sdk/eximpe-sdk-1.1.0.min.js"
+        integrity="sha384-5AHrZ8dfzODTyNdEelwQMZGQ//sTsYhkvFcBLN/gNacHKOREiQn2J7RM31qh4B6C"
         crossorigin="anonymous"></script>
-    <!-- Checkout payment logic -->
-    <script src="../assets/js/common-utils.js?v=1.0.9.7"></script>
-    <script src="../assets/js/checkout-payment.js?v=1.0.9.7"></script>
 
-    <!-- Credential injection handled centrally by common-utils.js -->
-
+    <script src="../assets/js/common-utils.js?v=1.0.9.8"></script>
+    <script src="../assets/js/checkout-payment.js?v=1.0.9.8"></script>
 </body>
 
 </html>

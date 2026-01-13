@@ -400,10 +400,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (data.success) {
                 showModal('success', 'Session Created', 'Session created successfully! Redirecting...');
+
+                // Store session details for the checkout page to pick up immediately
+                const sessionData = {
+                    sessionId: data.data.session_id,
+                    orderId: data.data.order_id,
+                    amount: cleanPayload.amount,
+                    currency: cleanPayload.currency || 'INR'
+                };
+                localStorage.setItem('eximpe_current_session', JSON.stringify(sessionData));
+                localStorage.setItem('last_used_order_id', data.data.order_id);
+
                 setTimeout(() => {
                     hideModal();
                     clearFormData();
-                    localStorage.setItem('last_used_order_id', data.data.order_id);
 
                     // Validate and sanitize session_id to prevent XSS
                     const sessionId = data.data.session_id;
