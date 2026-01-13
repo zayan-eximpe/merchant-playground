@@ -272,7 +272,7 @@ h1 {
 }
 
 .nav-link.active {
-    background: #f0fdf9;
+    background: white;
     color: #26a887;
     border-left-color: #26a887;
     font-weight: 600;
