@@ -90,7 +90,18 @@
                             placeholder="Product Description" required>
                         <div class="helper-text">Brief description of the product<span class="required">*</span></div>
                     </div>
+                    <div class="form-group">
+                        <label for="preferredPaymentMethod">Preferred Payment Method</label>
+                        <select id="preferredPaymentMethod" name="preferred_payment_method">
+                            <option value="">-- Select --</option>
+                            <option value="CARD">Card</option>
+                            <option value="UPI">UPI</option>
+                            <option value="NET_BANKING">Net Banking</option>
+                        </select>
+                        <div class="helper-text">Optional: Choose a preferred payment method</div>
+                    </div>
                 </div>
+                <!-- Preferred Payment Method -->
             </div>
 
             <div class="form-section">
@@ -110,6 +121,12 @@
                         <input type="email" id="buyerEmail" name="buyer_email" placeholder="user@example.com" required>
                         <div class="helper-text">Email address for receipts and notifications<span
                                 class="required">*</span></div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="sendEmailBuyer" name="send_email_to_buyer">
+                                Send Email to Buyer
+                            </label>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -121,6 +138,12 @@
                         </div>
                         <div class="helper-text">10-digit phone number (without country code)<span
                                 class="required">*</span></div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="sendSmsBuyer" name="send_sms_to_buyer">
+                                Send SMS to Buyer
+                            </label>
+                        </div>
                     </div>
 
                     <div class="form-group">

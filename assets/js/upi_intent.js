@@ -436,26 +436,58 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const data = await response.json();
 
-            if (data.success) {
+            if (data.success && data.data) {
                 const intentUri = data.data.intent_uri;
+                const testSimulatorUrl = data.data.test_simulator_url;
                 const orderId = data.data.order_id;
 
+                if (!intentUri && !testSimulatorUrl) {
+                    showModal('error', 'Error', 'No payment URI received from server.');
+                    return;
+                }
+
+                const isTest = !!testSimulatorUrl;
+                const finalUri = testSimulatorUrl || intentUri;
+                const modeLabel = isTest ? "Test Simulator" : "Live Intent URI";
+
                 // Create a message with the intent URI and UPI app options
-                const upiPayUri = intentUri.includes('upi://pay?') ? intentUri : `upi://pay?${intentUri}`;
+                const qrUri = isTest ? testSimulatorUrl : (intentUri && intentUri.includes('upi://pay?') ? intentUri : `upi://pay?${intentUri || ''}`);
                 const isDesktop = typeof UPIUtils !== 'undefined' && UPIUtils.isDesktop();
 
                 const successMessage = `
-                            <div style="text-align: left; margin: 10px 0;">
+                            <div style="text-align: center; margin: 10px 0;">
                                 ${isDesktop ? `
-                                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0; text-align: center;">
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
-                                        <i class="fas fa-qrcode" style="color: #4a5568;"></i>
-                                        <span style="font-weight: 500; color: #4a5568; font-size: 14px;">SCAN TO PAY</span>
+                                <div style="background: white; border-radius: 24px; padding: 30px; box-shadow: 0 12px 40px rgba(0,0,0,0.12); max-width: 320px; margin: 0 auto; border: 1px solid #f0f0f0; font-family: 'Inter', sans-serif;">
+                                    <!-- Header: BHIM UPI Logo -->
+                                    <div style="margin-bottom: 25px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                                        <img src="https://web-assets.payu.in/web/images/assets/upiLogo/BHIM.svg" alt="BHIM" style="height: 28px;">
+                                        <div style="width: 1.5px; height: 22px; background: #cbd5e0; border-radius: 1px;"></div>
+                                        <img src="https://web-assets.payu.in/web/images/assets/upiLogo/UPI.svg" alt="UPI" style="height: 20px;">
                                     </div>
-                                    <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                        <img src="${UPIUtils.getQRCodeUrl(upiPayUri)}" alt="UPI QR Code" style="width: 180px; height: 180px; display: block;">
+
+                                    <!-- Middle: QR Code Container -->
+                                    <div style="background: white; padding: 15px; border: 1px solid #edf2f7; border-radius: 20px; display: inline-block; margin-bottom: 25px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);">
+                                        <img src="${UPIUtils.getQRCodeUrl(qrUri)}" alt="UPI QR Code" style="width: 210px; height: 210px; display: block; border-radius: 8px;">
                                     </div>
-                                    <p style="margin-top: 12px; color: #64748b; font-size: 12px;">Scan with any UPI app to complete payment</p>
+
+                                    <!-- Footer: UPI App Logos Grid -->
+                                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                                        <div style="display: flex; justify-content: center; gap: 18px; align-items: center; opacity: 0.8;">
+                                            <img src="https://web-assets.payu.in/web/images/assets/upiLogo/PAYTM.svg" title="Paytm" style="height: 12px;">
+                                            <img src="https://web-assets.payu.in/web/images/assets/upiLogo/GOOGLEPAY.svg" title="Google Pay" style="height: 16px;">
+                                            <img src="https://web-assets.payu.in/web/images/assets/upiLogo/BHIM.svg" title="BHIM" style="height: 16px;">
+                                            <img src="https://web-assets.payu.in/web/images/assets/upiLogo/PHONEPE.svg" title="PhonePe" style="height: 16px;">
+                                        </div>
+                                        <div style="display: flex; justify-content: center; gap: 18px; align-items: center; opacity: 0.8;">
+                                            <img src="https://web-assets.payu.in/web/images/assets/upiLogo/WHATSAPP.svg" title="WhatsApp" style="height: 20px;">
+                                            <img src="https://web-assets.payu.in/web/images/assets/upiLogo/AMAZONPAY.svg" title="Amazon Pay" style="height: 16px;">
+                                            <img src="https://web-assets.payu.in/web/images/assets/upiLogo/CRED.svg" title="CRED" style="height: 16px;">
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 25px; color: #64748b; font-size: 12px; font-weight: 500; letter-spacing: 0.02em;">
+                                        Scan with any UPI app to pay
+                                    </div>
                                 </div>
                                 ` : `
                                 <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
@@ -465,82 +497,82 @@ document.addEventListener('DOMContentLoaded', function () {
                                             <path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4"/>
                                             <path d="M9 7V4a2 2 0 012-2h2a2 2 0 012 2v3"/>
                                         </svg>
-                                        <span style="font-weight: 500; color: #4a5568; font-size: 14px;">PAY USING ANY UPI APP</span>
+                                        <span style="font-weight: 500; color: #4a5568; font-size: 14px;">PAY USING ANY UPI APP (${modeLabel})</span>
                                     </div>
                                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="gpay" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="gpay" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/GOOGLEPAY.svg" alt="Google Pay" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">Google Pay</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="phonepe" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="phonepe" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/PHONEPE.svg" alt="PhonePe" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">PhonePe</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="bhim" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="bhim" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/BHIM.svg" alt="BHIM" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">BHIM</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="paytm" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="paytm" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/PAYTM.svg" alt="Paytm" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">PAYTM</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="amazonpay" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="amazonpay" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/AMAZONPAY.svg" alt="Amazon Pay" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">Amazon Pay</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="whatsapp" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="whatsapp" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/WHATSAPP.svg" alt="WhatsApp" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">WhatsApp</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="cred" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="cred" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/CRED.svg" alt="CRED" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">CRED</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="supermoney" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="supermoney" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/SUPERMONEY.svg" alt="Supermoney" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">Supermoney</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="fimoney" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="fimoney" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/FIMONEY.svg" alt="Fi Money" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">Fi Money</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="jupiter" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="jupiter" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/JUPITER.svg" alt="Jupiter" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">Jupiter</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="slice" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="slice" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/SLICE.svg" alt="Slice" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">Slice</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="generalupi" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="generalupi" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/UPI.svg" alt="General UPI" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
                                             <span class="upi-app-name">General UPI</span>
                                         </button>
-                                        <button data-action="openUpiApp" data-uri="${intentUri}" data-app="generalintent" class="upi-app-button">
+                                        <button data-action="openUpiApp" data-uri="${finalUri}" data-is-test="${isTest}" data-app="generalintent" class="upi-app-button">
                                             <div class="upi-app-icon" style="background: white; padding: 8px;">
                                                 <img src="https://web-assets.payu.in/web/images/assets/upiLogo/UPI.svg" alt="General Intent" style="width: 32px; height: 32px; object-fit: contain;">
                                             </div>
@@ -611,7 +643,11 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (action === 'openUpiApp') {
             const uri = target.getAttribute('data-uri');
             const app = target.getAttribute('data-app');
-            if (typeof UPIUtils !== 'undefined') {
+            const isTest = target.getAttribute('data-is-test') === 'true';
+
+            if (isTest) {
+                window.open(uri, '_blank');
+            } else if (typeof UPIUtils !== 'undefined') {
                 UPIUtils.openApp(uri, app, target);
             } else {
                 console.error('UPIUtils not found');

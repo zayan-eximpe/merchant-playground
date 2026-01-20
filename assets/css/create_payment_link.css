@@ -176,6 +176,29 @@ h1 {
     font-size: 14px;
     font-weight: 600;
     color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Enhanced checkbox styling */
+.form-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    accent-color: #26a887;
+    /* matches primary green */
+    border: 1.5px solid #e2e8f0;
+    border-radius: 4px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.form-group input[type="checkbox"]:focus {
+    outline: none;
+    border-color: rgb(38, 168, 135);
+    box-shadow: 0 0 0 2px rgba(38, 168, 135, 0.2);
 }
 
 .input-wrapper {

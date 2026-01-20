@@ -203,7 +203,12 @@ function showModal(type, title, message, paymentLink = '') {
                 openBtn?.addEventListener('click', openPaymentLink);
             }, 0);
         } else {
-            modalMessage.textContent = message;
+            if (type === 'error' && message.trim().startsWith('<')) {
+                // Render HTML (e.g., error list) safely using TrustedTypes
+                TrustedTypes.setInnerHTML(modalMessage, message);
+            } else {
+                modalMessage.textContent = message;
+            }
         }
     }
 
@@ -356,9 +361,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 let errorMsg = 'Failed to generate payment link';
                 if (data.error?.details) {
                     errorMsg = '<ul class="error-list">';
-                    Object.entries(data.error.details).forEach(([field, errors]) => {
+                    Object.entries(data.error.details).forEach(([field, fieldErrors]) => {
                         const fieldName = toTitleCaseField(field.replace(/\./g, ' '));
-                        errors.forEach((err) => {
+                        const errorsArray = Array.isArray(fieldErrors) ? fieldErrors : (typeof fieldErrors === 'object' && fieldErrors !== null ? Object.values(fieldErrors) : [fieldErrors]);
+                        errorsArray.forEach((err) => {
                             errorMsg += `
                                 <li>
                                     <i class="fas fa-exclamation-circle"></i>

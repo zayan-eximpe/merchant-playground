@@ -44,41 +44,86 @@
                             autocomplete="organization" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="companyType" name="company_type" placeholder="Company Type"
-                            autocomplete="off" required>
-                        <div class="helper-text">e.g., Private Limited, Public Limited, LLP</div>
+                        <input type="text" id="brandName" name="brand_name" placeholder="Brand Name" autocomplete="off"
+                            required>
                     </div>
                     <div class="form-group">
                         <input type="text" id="registrationNumber" name="registration_number"
                             placeholder="Registration Number" autocomplete="off" required>
-                        <div class="helper-text">Company Registration Number</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="internationalOrgType" name="international_org_type"
+                            placeholder="International Org Type" autocomplete="off" required>
+                        <div class="helper-text">e.g., Private Limited Company</div>
                     </div>
                     <div class="form-group">
                         <input type="text" id="taxId" name="tax_id" placeholder="Tax ID" autocomplete="off" required>
                         <div class="helper-text">GSTIN/Tax Identification Number</div>
                     </div>
-                    <div class="form-group full-width">
-                        <textarea id="address" name="address" placeholder="Company Address" rows="3"
-                            required></textarea>
+                    <div class="form-group">
+                        <input type="url" id="website" name="website" placeholder="Website URL" autocomplete="url"
+                            required>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="country" name="country" placeholder="Country" value="India"
-                            autocomplete="country-name" required>
+                        <input type="number" id="monthlyAvgTransactionVolume" name="monthly_avg_transaction_volume"
+                            placeholder="Monthly Avg Transaction Volume" autocomplete="off" required>
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
-                <div class="section-title"><i class="fas fa-user"></i> Contact Details</div>
+                <div class="section-title"><i class="fas fa-map-marker-alt"></i> Registered Address</div>
                 <div class="form-grid">
+                    <div class="form-group full-width">
+                        <textarea id="registeredAddress" name="registered_address" placeholder="Registered Address"
+                            rows="2" required></textarea>
+                    </div>
                     <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder="Contact Email" autocomplete="email"
+                        <input type="text" id="registeredCity" name="registered_city" placeholder="City" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="registeredState" name="registered_state" placeholder="State" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="registeredCountry" name="registered_country" placeholder="Country"
                             required>
                     </div>
                     <div class="form-group">
-                        <span class="phone-prefix">+91</span>
-                        <input type="tel" id="phone" name="phone" class="phone-input" placeholder="Contact Phone"
-                            autocomplete="tel" required>
+                        <input type="text" id="registeredPincode" name="registered_pincode" placeholder="Pincode"
+                            required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-envelope"></i> Communication Address</div>
+                <div style="margin-bottom: 15px;">
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: #4a5568;">
+                        <input type="checkbox" id="sameAsRegisteredAddress" name="same_as_registered_address"
+                            style="width: auto; height: auto;">
+                        Same as Registered Address
+                    </label>
+                </div>
+                <div id="communicationAddressFields" class="form-grid">
+                    <div class="form-group full-width">
+                        <textarea id="communicationAddress" name="communication_address"
+                            placeholder="Communication Address" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="communicationCity" name="communication_city" placeholder="City" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="communicationState" name="communication_state" placeholder="State"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="communicationCountry" name="communication_country" placeholder="Country"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="communicationPincode" name="communication_pincode" placeholder="Pincode"
+                            required>
                     </div>
                 </div>
             </div>
@@ -89,65 +134,78 @@
                     <div class="form-group">
                         <input type="text" id="businessCategory" name="business_category"
                             placeholder="Business Category" autocomplete="off" required>
-                        <div class="helper-text">e.g., IT & ITES, Manufacturing, Retail</div>
+                        <div class="helper-text">e.g., goods_merchant</div>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="purposeCode" name="purpose_code" placeholder="Purpose Code"
+                        <input type="text" id="businessMode" name="business_mode" placeholder="Business Mode"
                             autocomplete="off" required>
-                        <div class="helper-text">e.g., P0806 for Software</div>
+                        <div class="helper-text">e.g., b2b</div>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="commodity" name="commodity" placeholder="Commodity" autocomplete="off"
-                            required>
-                        <div class="helper-text">e.g., Software, Hardware, Services</div>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="paymentTerms" name="payment_terms" placeholder="Payment Terms"
-                            autocomplete="off" required>
-                        <div class="helper-text">e.g., Net 30, Immediate</div>
-                    </div>
-                    <div class="form-group">
-                        <input type="url" id="website" name="website" placeholder="Website URL" autocomplete="url"
-                            required>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <div class="section-title"><i class="fas fa-university"></i> Bank Details</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <input type="text" id="accountNumber" name="account_number" placeholder="Account Number"
+                        <input type="text" id="hsCodes" name="hs_codes" placeholder="HS Codes (Comma separated)"
                             autocomplete="off" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="bankName" name="name" placeholder="Bank Name" autocomplete="off"
+                        <input type="text" id="category" name="category" placeholder="Category" autocomplete="off"
                             required>
                     </div>
                     <div class="form-group full-width">
-                        <textarea id="bankAddress" name="address" placeholder="Bank Address" rows="2"
-                            required></textarea>
+                        <textarea id="descriptionOfProductsAndServices" name="description_of_products_and_services"
+                            placeholder="Description of Products and Services" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <input type="text" id="agreementDetails" name="agreement_details"
+                            placeholder="Agreement Details" autocomplete="off" required>
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
-                <div class="section-title"><i class="fas fa-file-invoice"></i> Documents</div>
+                <div class="section-title"><i class="fas fa-university"></i> Settlement Details</div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <input type="file" id="registrationDocuments" name="registration_documents[]"
-                            accept=".pdf,.jpg,.jpeg,.png" multiple required>
-                        <div class="helper-text">Registration Documents (Multiple files allowed)</div>
+                        <input type="text" id="bankAccountNumber" name="bank_account_number"
+                            placeholder="Bank Account Number" autocomplete="off" required>
                     </div>
                     <div class="form-group">
-                        <input type="file" id="businessLicenses" name="business_licenses[]"
-                            accept=".pdf,.jpg,.jpeg,.png" multiple required>
-                        <div class="helper-text">Business Licenses (Multiple files allowed)</div>
+                        <input type="text" id="bankAccountName" name="bank_account_name" placeholder="Bank Account Name"
+                            autocomplete="off" required>
                     </div>
                     <div class="form-group">
-                        <input type="file" id="otherDocuments" name="other_documents[]" accept=".pdf,.jpg,.jpeg,.png"
-                            multiple>
-                        <div class="helper-text">Other Supporting Documents (Optional)</div>
+                        <input type="text" id="bankSwiftCode" name="bank_swift_code" placeholder="Bank SWIFT Code"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="bankName" name="bank_name" placeholder="Bank Name" autocomplete="off"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="bankBranchName" name="bank_branch_name" placeholder="Bank Branch Name"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="bankCity" name="bank_city" placeholder="Bank City" autocomplete="off"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="bankState" name="bank_state" placeholder="Bank State" autocomplete="off"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="bankCountry" name="bank_country" placeholder="Bank Country"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="bankPincode" name="bank_pincode" placeholder="Bank Pincode"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="routingNumber" name="routing_number" placeholder="Routing Number"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <textarea id="bankAddress" name="bank_address" placeholder="Bank Address" rows="2"
+                            required></textarea>
                     </div>
                 </div>
             </div>
@@ -157,6 +215,7 @@
                 <span id="btnText">Create Merchant</span>
             </button>
         </form>
+
     </div>
 
 
