@@ -7,7 +7,7 @@ document.body.style.zoom = "90%";
 
 function createSampleData() {
     const sampleData = {
-        vpa: 'john.doe@payu',
+        vpa: 'anything@payu',
         vpa_provider: 'others',
         client_id: '7411846657',
         auth_key: '7A856E3CFC78D145AF54',
@@ -250,11 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
         mobileMenuOverlay.classList.toggle('active', isMobileMenuOpen);
         // Update icon based on menu state
         const icon = mobileFab.querySelector('i');
-        if (isMobileMenuOpen) {
-            icon.className = 'fas fa-plus';
-        } else {
-            icon.className = 'fas fa-bolt';
-        }
+        icon.className = 'fas fa-bolt';
     }
 
     function closeMobileMenu() {

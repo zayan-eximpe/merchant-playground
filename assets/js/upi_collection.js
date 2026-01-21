@@ -10,7 +10,7 @@ function createSampleData() {
         amount: '1.00',
         currency: 'INR',
         reference_id: 'S2SC' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-        vpa: 'john.doe@payu',
+        vpa: 'anything@payu',
         upi_app_name: 'others',
         return_url: `${window.location.origin}/checkout/payment_callback.html`,
         type_of_goods: 'goods',
@@ -394,11 +394,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update icon based on menu state
         const icon = mobileFab.querySelector('i');
-        if (isMobileMenuOpen) {
-            icon.className = 'fas fa-plus';
-        } else {
-            icon.className = 'fas fa-bolt';
-        }
+        icon.className = 'fas fa-bolt';
     }
 
     function closeMobileMenu() {

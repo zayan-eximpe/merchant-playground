@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (mobileFab) {
             const icon = mobileFab.querySelector('i');
             if (icon) {
-                icon.className = isMobileMenuOpen ? 'fas fa-plus' : 'fas fa-bolt';
+                icon.className = 'fas fa-bolt';
             }
         }
     }
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Card selected - show card section, hide UPI section
             if (upiPaymentSection) upiPaymentSection.style.display = 'none';
             if (cardPaymentSection) cardPaymentSection.style.display = 'block';
-            
+
             // Set default expiry year to 2029 when card is selected
             const expiryYearSelect = document.getElementById('expiryYear');
             if (expiryYearSelect && !expiryYearSelect.value) {
@@ -484,26 +484,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     showModal('error', 'Authentication Error', 'ACS template is not available. Please try again.');
                     return;
                 }
-                
+
                 // Close the modal first
                 closeModal();
-                
+
                 // Decode and parse the ACS template
                 const html = decodeBase64(acsTemplate);
-                
+
                 try {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     const form = doc.querySelector('form');
-                    
+
                     if (form) {
                         // Clone the form to avoid issues
                         const clonedForm = form.cloneNode(true);
                         clonedForm.style.display = 'none';
-                        
+
                         // Append form to body and submit (this will redirect to the ACS URL)
                         document.body.appendChild(clonedForm);
-                        
+
                         // Submit the form which will redirect to the ACS authentication page
                         clonedForm.submit();
                     } else {

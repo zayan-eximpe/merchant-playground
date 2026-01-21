@@ -197,7 +197,6 @@ function populateSampleOrderFields() {
         amount: '1.00',
         currency: 'INR',
         type_of_goods: 'goods',
-        reference_id: 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase(),
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
         buyer_phone: '9876543210',
@@ -217,7 +216,6 @@ function populateSampleOrderFields() {
     };
     document.getElementById('amount').value = sampleData.amount;
     document.getElementById('currency').value = sampleData.currency;
-    document.getElementById('referenceId').value = sampleData.reference_id;
     document.getElementById('buyerName').value = sampleData.buyer_name;
     document.getElementById('buyerEmail').value = sampleData.buyer_email;
     document.getElementById('buyerPhone').value = sampleData.buyer_phone;
@@ -233,7 +231,6 @@ function populateSampleOrderFields() {
     document.getElementById('productDescription').value = sampleData.product_description;
     document.getElementById('hsCode').value = sampleData.hs_code;
     document.getElementById('hsCodeDescription').value = sampleData.hs_code_description;
-    document.getElementById('invoiceNumber').value = sampleData.invoice_number;
     document.getElementById('invoiceDate').value = sampleData.invoice_date;
     saveFormData();
 }
@@ -291,11 +288,6 @@ function clearCache() {
     document.getElementById('sessionForm').reset();
     // Restore Card Identifier value
     document.getElementById('cardIdentifier').value = currentCardIdentifier;
-
-    // Regenerate Reference ID and Invoice Number
-    document.getElementById('referenceId').value = 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase();
-    document.getElementById('invoiceNumber').value = 'INV' + Math.random().toString(36).substring(2, 8).toUpperCase();
-
     // Update summaries
     updateOrderSummary();
     updateOrderSummaryTile();
@@ -312,7 +304,6 @@ function updateOrderSummary() {
         { label: 'Buyer Email', value: get('buyerEmail') },
         { label: 'Buyer Phone', value: get('buyerPhone') },
         { label: 'Reference ID', value: get('referenceId') },
-        { label: 'Invoice Number', value: get('invoiceNumber') },
         { label: 'Invoice Date', value: get('invoiceDate') },
     ];
     const content = summary.filter(item => item.value && item.value !== ' ').map(item =>
@@ -331,13 +322,11 @@ function updateOrderSummaryTile() {
     const prodDesc = document.getElementById('orderSummaryProductDesc');
     const amount = document.getElementById('orderSummaryAmount');
     const currency = document.getElementById('orderSummaryCurrency');
-    const reference = document.getElementById('orderSummaryReference');
 
     if (prodName) prodName.textContent = get('productName') || 'Sample Product';
     if (prodDesc) prodDesc.textContent = get('productDescription') || 'This is a sample product description';
     if (amount) amount.textContent = (get('amount') ? '₹' + get('amount') : '₹1.00');
     if (currency) currency.textContent = get('currency') || 'INR';
-    if (reference) reference.textContent = get('referenceId') || 'CARD_XXXXXX';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -431,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 collection_mode: 's2s',
                 mop_type: document.getElementById('cardType').value,
                 currency: document.getElementById('currency').value,
-                reference_id: document.getElementById('referenceId').value || undefined,
+                reference_id: 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase(),
                 card_details: card_details,
                 buyer: {
                     name: document.getElementById('buyerName').value,
@@ -455,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     type_of_goods: document.getElementById('typeOfGoods').value
                 },
                 invoice: {
-                    number: document.getElementById('invoiceNumber').value || undefined,
+                    number: 'INV' + Math.random().toString(36).substring(2, 8).toUpperCase(),
                     date: document.getElementById('invoiceDate').value || undefined
                 }
             };

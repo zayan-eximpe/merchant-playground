@@ -167,11 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update icon based on menu state
         const icon = mobileFab.querySelector('i');
-        if (isMobileMenuOpen) {
-            icon.className = 'fas fa-plus';
-        } else {
-            icon.className = 'fas fa-bolt';
-        }
+        icon.className = 'fas fa-bolt';
     }
 
     function closeMobileMenu() {

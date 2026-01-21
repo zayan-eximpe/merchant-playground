@@ -39,96 +39,54 @@
                 style="margin-left:auto; background:none; border:none; cursor:pointer; color:inherit;">&times;</button>
         </div>
 
-        <div class="credentials-section" id="credentials-section">
-            <div class="section-title-row" id="cred-toggle-btn" style="cursor: pointer; margin-bottom: 0;">
-                <div class="cred-title">
-                    <i class="fas fa-key"></i> API Credentials
-                    <i class="fas fa-chevron-down" id="cred-chevron"
-                        style="font-size: 14px; color: #94a3b8; margin-left: 8px; transition: transform 0.3s;"></i>
-                </div>
-                <div class="env-select-wrapper" onclick="event.stopPropagation();">
-                    <span class="env-label">Environment</span>
-                    <select id="env-switcher" class="env-select">
-                        <option value="production">Production</option>
-                        <option value="staging">Staging</option>
-                        <option value="uat">UAT</option>
-                        <option value="development">Development</option>
-                    </select>
-                </div>
-            </div>
+        <button id="open-cred-modal" class="btn btn-secondary"
+            style="position: absolute; top: 24px; right: 24px; z-index: 20; background: white; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <i class="fas fa-key"></i> <span class="btn-text">Credentials</span>
+        </button>
+        <style>
+            @media (max-width: 600px) {
+                #open-cred-modal .btn-text {
+                    display: none;
+                }
 
-            <div id="cred-content"
-                style="display: none; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 24px;">
-                <div class="status-form">
-                    <div class="form-group">
-                        <label class="form-label">Client ID</label>
-                        <input id="clientId" data-inject-config="CLIENT_ID" type="text" placeholder="Enter Client ID"
-                            class="form-input" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Client Secret</label>
-                        <input id="authKey" data-inject-config="AUTH_KEY" type="password"
-                            placeholder="Enter Client Secret" class="form-input" />
-                    </div>
-                    <div class="form-group" style="justify-content: flex-end;">
-                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding: 10px 0;">
-                            <input type="checkbox" id="isPspCheckbox"
-                                style="width:18px; height:18px; accent-color: #26a887;">
-                            <span class="form-label" style="margin:0;">Enable PSP Mode</span>
-                        </label>
-                    </div>
-                    <div class="form-group" id="merchantIdGroup" style="display:none;">
-                        <label class="form-label">Merchant ID</label>
-                        <input id="merchantId" data-inject-config="MERCHANT_ID" type="text"
-                            placeholder="Enter Merchant ID" class="form-input" />
-                    </div>
-                </div>
-
-                <div class="cred-actions">
-                    <button id="cred-save" class="btn btn-primary"><i class="fas fa-save"></i> Save
-                        Credentials</button>
-                    <button id="cred-clear" class="btn btn-secondary"><i class="fas fa-trash-alt"></i>
-                        Clear</button>
-
-                    <div style="width: 1px; height: 24px; background: #e2e8f0; margin: 0 8px;"></div>
-
-                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                        <input id="cred-encrypt-toggle" type="checkbox" style="accent-color: #26a887;">
-                        <span style="font-size:13px; font-weight:600; color:#64748b;">Encrypt</span>
-                    </label>
-                    <input id="cred-passphrase" type="password" placeholder="Passphrase" class="form-input"
-                        style="display:none; width: 140px;" />
-
-                    <button id="cred-load-encrypted" class="btn btn-secondary" style="display:none;">Load</button>
-                    <button id="cred-export" class="btn btn-secondary"><i class="fas fa-download"></i>
-                        Export</button>
-                    <button id="cred-import-btn" class="btn btn-secondary"><i class="fas fa-upload"></i>
-                        Import</button>
-                    <input id="cred-import-file" type="file" accept="application/json" style="display:none;" />
-
-                    <div id="cred-status" style="margin-left:auto; color:#64748b; font-size:13px; font-weight:500;">
-                    </div>
-                </div>
-            </div>
-        </div>
+                #open-cred-modal {
+                    padding: 10px;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    justify-content: center;
+                }
+            }
+        </style>
 
         <div class="content-wrapper">
             <div class="sidebar-nav">
+                <div class="nav-category">Accept Payments</div>
                 <ul class="nav-menu">
                     <li><a href="#hosted-payment" class="nav-link active"><i class="fas fa-shield-alt"></i> Hosted
-                            Payment</a></li>
+                            Checkout</a></li>
                     <li><a href="#payment-links" class="nav-link"><i class="fas fa-link"></i> Payment Links</a></li>
                     <li><a href="#s2s-payment" class="nav-link"><i class="fas fa-server"></i> S2S Payments</a></li>
-                    <li><a href="#order-management" class="nav-link"><i class="fas fa-clipboard-list"></i>
-                            Orders</a></li>
+                </ul>
+
+                <div class="nav-category">Recurring Billing</div>
+                <ul class="nav-menu">
                     <li><a href="#subscription-management" class="nav-link"><i class="fas fa-sync-alt"></i>
                             Subscriptions</a></li>
-                    <li><a href="#refunds" class="nav-link"><i class="fas fa-undo-alt"></i> Refunds</a></li>
-                    <li><a href="#settlements" class="nav-link"><i class="fas fa-money-bill-wave"></i>
-                            Settlements</a></li>
-                    <li><a href="#merchant-management" class="nav-link"><i class="fas fa-store"></i> Merchant</a>
+                </ul>
+
+                <div class="nav-category">Post-Payment</div>
+                <ul class="nav-menu">
+                    <li><a href="#order-management" class="nav-link"><i class="fas fa-clipboard-list"></i> Orders</a>
                     </li>
-                    <li><a href="#webhooks" class="nav-link"><i class="fas fa-bell"></i> Webhooks</a></li>
+                    <li><a href="#refunds" class="nav-link"><i class="fas fa-undo-alt"></i> Refunds</a></li>
+                    <li><a href="#settlements" class="nav-link"><i class="fas fa-money-bill-wave"></i> Settlements</a>
+                    </li>
+                </ul>
+
+                <div class="nav-category">Account</div>
+                <ul class="nav-menu">
+                    <li><a href="#merchant-management" class="nav-link"><i class="fas fa-store"></i> Merchant</a></li>
                 </ul>
             </div>
             <div class="api-sections">
@@ -249,6 +207,31 @@
                     </div>
                 </div>
 
+                <!-- Subscription Management Section -->
+                <div class="api-section" id="subscription-management">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div>
+                            <h2 class="section-title">Subscriptions</h2>
+                            <p class="section-desc">Handle recurring billing and plans.</p>
+                        </div>
+                    </div>
+                    <div class="integrations-grid">
+                        <a href="subscription/subscriptions.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-calendar-check"></i> Create Subscription</div>
+                            <div class="card-desc">Set up recurring payments with auto-debit.</div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="subscription/subscription_management.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-tasks"></i> Manage Plans</div>
+                            <div class="card-desc">Look up and modify existing subscriptions.</div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Order Management Section -->
                 <div class="api-section" id="order-management">
                     <div class="section-header">
@@ -274,31 +257,6 @@
                         <a href="order/order_verification.html" class="integration-card">
                             <div class="card-title"><i class="fas fa-shield-check"></i> Verify Order</div>
                             <div class="card-desc">Upload proof of delivery for verification.</div>
-                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Subscription Management Section -->
-                <div class="api-section" id="subscription-management">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="fas fa-sync-alt"></i>
-                        </div>
-                        <div>
-                            <h2 class="section-title">Subscriptions</h2>
-                            <p class="section-desc">Handle recurring billing and plans.</p>
-                        </div>
-                    </div>
-                    <div class="integrations-grid">
-                        <a href="subscription/subscriptions.html" class="integration-card">
-                            <div class="card-title"><i class="fas fa-calendar-check"></i> Create Subscription</div>
-                            <div class="card-desc">Set up recurring payments with auto-debit.</div>
-                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
-                        </a>
-                        <a href="subscription/subscription_management.html" class="integration-card">
-                            <div class="card-title"><i class="fas fa-tasks"></i> Manage Plans</div>
-                            <div class="card-desc">Look up and modify existing subscriptions.</div>
                             <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
                         </a>
                     </div>
@@ -383,26 +341,87 @@
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- Webhooks Section -->
-                <div class="api-section" id="webhooks">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="fas fa-bell"></i>
-                        </div>
-                        <div>
-                            <h2 class="section-title">Webhooks</h2>
-                            <p class="section-desc">Real-time event notifications.</p>
-                        </div>
-                    </div>
-                    <div class="integrations-grid">
-                        <a href="#" class="integration-card" style="cursor: default;">
-                            <div class="badge-soon">Coming Soon</div>
-                            <div class="card-title"><i class="fas fa-bell"></i> Events</div>
-                            <div class="card-desc">Listen for payment, refund, and settlement events.</div>
-                        </a>
+    <!-- Credentials Modal -->
+    <div id="cred-modal" class="modal-overlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000; align-items: center; justify-content: center;">
+        <div class="modal-container"
+            style="background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 600px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div class="modal-title"
+                    style="font-size: 20px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-key" style="color: #26a887;"></i> API Credentials
+                </div>
+                <button id="close-cred-modal" class="modal-close"
+                    style="background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="section-title-row" style="margin-bottom: 20px;">
+                    <div class="env-select-wrapper" style="width: 100%;">
+                        <span class="env-label">Environment</span>
+                        <select id="env-switcher" class="env-select" style="width: 100%;">
+                            <option value="production">Production</option>
+                            <option value="staging">Staging</option>
+                            <option value="uat">UAT</option>
+                            <option value="development">Development</option>
+                        </select>
                     </div>
                 </div>
+
+                <div class="status-form">
+                    <div class="form-group">
+                        <label class="form-label">Client ID</label>
+                        <input id="clientId" data-inject-config="CLIENT_ID" type="text" placeholder="Enter Client ID"
+                            class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client Secret</label>
+                        <input id="authKey" data-inject-config="AUTH_KEY" type="password"
+                            placeholder="Enter Client Secret" class="form-input" />
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding: 10px 0;">
+                            <input type="checkbox" id="isPspCheckbox"
+                                style="width:18px; height:18px; accent-color: #26a887;">
+                            <span class="form-label" style="margin:0;">Enable PSP Mode</span>
+                        </label>
+                    </div>
+                    <div class="form-group" id="merchantIdGroup" style="display:none;">
+                        <label class="form-label">Merchant ID</label>
+                        <input id="merchantId" data-inject-config="MERCHANT_ID" type="text"
+                            placeholder="Enter Merchant ID" class="form-input" />
+                    </div>
+                </div>
+
+                <div class="cred-actions"
+                    style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <button id="cred-save" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                    <button id="cred-clear" class="btn btn-secondary"><i class="fas fa-trash-alt"></i> Clear</button>
+
+                    <div style="width: 1px; height: 24px; background: #e2e8f0; margin: 0 8px;"></div>
+
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input id="cred-encrypt-toggle" type="checkbox" style="accent-color: #26a887;">
+                        <span style="font-size:13px; font-weight:600; color:#64748b;">Encrypt</span>
+                    </label>
+                    <input id="cred-passphrase" type="password" placeholder="Passphrase" class="form-input"
+                        style="display:none; width: 120px;" />
+
+                    <div style="flex: 1;"></div>
+
+                    <button id="cred-load-encrypted" class="btn btn-secondary" style="display:none;">Load</button>
+                    <button id="cred-export" class="btn btn-secondary" title="Export"><i
+                            class="fas fa-download"></i></button>
+                    <button id="cred-import-btn" class="btn btn-secondary" title="Import"><i
+                            class="fas fa-upload"></i></button>
+                    <input id="cred-import-file" type="file" accept="application/json" style="display:none;" />
+                </div>
+                <div id="cred-status"
+                    style="margin-top: 12px; color:#64748b; font-size:13px; font-weight:500; text-align: right;"></div>
             </div>
         </div>
     </div>
@@ -720,31 +739,45 @@
 
             window.addEventListener('scroll', onScroll);
 
-            // Credentials Toggle Logic
-            const credToggleBtn = document.getElementById('cred-toggle-btn');
-            const credContent = document.getElementById('cred-content');
-            const credChevron = document.getElementById('cred-chevron');
-            let isCredExpanded = false;
+            // Credentials Modal Logic
+            const credModal = document.getElementById('cred-modal');
+            const openCredModalBtn = document.getElementById('open-cred-modal');
+            const closeCredModalBtn = document.getElementById('close-cred-modal');
 
-            function toggleCredentials() {
-                isCredExpanded = !isCredExpanded;
-                credContent.style.display = isCredExpanded ? 'block' : 'none';
-                credChevron.style.transform = isCredExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
-
-                // Update margin of title row
-                const titleRow = document.querySelector('.section-title-row');
-                if (titleRow) {
-                    titleRow.style.marginBottom = isCredExpanded ? '0' : '0';
+            function openCredModal() {
+                if (credModal) {
+                    credModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
                 }
             }
 
-            if (credToggleBtn) {
-                credToggleBtn.addEventListener('click', toggleCredentials);
+            function closeCredModal() {
+                if (credModal) {
+                    credModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
             }
 
-            // Auto-expand if no credentials
+            if (openCredModalBtn) {
+                openCredModalBtn.addEventListener('click', openCredModal);
+            }
+
+            if (closeCredModalBtn) {
+                closeCredModalBtn.addEventListener('click', closeCredModal);
+            }
+
+            // Close modal when clicking outside
+            if (credModal) {
+                credModal.addEventListener('click', (e) => {
+                    if (e.target === credModal) {
+                        closeCredModal();
+                    }
+                });
+            }
+
+            // Auto-open modal if no credentials
             if (!credentialsExistForEnv()) {
-                toggleCredentials();
+                openCredModal();
             }
 
             // Mobile Navigation Logic

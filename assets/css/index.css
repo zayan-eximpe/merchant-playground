@@ -34,7 +34,6 @@ body {
     justify-content: center;
     margin: 0 auto 24px auto;
     box-shadow: 0 10px 25px -5px rgba(38, 168, 135, 0.4);
-    transform: rotate(-5deg);
     transition: transform 0.3s ease;
 }
 
@@ -1023,6 +1022,15 @@ h1 {
     .sidebar-nav {
         display: block;
     }
+}
+
+.nav-category {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 20px 0 8px 12px;
 }
 
 .sidebar-nav ul {

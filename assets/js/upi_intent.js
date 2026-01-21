@@ -173,7 +173,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Modal elements
     const modalOverlay = document.getElementById('modalOverlay');
     const modalBox = document.getElementById('modalBox');
-    const modalIcon = document.getElementById('modalIcon');
     const modalTitle = document.getElementById('modalTitle');
     const modalMessage = document.getElementById('modalMessage');
     const modalCloseBtn = document.getElementById('modalCloseBtn');
@@ -192,11 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update icon based on menu state
         const icon = mobileFab.querySelector('i');
-        if (isMobileMenuOpen) {
-            icon.className = 'fas fa-plus';
-        } else {
-            icon.className = 'fas fa-bolt';
-        }
+        icon.className = 'fas fa-bolt';
     }
 
     function closeMobileMenu() {
@@ -264,7 +259,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             // Fallback if ModalUtils is not loaded
             modalBox.className = 'modal ' + type;
-            modalIcon.textContent = type === 'success' ? '✅' : '❌';
             modalTitle.textContent = title;
             if (window.TrustedTypes && typeof window.TrustedTypes.setInnerHTML === 'function') {
                 window.TrustedTypes.setInnerHTML(modalMessage, message);
