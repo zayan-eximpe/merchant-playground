@@ -325,8 +325,53 @@ button.main-action-btn:disabled {
     box-shadow: none;
 }
 
-.main-action-btn.outline-btn:hover {
-    background: rgba(38, 168, 135, 0.05);
+#searchSavedCardsBtn {
+    height: 50px;
+    margin-top: 0 !important;
+    padding: 0 28px !important;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: auto !important;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    color: #475569;
+}
+
+#searchSavedCardsBtn:not(:disabled):hover {
+    background: #fff;
+    border-color: #26a887;
+    color: #26a887;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(38, 168, 135, 0.1), 0 4px 6px -2px rgba(38, 168, 135, 0.05);
+}
+
+#searchSavedCardsBtn:not(:disabled):active {
+    transform: translateY(0);
+}
+
+#searchSavedCardsBtn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+}
+
+/* Input Hover Effects */
+input:hover,
+select:hover {
+    border-color: #cbd5e1;
+}
+
+.input-wrapper:focus-within .input-icon {
+    color: #26a887;
 }
 
 /* Helper Text & Tooltips */

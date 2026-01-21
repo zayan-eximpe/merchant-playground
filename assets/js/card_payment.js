@@ -62,9 +62,83 @@ function setCardFieldsVisibility(visible) {
     if (cvvField) cvvField.style.display = visible ? '' : 'none';
 }
 
+// Detect card network based on number
+function detectCardNetwork(number) {
+    const re = {
+        visa: /^4/,
+        mastercard: /^5[1-5]|^2[2-7]/,
+        amex: /^3[47]/,
+        diners: /^3(?:0[0-5]|[68])/,
+        rupay: /^6[05]|^508|^8[12]/,
+        maestro: /^(?:5[0678]\d\d|6304|6390|67\d\d)/,
+    };
+
+    for (const [network, regex] of Object.entries(re)) {
+        if (regex.test(number)) {
+            return network;
+        }
+    }
+    return null;
+}
+
+// Update card icon based on network
+function updateCardIcon(network) {
+    const icon = document.getElementById('cardNumberIcon');
+    if (!icon) return;
+
+    // Reset classes
+    icon.className = 'input-icon';
+
+    switch (network) {
+        case 'visa':
+            icon.classList.add('fab', 'fa-cc-visa');
+            break;
+        case 'mastercard':
+            icon.classList.add('fab', 'fa-cc-mastercard');
+            break;
+        case 'amex':
+            icon.classList.add('fab', 'fa-cc-amex');
+            break;
+        case 'diners':
+            icon.classList.add('fab', 'fa-cc-diners-club');
+            break;
+        case 'rupay':
+            icon.classList.add('fas', 'fa-credit-card'); // Fallback for RuPay
+            break;
+        case 'maestro':
+            icon.classList.add('fab', 'fa-cc-mastercard'); // Maestro often uses MC icon
+            break;
+        default:
+            icon.classList.add('fas', 'fa-credit-card');
+            break;
+    }
+}
+
+// Update card network select based on detected network
+function updateCardNetworkSelect(network) {
+    const select = document.getElementById('cardNetwork');
+    if (!select) return;
+
+    if (network) {
+        // Check if the network is a valid option
+        const options = Array.from(select.options).map(opt => opt.value);
+        if (options.includes(network)) {
+            select.value = network;
+            select.dispatchEvent(new Event('change'));
+        }
+    }
+}
+
 // Format card number with spaces
 function formatCardNumber(input) {
     let value = input.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+
+    // Detect network and update UI
+    const network = detectCardNetwork(value);
+    updateCardIcon(network);
+    updateCardNetworkSelect(network);
+
+    // Format with spaces
     const formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
     input.value = formattedValue;
 }
@@ -78,50 +152,22 @@ function formatCVV(input) {
 let sampleCardIndex = 0;
 function toggleSampleCard() {
     const allowedSampleCards = [
-        {
-            card_number: '4895380110000003',
-            card_type: 'credit_card',
-            card_network: 'visa',
-            expiry_month: '05',
-            expiry_year: '2030',
-            cvv: '123',
-            card_nickname: 'VISA Credit',
-            card_holder_name: 'John Doe'
-        },
-        {
-            card_number: '4895380110000003',
-            card_type: 'debit_card',
-            card_network: 'visa',
-            expiry_month: '05',
-            expiry_year: '2030',
-            cvv: '123',
-            card_nickname: 'VISA Debit',
-            card_holder_name: 'John Doe'
-        },
-        {
-            card_number: '5506900480000008',
-            card_type: 'credit_card',
-            card_network: 'mastercard',
-            expiry_month: '05',
-            expiry_year: '2030',
-            cvv: '123',
-            card_nickname: 'MasterCard Credit',
-            card_holder_name: 'John Doe'
-        },
-        {
-            card_number: '5506900480000008',
-            card_type: 'debit_card',
-            card_network: 'mastercard',
-            expiry_month: '05',
-            expiry_year: '2030',
-            cvv: '123',
-            card_nickname: 'MasterCard Debit',
-            card_holder_name: 'John Doe'
-        }
+        { card_number: '4706131211212123', card_type: 'debit_card', card_network: 'visa', card_nickname: 'Visa Debit Retail 1', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '4062288312345026', card_type: 'debit_card', card_network: 'visa', card_nickname: 'Visa Debit Retail 2', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '4576238912771450', card_type: 'credit_card', card_network: 'visa', card_nickname: 'Visa Credit Retail 1', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '4444333322221111', card_type: 'credit_card', card_network: 'visa', card_nickname: 'Visa Credit Retail 2', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '5409162669381034', card_type: 'debit_card', card_network: 'mastercard', card_nickname: 'MC Debit Retail 1', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '5445856839524391', card_type: 'debit_card', card_network: 'mastercard', card_nickname: 'MC Debit Retail 2', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '5105105105105100', card_type: 'credit_card', card_network: 'mastercard', card_nickname: 'MC Credit Retail 1', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '5176539438527826', card_type: 'credit_card', card_network: 'mastercard', card_nickname: 'MC Credit Retail 2', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '6074825972083818', card_type: 'debit_card', card_network: 'rupay', card_nickname: 'RuPay Debit Retail 1', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '6074828163369590', card_type: 'debit_card', card_network: 'rupay', card_nickname: 'RuPay Debit Retail 2', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' },
+        { card_number: '6528591234543575', card_type: 'credit_card', card_network: 'rupay', card_nickname: 'RuPay Credit Retail 1', expiry_month: '05', expiry_year: '2030', cvv: '123', card_holder_name: 'John Doe' }
     ];
     sampleCardIndex = (sampleCardIndex + 1) % allowedSampleCards.length;
     const sampleCard = allowedSampleCards[sampleCardIndex];
     document.getElementById('cardNumber').value = sampleCard.card_number;
+    formatCardNumber(document.getElementById('cardNumber'));
     document.getElementById('cardNickname').value = sampleCard.card_nickname;
     document.getElementById('cardHolderName').value = sampleCard.card_holder_name;
     document.getElementById('expiryMonth').value = sampleCard.expiry_month;
@@ -223,6 +269,9 @@ function loadFormData() {
                     element.checked = formData[element.name];
                 } else {
                     element.value = formData[element.name];
+                    if (element.id === 'cardNumber') {
+                        formatCardNumber(element);
+                    }
                 }
                 if (element.tagName === 'SELECT') {
                     element.dispatchEvent(new Event('change'));
@@ -242,7 +291,53 @@ function clearCache() {
     document.getElementById('sessionForm').reset();
     // Restore Card Identifier value
     document.getElementById('cardIdentifier').value = currentCardIdentifier;
-    // Re-enable card fields if they were disabled by saved card selection
+
+    // Regenerate Reference ID and Invoice Number
+    document.getElementById('referenceId').value = 'CARD' + Math.random().toString(36).substring(2, 18).toUpperCase();
+    document.getElementById('invoiceNumber').value = 'INV' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    // Update summaries
+    updateOrderSummary();
+    updateOrderSummaryTile();
+}
+
+// --- ORDER SUMMARY LOGIC ---
+function updateOrderSummary() {
+    const get = id => document.getElementById(id)?.value || '';
+    const summary = [
+        { label: 'Amount', value: get('amount') + ' ' + get('currency') },
+        { label: 'Product', value: get('productName') },
+        { label: 'Description', value: get('productDescription') },
+        { label: 'Buyer Name', value: get('buyerName') },
+        { label: 'Buyer Email', value: get('buyerEmail') },
+        { label: 'Buyer Phone', value: get('buyerPhone') },
+        { label: 'Reference ID', value: get('referenceId') },
+        { label: 'Invoice Number', value: get('invoiceNumber') },
+        { label: 'Invoice Date', value: get('invoiceDate') },
+    ];
+    const content = summary.filter(item => item.value && item.value !== ' ').map(item =>
+        `<div style='font-weight:500;'>${escapeHtml(item.label)}:</div><div>${escapeHtml(item.value)}</div>`
+    ).join('');
+    const summaryContainer = document.getElementById('orderSummaryContent');
+    if (summaryContainer) {
+        TrustedTypes.setInnerHTML(summaryContainer, content || '<span style="color:#718096;">No order details yet.</span>');
+    }
+}
+
+// --- ORDER SUMMARY TILE LOGIC ---
+function updateOrderSummaryTile() {
+    const get = id => document.getElementById(id)?.value || '';
+    const prodName = document.getElementById('orderSummaryProductName');
+    const prodDesc = document.getElementById('orderSummaryProductDesc');
+    const amount = document.getElementById('orderSummaryAmount');
+    const currency = document.getElementById('orderSummaryCurrency');
+    const reference = document.getElementById('orderSummaryReference');
+
+    if (prodName) prodName.textContent = get('productName') || 'Sample Product';
+    if (prodDesc) prodDesc.textContent = get('productDescription') || 'This is a sample product description';
+    if (amount) amount.textContent = (get('amount') ? '₹' + get('amount') : '₹1.00');
+    if (currency) currency.textContent = get('currency') || 'INR';
+    if (reference) reference.textContent = get('referenceId') || 'CARD_XXXXXX';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -258,6 +353,18 @@ document.addEventListener('DOMContentLoaded', function () {
         if (element.name) {
             element.addEventListener('input', saveFormData);
             element.addEventListener('change', saveFormData);
+        }
+    }
+
+    // Card number formatting and network detection
+    const cardNumberInput = document.getElementById('cardNumber');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function () {
+            formatCardNumber(this);
+        });
+        // Also run on load if there's a value
+        if (cardNumberInput.value) {
+            formatCardNumber(cardNumberInput);
         }
     }
     // Load Client Secret from local storage if it exists
@@ -284,32 +391,6 @@ document.addEventListener('DOMContentLoaded', function () {
         ModalUtils.hide();
         createButton.disabled = true;
         btnText.textContent = 'Creating Card Payment...';
-        // --- BEGIN: Card validation for only two allowed cards ---
-        const allowedCards = [
-            {
-                number: '5506 9004 8000 0008',
-                raw: '5506900480000008',
-                network: 'MASTERCARD',
-                expiry_month: '05',
-                expiry_year: '2030',
-                cvv: '123'
-            },
-            {
-                number: '4895 3700 7734 6937',
-                raw: '4895380110000003',
-                network: 'VISA',
-                expiry_month: '05',
-                expiry_year: '2030',
-                cvv: '123'
-            }
-        ];
-        // Get entered card details
-        const enteredNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
-        const enteredNetwork = document.getElementById('cardNetwork').value.toUpperCase();
-        const enteredMonth = document.getElementById('expiryMonth').value;
-        const enteredYear = document.getElementById('expiryYear').value;
-        const enteredCVV = document.getElementById('cvv').value;
-
         // --- END: Card validation ---
         // Populate the rest of the sample order fields before submit
         // populateSampleOrderFields(); // Removed to prevent overwriting user edits
@@ -662,17 +743,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (searchSavedCardsBtn) {
         searchSavedCardsBtn.addEventListener('click', async function () {
-            // Toggle visibility if already open
-            if (savedCardsContainer.style.display === 'block') {
-                savedCardsContainer.style.display = 'none';
-                return;
-            }
-
             const identifier = document.getElementById('cardIdentifier').value.trim();
             if (!identifier) {
                 ModalUtils.show('error', 'Missing Identifier', 'Please enter a Card Identifier to search.');
                 return;
             }
+
+            // Set loading state
+            const originalContent = searchSavedCardsBtn.innerHTML;
+            searchSavedCardsBtn.disabled = true;
+            TrustedTypes.setInnerHTML(searchSavedCardsBtn, '<i class="fas fa-circle-notch fa-spin"></i> <span>Searching...</span>');
+
+            // Clear previous results while loading
+            savedCardsContainer.style.display = 'none';
+            savedCardsContainer.textContent = '';
+
             // Prepare headers
             const headers = {
                 'Accept': 'application/json',
@@ -699,64 +784,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             } catch (err) {
                 showSavedCardsInline([]);
+            } finally {
+                // Restore state
+                searchSavedCardsBtn.disabled = false;
+                TrustedTypes.setInnerHTML(searchSavedCardsBtn, originalContent);
             }
         });
     }
 
 
 
-    // --- ORDER SUMMARY LOGIC ---
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    function updateOrderSummary() {
-        const get = id => document.getElementById(id)?.value || '';
-        const summary = [
-            { label: 'Amount', value: get('amount') + ' ' + get('currency') },
-            { label: 'Product', value: get('productName') },
-            { label: 'Description', value: get('productDescription') },
-            { label: 'Buyer Name', value: get('buyerName') },
-            { label: 'Buyer Email', value: get('buyerEmail') },
-            { label: 'Buyer Phone', value: get('buyerPhone') },
-            { label: 'Reference ID', value: get('referenceId') },
-            { label: 'Invoice Number', value: get('invoiceNumber') },
-            { label: 'Invoice Date', value: get('invoiceDate') },
-        ];
-        const content = summary.filter(item => item.value && item.value !== ' ').map(item =>
-            `<div style='font-weight:500;'>${escapeHtml(item.label)}:</div><div>${escapeHtml(item.value)}</div>`
-        ).join('');
-        TrustedTypes.setInnerHTML(document.getElementById('orderSummaryContent'), content || '<span style="color:#718096;">No order details yet.</span>');
-    }
     // Update summary on load and on input changes
-    document.addEventListener('DOMContentLoaded', function () {
-        updateOrderSummary();
-        const form = document.getElementById('sessionForm');
-        for (let element of form.elements) {
-            if (element.name) {
-                element.addEventListener('input', updateOrderSummary);
-                element.addEventListener('change', updateOrderSummary);
-            }
-        }
-    });
-
-    // --- ORDER SUMMARY TILE LOGIC ---
-    function updateOrderSummaryTile() {
-        const get = id => document.getElementById(id)?.value || '';
-        document.getElementById('orderSummaryProductName').textContent = get('productName') || 'Sample Product';
-        document.getElementById('orderSummaryProductDesc').textContent = get('productDescription') || 'This is a sample product description';
-        document.getElementById('orderSummaryAmount').textContent = (get('amount') ? '₹' + get('amount') : '₹1.00');
-        document.getElementById('orderSummaryCurrency').textContent = get('currency') || 'INR';
-        // Buyer Name and Email are now inputs on the left, so no need to update text content
-        document.getElementById('orderSummaryReference').textContent = get('referenceId') || 'CARD_XXXXXX';
-        // Optionally, set product image if you have a URL field
-        // document.getElementById('orderSummaryProductImg').src = get('productImageUrl') || 'https://via.placeholder.com/80x80?text=Product';
-    }
+    updateOrderSummary();
     updateOrderSummaryTile();
+
     for (let element of form.elements) {
         if (element.name) {
+            element.addEventListener('input', updateOrderSummary);
+            element.addEventListener('change', updateOrderSummary);
             element.addEventListener('input', updateOrderSummaryTile);
             element.addEventListener('change', updateOrderSummaryTile);
         }

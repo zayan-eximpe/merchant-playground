@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-    <script src="../assets/js/config.js?v=1.0.9.9"></script>
+    <script src="../assets/js/config.js?v=1.0.9.10"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <title>Create S2S Card Payment</title>
-    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.9">
-    <link rel="stylesheet" href="../assets/css/card_payment.css?v=1.0.9.9">
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.10">
+    <link rel="stylesheet" href="../assets/css/card_payment.css?v=1.0.9.10">
     <style>
         /* Sidebar Input Styles */
         .summary-input-group {
@@ -132,7 +132,7 @@
                         <div class="input-wrapper">
                             <input type="text" id="cardNumber" name="card_number" class="card-number-input"
                                 placeholder="0000 0000 0000 0000" maxlength="19">
-                            <i class="fas fa-credit-card input-icon"></i>
+                            <i id="cardNumberIcon" class="fas fa-credit-card input-icon"></i>
                         </div>
                         <span class="tooltiptext"><strong>Card Number</strong><br>16-digit card number</span>
                     </div>
@@ -237,9 +237,8 @@
                                     placeholder="buyer_id, device_id, etc.">
                                 <i class="fas fa-id-badge input-icon"></i>
                             </div>
-                            <button type="button" id="searchSavedCardsBtn" class="main-action-btn outline-btn"
-                                style="width: auto; margin-top: 0; padding: 0 24px; font-size: 14px; white-space: nowrap;">
-                                <i class="fas fa-search"></i> List Cards
+                            <button type="button" id="searchSavedCardsBtn" class="main-action-btn outline-btn">
+                                <i class="fas fa-search"></i> <span>List Cards</span>
                             </button>
                         </div>
                         <!-- Inline Saved Cards List -->
@@ -290,8 +289,8 @@
 
 
     <!-- Common utilities -->
-    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.9"></script>
-    <script src="../assets/js/common-utils.js?v=1.0.9.9"></script>
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.10"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.9.10"></script>
 
     <!-- Pass Django variables to JavaScript -->
     <script>
@@ -299,7 +298,7 @@
     </script>
 
     <!-- Page-specific logic -->
-    <script src="../assets/js/card_payment.js?v=1.0.9.9"></script>
+    <script src="../assets/js/card_payment.js?v=1.0.9.10"></script>
 </body>
 
 </html>
