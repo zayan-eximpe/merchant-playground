@@ -395,6 +395,13 @@
                         <input id="merchantId" data-inject-config="MERCHANT_ID" type="text"
                             placeholder="Enter Merchant ID" class="form-input" />
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">X-API-Version</label>
+                        <select id="apiVersion" data-inject-config="API_VERSION" class="form-input">
+                            <option value="1.0.0">1.0.0</option>
+                            <option value="2.0.0" selected>2.0.0</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="cred-actions"
@@ -526,6 +533,8 @@
                     document.getElementById('isPspCheckbox').checked = false;
                     const _cbEl = document.getElementById('cred-callback-url');
                     if (_cbEl) _cbEl.value = (window.Config && window.Config.CALLBACK_URL) || '';
+                        const _apiVerEl = document.getElementById('apiVersion');
+                        if (_apiVerEl) _apiVerEl.value = (window.Config && window.Config.API_VERSION) || '2.0.0';
                     statusEl.textContent = 'No credentials for ' + env;
                     return;
                 }
@@ -548,6 +557,8 @@
                         document.getElementById('isPspCheckbox').checked = parsed.IS_PSP ? true : false;
                         const _cbEl3 = document.getElementById('cred-callback-url');
                         if (_cbEl3) _cbEl3.value = parsed.CALLBACK_URL || '';
+                        const _apiVerEl = document.getElementById('apiVersion');
+                        if (_apiVerEl) _apiVerEl.value = parsed.API_VERSION || (window.Config && window.Config.API_VERSION) || _apiVerEl.value || '2.0.0';
                         statusEl.textContent = 'Loaded credentials for ' + env;
                     } catch (e) {
                         statusEl.textContent = 'Failed to parse stored credentials for ' + env;
@@ -566,7 +577,8 @@
                     AUTH_KEY: document.getElementById('authKey').value || '',
                     IS_PSP: document.getElementById('isPspCheckbox').checked ? true : false,
                     MERCHANT_ID: document.getElementById('merchantId').value || '',
-                    CALLBACK_URL: (document.getElementById('cred-callback-url') ? document.getElementById('cred-callback-url').value : '') || ''
+                        CALLBACK_URL: (document.getElementById('cred-callback-url') ? document.getElementById('cred-callback-url').value : '') || '',
+                        API_VERSION: (document.getElementById('apiVersion') ? document.getElementById('apiVersion').value : '') || ''
                 };
 
                 if (encryptToggle.checked) {
@@ -601,6 +613,8 @@
                     document.getElementById('isPspCheckbox').checked = parsed.IS_PSP ? true : false;
                     const _cbEl4 = document.getElementById('cred-callback-url');
                     if (_cbEl4) _cbEl4.value = parsed.CALLBACK_URL || '';
+                    const _apiVerEl = document.getElementById('apiVersion');
+                    if (_apiVerEl) _apiVerEl.value = parsed.API_VERSION || (window.Config && window.Config.API_VERSION) || _apiVerEl.value || '2.0.0';
                     statusEl.textContent = 'Decrypted and loaded for ' + env;
                 } catch (e) {
                     statusEl.textContent = 'Decryption failed — bad passphrase?';

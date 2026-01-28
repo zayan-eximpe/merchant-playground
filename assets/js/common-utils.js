@@ -605,6 +605,45 @@ function getConfigValue(key) {
     return null;
 }
 
+// Get API version from stored credentials or config
+function getApiVersion() {
+    const fromCreds = getConfigValue('API_VERSION');
+    if (fromCreds) return fromCreds;
+    if (window.Config && window.Config.API_VERSION) {
+        return window.Config.API_VERSION;
+    }
+    return null;
+}
+
+// Patch global fetch to always include X-API-Version header when available
+if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
+    (function () {
+        const originalFetch = window.fetch.bind(window);
+        window.fetch = function (input, init) {
+            try {
+                const apiVersion = typeof getApiVersion === 'function' ? getApiVersion() : null;
+                if (apiVersion) {
+                    init = init || {};
+                    const existingHeaders = init.headers || {};
+                    // Normalize to plain object for this codebase's usage
+                    const headers = (existingHeaders instanceof Headers)
+                        ? (() => {
+                            const obj = {};
+                            existingHeaders.forEach((v, k) => { obj[k] = v; });
+                            return obj;
+                        })()
+                        : { ...existingHeaders };
+                    headers['X-API-Version'] = apiVersion;
+                    init.headers = headers;
+                }
+            } catch (e) {
+                // Fail silently, do not block original fetch
+            }
+            return originalFetch(input, init);
+        };
+    })();
+}
+
 
 function loadInjectedConfigs() {
     const env = getSelectedEnv();
@@ -664,6 +703,9 @@ function loadInjectedConfigs() {
             }
             if (!window.Config.MERCHANT_ID && parsed.MERCHANT_ID) {
                 window.Config.MERCHANT_ID = parsed.MERCHANT_ID;
+            }
+            if (!window.Config.API_VERSION && parsed.API_VERSION) {
+                window.Config.API_VERSION = parsed.API_VERSION;
             }
             if (typeof parsed.IS_PSP !== 'undefined') {
                 const cb = document.getElementById('isPspCheckbox');
