@@ -98,7 +98,7 @@ function createSampleData() {
     }
     const typeOfGoodsInput = document.getElementById('typeOfGoods');
     if (typeOfGoodsInput) {
-        typeOfGoodsInput.value = 'goods';
+        typeOfGoodsInput.value = 'physical_goods';
     }
     const productionNameInput = document.getElementById('productName');
     const buyerName = document.getElementById('buyerName');

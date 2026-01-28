@@ -196,7 +196,7 @@ function populateSampleOrderFields() {
     const sampleData = {
         amount: '1.00',
         currency: 'INR',
-        type_of_goods: 'goods',
+        type_of_goods: 'physical_goods',
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
         buyer_phone: '9876543210',

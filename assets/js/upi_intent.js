@@ -11,7 +11,7 @@ function createSampleData() {
         currency: 'INR',
         reference_id: 'S2SI' + Math.random().toString(36).substring(2, 8).toUpperCase(),
         return_url: `${window.location.origin}/checkout/payment_callback.html`,
-        type_of_goods: 'goods',
+        type_of_goods: 'physical_goods',
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
         buyer_phone: '9876543210',
