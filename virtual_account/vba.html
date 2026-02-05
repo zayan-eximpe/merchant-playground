@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../assets/js/config.js?v=1.0.9.10"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Virtual Bank Account (VBA) - EximPe Integrations</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.10">
+    <link rel="stylesheet" href="../assets/css/upi_collection.css?v=1.0.9.10">
+</head>
+
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <h1 style="color: rgb(38, 168, 135);">Virtual Bank Account (VBA)</h1>
+        <div class="subtitle" style="text-wrap: balanced;">
+            Create Virtual Bank Accounts to collect payments and reconcile customer-specific credits.
+        </div>
+
+        <div class="header-actions right-actions">
+            <a href="../index.html" class="header-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Playground
+            </a>
+        </div>
+
+        <!-- Quick Create/Open VBA Card (Creation first) -->
+        <div class="form-section" style="margin-top: 24px;">
+            <div class="section-title"><i class="fas fa-bolt"></i> Quick Open VBA</div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <div class="helper-text" style="margin-bottom: 8px;">
+                        Quickly create a Virtual Bank Account. The resulting
+                        <code>virtual_account_id</code> will be saved and prefilled in the Get VBA Details section.
+                    </div>
+                    <button type="button" id="quickCreateVbaButton" class="secondary-btn">
+                        <i class="fas fa-university"></i>
+                        <span>Open a VBA</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fetch Existing VBA Details -->
+        <form id="vbaFetchForm" autocomplete="off" style="margin-top: 24px;">
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-search"></i> Get VBA Details</div>
+                <div class="form-grid">
+                    <div class="form-group full-width tooltip">
+                        <input type="text" id="vbaId" name="virtual_account_id"
+                            placeholder="Virtual Account ID (e.g., 12345678)" required>
+                        <span class="tooltiptext">
+                            <strong>Virtual Account ID</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            The VBA identifier returned from the create VBA API.<br>
+                            This will be prefilled when you create a new VBA.
+                        </span>
+                        <div class="helper-text">Virtual Account ID to fetch details for
+                            <span class="required">*</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="fetchButton" class="main-action-btn">
+                <i class="fas fa-search"></i>
+                <span>Get VBA Details</span>
+            </button>
+        </form>
+
+        <!-- Inline VBA Details Result -->
+        <div id="vbaResultContainer" class="form-section" style="margin-top: 24px; display: none;">
+            <div class="section-title">
+                <i class="fas fa-info-circle"></i> Virtual Bank Account Details
+            </div>
+            <div id="vbaResultContent"></div>
+            <div style="margin-top: 16px; text-align: right;">
+                <button type="button" id="vbaPaymentsButton" class="secondary-btn" style="max-width: 220px; margin-right: 8px;">
+                    <i class="fas fa-list"></i>
+                    <span>View Payments</span>
+                </button>
+                <button type="button" id="vbaPaymentUtrToggleButton" class="secondary-btn" style="max-width: 240px; margin-right: 8px;">
+                    <i class="fas fa-search"></i>
+                    <span>Search Payment by UTR</span>
+                </button>
+                <button type="button" id="vbaStatusToggleButton" class="secondary-btn" style="max-width: 220px; margin-right: 8px;">
+                    <i class="fas fa-power-off"></i>
+                    <span>Toggle Status</span>
+                </button>
+                <button type="button" id="vbaEditToggleButton" class="secondary-btn" style="max-width: 200px;">
+                    <i class="fas fa-edit"></i>
+                    <span>Edit VBA</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Edit VBA Details -->
+        <form id="vbaEditForm" autocomplete="off" style="margin-top: 24px; display: none;">
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-edit"></i> Edit VBA Details</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="vbaAccountName" name="virtual_account_name"
+                            placeholder="Virtual Account Name">
+                        <span class="tooltiptext">
+                            <strong>Virtual Account Name</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Friendly name for this Virtual Bank Account.
+                        </span>
+                        <div class="helper-text">Optional display name for the VBA</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="email" id="vbaAccountEmail" name="virtual_account_email"
+                            placeholder="Virtual Account Email">
+                        <span class="tooltiptext">
+                            <strong>Virtual Account Email</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Contact email associated with this Virtual Bank Account.
+                        </span>
+                        <div class="helper-text">Optional contact email for the VBA</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="vbaAccountPhone" name="virtual_account_phone"
+                            placeholder="Virtual Account Phone">
+                        <span class="tooltiptext">
+                            <strong>Virtual Account Phone</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Contact phone number associated with this VBA.
+                        </span>
+                        <div class="helper-text">Optional contact phone for the VBA</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="editButton" class="main-action-btn">
+                <i class="fas fa-save"></i>
+                <span>Update VBA</span>
+            </button>
+        </form>
+
+        <!-- VBA Payments -->
+        <div id="vbaPaymentsContainer" class="form-section" style="margin-top: 24px; display: none;">
+            <div class="section-title">
+                <i class="fas fa-list"></i> Payments to this Virtual Account
+            </div>
+            <div id="vbaPaymentUtrRow" class="form-grid" style="margin-bottom: 12px; display: none;">
+                <div class="form-group tooltip">
+                    <input type="text" id="vbaPaymentUtr" placeholder="Payment UTR">
+                    <span class="tooltiptext">
+                        <strong>Payment UTR</strong><br>
+                        <span class="tooltip-optional">Optional</span><br>
+                        Enter a UTR to fetch a specific payment mapped to this VBA.
+                    </span>
+                    <div class="helper-text">Enter UTR and click \"Search by UTR\" to fetch a single payment.</div>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="vbaPaymentUtrButton" class="secondary-btn" style="width:100%;">
+                        <i class="fas fa-search"></i>
+                        <span>Search by UTR</span>
+                    </button>
+                </div>
+            </div>
+            <div id="vbaPaymentsContent" class="helper-text">
+                No payments loaded yet.
+            </div>
+        </div>
+    </div>
+
+    <!-- Common utilities -->
+    <!-- Trusted Types Policy (must load first) -->
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.10"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.9.10"></script>
+    <!-- Pass Django variables to JavaScript -->
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/vba.js?v=1.0.9.10"></script>
+
+    <!-- Credential injection handled centrally by common-utils.js -->
+
+</body>
+
+</html>
+
