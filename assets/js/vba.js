@@ -23,9 +23,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const vbaPaymentUtrRow = document.getElementById('vbaPaymentUtrRow');
     const vbaPaymentUtrInput = document.getElementById('vbaPaymentUtr');
     const vbaPaymentUtrButton = document.getElementById('vbaPaymentUtrButton');
+    const verificationModalOverlay = document.getElementById('verificationModalOverlay');
+    const verificationModalBox = document.getElementById('verificationModalBox');
+    const verificationModalCloseBtn = document.getElementById('verificationModalCloseBtn');
+    const verificationModalCancelBtn = document.getElementById('verificationModalCancelBtn');
+    const verificationModalPaymentIdEl = document.getElementById('verificationModalPaymentId');
+    const verificationDetailsForm = document.getElementById('verificationDetailsForm');
+    const verifTypeOfGoods = document.getElementById('verifTypeOfGoods');
+    const verifHsCode = document.getElementById('verifHsCode');
+    const verifHsCodeGroup = document.getElementById('verifHsCodeGroup');
+    const verifHsCodeRequired = document.getElementById('verifHsCodeRequired');
+    const verificationModalSubmitBtn = document.getElementById('verificationModalSubmitBtn');
+    const verificationModalAutoFillBtn = document.getElementById('verificationModalAutoFillBtn');
+    const verificationModalResponse = document.getElementById('verificationModalResponse');
 
     // Track the latest fetched/created VBA to support editing
     let currentVba = null;
+    let currentVerificationPaymentUid = null;
 
     function showError(message) {
         if (typeof ModalUtils !== 'undefined') {
@@ -240,21 +254,28 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <th style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">Payment UTR</th>
                                         <th style="text-align:right; padding:8px; border-bottom:1px solid #e2e8f0;">Amount</th>
                                         <th style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">Created At</th>
+                                        <th style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>`;
 
                 results.forEach((payment) => {
-                    const amountCents = payment.amount_cents || 0;
+                    const amountCents = payment.amount ?? payment.amount_cents ?? 0;
                     const amount = (amountCents / 100).toFixed(2);
+                    const paymentUid = escapeHtml(payment.payment_id || '');
                     html += `
                         <tr>
-                            <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${escapeHtml(payment.payment_id || '')}</td>
+                            <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${paymentUid}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${escapeHtml(payment.order_id || '')}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9;">${escapeHtml(payment.status || '')}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${escapeHtml(payment.payment_utr || '')}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9; text-align:right;">₹${amount}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9;">${escapeHtml(payment.created_at || '')}</td>
+                            <td style="padding:8px; border-bottom:1px solid #f1f5f9;">
+                                <button type="button" class="secondary-btn vba-upload-verification-btn" data-payment-uid="${paymentUid}" style="padding:6px 10px; font-size:12px; white-space:nowrap;">
+                                    <i class="fas fa-file-upload"></i><span>Populate Payment Details</span>
+                                </button>
+                            </td>
                         </tr>`;
                 });
 
@@ -291,6 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     });
                 });
+                // Upload verification buttons are handled via delegation on vbaPaymentsContent
             }
         } catch (error) {
             console.error('Error fetching VBA payments:', error);
@@ -373,21 +395,28 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <th style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">Payment UTR</th>
                                         <th style="text-align:right; padding:8px; border-bottom:1px solid #e2e8f0;">Amount</th>
                                         <th style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">Created At</th>
+                                        <th style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>`;
 
                 const p = payment;
-                const amountCents = p.amount_cents || 0;
+                const amountCents = p.amount ?? p.amount_cents ?? 0;
                 const amount = (amountCents / 100).toFixed(2);
+                const paymentUidSingle = escapeHtml(p.payment_id || '');
                 html += `
                         <tr>
-                            <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${escapeHtml(p.payment_id || '')}</td>
+                            <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${paymentUidSingle}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${escapeHtml(p.order_id || '')}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9;">${escapeHtml(p.status || '')}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9; font-family:monospace;">${escapeHtml(p.payment_utr || '')}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9; text-align:right;">₹${amount}</td>
                             <td style="padding:8px; border-bottom:1px solid #f1f5f9;">${escapeHtml(p.created_at || '')}</td>
+                            <td style="padding:8px; border-bottom:1px solid #f1f5f9;">
+                                <button type="button" class="secondary-btn vba-upload-verification-btn" data-payment-uid="${paymentUidSingle}" style="padding:6px 10px; font-size:12px; white-space:nowrap;">
+                                    <i class="fas fa-file-upload"></i><span>Populate Payment Details</span>
+                                </button>
+                            </td>
                         </tr>`;
 
                 html += `        </tbody>
@@ -406,6 +435,146 @@ document.addEventListener('DOMContentLoaded', function () {
                 : 'An unexpected error occurred while fetching payment by UTR.';
             showError(msg);
             if (vbaPaymentsContent) vbaPaymentsContent.innerHTML = escapeHtml(msg);
+        }
+    }
+
+    function openVerificationModal(paymentUid) {
+        currentVerificationPaymentUid = paymentUid;
+        if (verificationModalPaymentIdEl) verificationModalPaymentIdEl.textContent = paymentUid || '';
+        if (verificationDetailsForm) verificationDetailsForm.reset();
+        updateVerificationHsCodeVisibility();
+        showVerificationResponse(null);
+        if (verificationModalOverlay) verificationModalOverlay.style.display = 'flex';
+    }
+
+    function showVerificationResponse(success, message, data) {
+        if (!verificationModalResponse) return;
+        if (success === null) {
+            verificationModalResponse.style.display = 'none';
+            verificationModalResponse.innerHTML = '';
+            return;
+        }
+        verificationModalResponse.style.display = 'block';
+        const isSuccess = success === true;
+        const title = isSuccess ? 'Response' : 'Error';
+        const borderColor = isSuccess ? '#10b981' : '#ef4444';
+        const titleColor = isSuccess ? '#059669' : '#dc2626';
+        let html = `<div style="font-size: 13px;"><div style="font-weight: 600; color: ${titleColor}; margin-bottom: 8px;">${escapeHtml(title)}</div>`;
+        if (message) html += `<div style="margin-bottom: 8px; color: #374151;">${escapeHtml(message)}</div>`;
+        if (data !== undefined && data !== null) {
+            html += `<pre style="margin: 0; padding: 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-word;">${escapeHtml(typeof data === 'string' ? data : JSON.stringify(data, null, 2))}</pre>`;
+        }
+        html += '</div>';
+        verificationModalResponse.style.borderColor = borderColor;
+        verificationModalResponse.innerHTML = html;
+        verificationModalResponse.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Sample data matching payment creation forms (create_session / upi_collection / etc.)
+    function fillVerificationFormWithSampleData() {
+        const sampleData = {
+            buyer_name: 'John Doe',
+            type_of_goods: 'PHYSICAL_GOODS',
+            product_description: 'This is a sample product description',
+            buyer_address: '123 Main Street, Apt 4B, City, State',
+            invoice_number: 'INV' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+            buyer_postal_code: '123456',
+            hs_code: '98051000'
+        };
+        const buyerNameEl = document.getElementById('verifBuyerName');
+        const productDescEl = document.getElementById('verifProductDescription');
+        const buyerAddressEl = document.getElementById('verifBuyerAddress');
+        const invoiceNumberEl = document.getElementById('verifInvoiceNumber');
+        const buyerPostalEl = document.getElementById('verifBuyerPostalCode');
+        if (buyerNameEl) buyerNameEl.value = sampleData.buyer_name;
+        if (verifTypeOfGoods) verifTypeOfGoods.value = sampleData.type_of_goods;
+        if (productDescEl) productDescEl.value = sampleData.product_description;
+        if (buyerAddressEl) buyerAddressEl.value = sampleData.buyer_address;
+        if (invoiceNumberEl) invoiceNumberEl.value = sampleData.invoice_number;
+        if (buyerPostalEl) buyerPostalEl.value = sampleData.buyer_postal_code;
+        if (verifHsCode) verifHsCode.value = sampleData.hs_code;
+        updateVerificationHsCodeVisibility();
+    }
+
+    function closeVerificationModal() {
+        currentVerificationPaymentUid = null;
+        if (verificationModalOverlay) verificationModalOverlay.style.display = 'none';
+    }
+
+    function updateVerificationHsCodeVisibility() {
+        const type = verifTypeOfGoods ? verifTypeOfGoods.value : '';
+        const needsHsCode = type === 'GOODS' || type === 'PHYSICAL_GOODS' || type === 'DIGITAL_GOODS';
+        if (verifHsCode) verifHsCode.required = needsHsCode;
+        if (verifHsCodeRequired) verifHsCodeRequired.style.visibility = needsHsCode ? 'visible' : 'hidden';
+    }
+
+    async function uploadVerificationDetails() {
+        const paymentUid = currentVerificationPaymentUid;
+        if (!paymentUid) {
+            showVerificationResponse(false, 'Payment UID is missing.', null);
+            return;
+        }
+
+        const buyerName = document.getElementById('verifBuyerName') && document.getElementById('verifBuyerName').value.trim();
+        const typeOfGoods = verifTypeOfGoods && verifTypeOfGoods.value;
+        const productDescription = document.getElementById('verifProductDescription') && document.getElementById('verifProductDescription').value.trim();
+        const buyerAddress = document.getElementById('verifBuyerAddress') && document.getElementById('verifBuyerAddress').value.trim();
+        const invoiceNumber = document.getElementById('verifInvoiceNumber') && document.getElementById('verifInvoiceNumber').value.trim();
+        const buyerPostalCode = document.getElementById('verifBuyerPostalCode') && document.getElementById('verifBuyerPostalCode').value.trim();
+        const hsCode = verifHsCode && verifHsCode.value.trim();
+
+        if (!buyerName || !typeOfGoods || !productDescription || !buyerAddress || !invoiceNumber || !buyerPostalCode) {
+            showVerificationResponse(false, 'Please fill all required fields.', null);
+            return;
+        }
+
+        const needsHsCode = typeOfGoods === 'GOODS' || typeOfGoods === 'PHYSICAL_GOODS' || typeOfGoods === 'DIGITAL_GOODS';
+        if (needsHsCode && !hsCode) {
+            showVerificationResponse(false, 'HS code is required when type of goods is GOODS, PHYSICAL_GOODS, or DIGITAL_GOODS.', null);
+            return;
+        }
+
+        const payload = {
+            buyer_name: buyerName,
+            type_of_goods: typeOfGoods,
+            product_description: productDescription,
+            buyer_address: buyerAddress,
+            invoice_number: invoiceNumber,
+            buyer_postal_code: buyerPostalCode
+        };
+        if (hsCode) payload.hs_code = hsCode;
+
+        if (verificationModalSubmitBtn) {
+            verificationModalSubmitBtn.disabled = true;
+            verificationModalSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        }
+        showVerificationResponse(null);
+
+        try {
+            const response = await fetch(`${window.API_URL}/pg/payments/${encodeURIComponent(paymentUid)}/upload-verification-details/`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                const errorMessage = data.message || (data.error_details && (typeof data.error_details === 'string' ? data.error_details : JSON.stringify(data.error_details))) || (data.error && data.error.details && (typeof data.error.details === 'string' ? data.error.details : JSON.stringify(data.error.details))) || 'Failed to upload payment verification details.';
+                showVerificationResponse(false, errorMessage, data);
+                return;
+            }
+
+            showVerificationResponse(true, data.message || 'Payment verification details uploaded successfully.', data);
+        } catch (error) {
+            console.error('Error uploading verification details:', error);
+            const msg = error && error.message ? error.message : 'An unexpected error occurred while uploading verification details.';
+            showVerificationResponse(false, msg, null);
+        } finally {
+            if (verificationModalSubmitBtn) {
+                verificationModalSubmitBtn.disabled = false;
+                verificationModalSubmitBtn.innerHTML = '<i class="fas fa-upload"></i><span>Upload</span>';
+            }
         }
     }
 
@@ -748,6 +917,50 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             await fetchVbaPaymentByUtr();
         });
+    }
+
+    // Delegated click: Populate Payment Details button in payment list
+    if (vbaPaymentsContent) {
+        vbaPaymentsContent.addEventListener('click', function (e) {
+            const btn = e.target && e.target.closest('.vba-upload-verification-btn');
+            if (!btn) return;
+            const paymentUid = btn.getAttribute('data-payment-uid');
+            if (paymentUid) openVerificationModal(paymentUid);
+        });
+    }
+
+    // Verification details modal: close buttons and overlay
+    if (verificationModalCloseBtn) {
+        verificationModalCloseBtn.addEventListener('click', closeVerificationModal);
+    }
+    if (verificationModalCancelBtn) {
+        verificationModalCancelBtn.addEventListener('click', closeVerificationModal);
+    }
+    if (verificationModalOverlay) {
+        verificationModalOverlay.addEventListener('click', function (e) {
+            if (e.target === verificationModalOverlay) closeVerificationModal();
+        });
+    }
+    if (verificationModalBox) {
+        verificationModalBox.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+
+    // Type of goods change: HS code required for GOODS / PHYSICAL_GOODS / DIGITAL_GOODS
+    if (verifTypeOfGoods) {
+        verifTypeOfGoods.addEventListener('change', updateVerificationHsCodeVisibility);
+    }
+
+    // Verification details form submit
+    if (verificationDetailsForm) {
+        verificationDetailsForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            uploadVerificationDetails();
+        });
+    }
+
+    // Auto fill verification form with same sample data as payment creation forms
+    if (verificationModalAutoFillBtn) {
+        verificationModalAutoFillBtn.addEventListener('click', fillVerificationFormWithSampleData);
     }
 
     // Pre-populate VBA ID field from localStorage if available
