@@ -23,6 +23,72 @@
         </div>
     </div>
 
+    <!-- Modal for Upload Payment Verification Details -->
+    <div class="modal-overlay" id="verificationModalOverlay" style="display: none;">
+        <div class="modal" id="verificationModalBox" style="max-width: 560px; text-align: left;">
+            <button class="modal-close" id="verificationModalCloseBtn" aria-label="Close">&times;</button>
+            <div class="section-title" style="margin-bottom: 16px;">
+                <i class="fas fa-file-upload"></i> Upload Payment Verification Details
+            </div>
+            <p class="helper-text" style="margin-bottom: 16px;">Payment: <strong id="verificationModalPaymentId"></strong></p>
+            <form id="verificationDetailsForm" autocomplete="off">
+                <div class="form-section" style="margin-bottom: 16px;">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer name <span class="required">*</span></label>
+                            <input type="text" id="verifBuyerName" name="buyer_name" placeholder="Importer/buyer name" maxlength="255" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Type of goods <span class="required">*</span></label>
+                            <select id="verifTypeOfGoods" name="type_of_goods" required>
+                                <option value="">Select</option>
+                                <option value="GOODS">GOODS</option>
+                                <option value="PHYSICAL_GOODS">PHYSICAL_GOODS</option>
+                                <option value="DIGITAL_GOODS">DIGITAL_GOODS</option>
+                                <option value="SERVICE">SERVICE</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Product description <span class="required">*</span></label>
+                            <textarea id="verifProductDescription" name="product_description" placeholder="Description of the product/goods" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer address <span class="required">*</span></label>
+                            <input type="text" id="verifBuyerAddress" name="buyer_address" placeholder="Importer/buyer address" required>
+                        </div>
+                        <div class="form-group">
+                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Invoice number <span class="required">*</span></label>
+                            <input type="text" id="verifInvoiceNumber" name="invoice_number" placeholder="Invoice number" maxlength="255" required>
+                        </div>
+                        <div class="form-group">
+                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer postal code <span class="required">*</span></label>
+                            <input type="text" id="verifBuyerPostalCode" name="buyer_postal_code" placeholder="e.g. SW1A 1AA" maxlength="10" required>
+                        </div>
+                        <div class="form-group full-width" id="verifHsCodeGroup">
+                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">HS code <span id="verifHsCodeRequired" class="required">*</span></label>
+                            <input type="text" id="verifHsCode" name="hs_code" placeholder="Required for GOODS / PHYSICAL_GOODS / DIGITAL_GOODS" maxlength="30">
+                            <div class="helper-text" id="verifHsCodeHelp">Required when type of goods is GOODS, PHYSICAL_GOODS, or DIGITAL_GOODS.</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap;">
+                    <button type="button" id="verificationModalAutoFillBtn" class="secondary-btn" style="max-width: 160px;">
+                        <i class="fas fa-magic"></i>
+                        <span>Auto fill</span>
+                    </button>
+                    <div style="display: flex; gap: 12px;">
+                        <button type="button" id="verificationModalCancelBtn" class="secondary-btn" style="max-width: 120px;">Cancel</button>
+                        <button type="submit" id="verificationModalSubmitBtn" class="main-action-btn" style="max-width: 200px; margin-top: 0;">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id="verificationModalResponse" style="margin-top: 20px; padding: 16px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; display: none;"></div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
