@@ -2,14 +2,14 @@
 <html lang="en">
 
 <head>
-    <script src="../assets/js/config.js?v=1.0.9.10"></script>
+    <script src="../assets/js/config.js?v=1.0.9.11"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Virtual Bank Account (VBA) - EximPe Integrations</title>
-    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.10">
-    <link rel="stylesheet" href="../assets/css/upi_collection.css?v=1.0.9.10">
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.11">
+    <link rel="stylesheet" href="../assets/css/upi_collection.css?v=1.0.9.11">
 </head>
 
 <body>
@@ -30,16 +30,22 @@
             <div class="section-title" style="margin-bottom: 16px;">
                 <i class="fas fa-file-upload"></i> Upload Payment Verification Details
             </div>
-            <p class="helper-text" style="margin-bottom: 16px;">Payment: <strong id="verificationModalPaymentId"></strong></p>
+            <p class="helper-text" style="margin-bottom: 16px;">Payment: <strong
+                    id="verificationModalPaymentId"></strong></p>
             <form id="verificationDetailsForm" autocomplete="off">
                 <div class="form-section" style="margin-bottom: 16px;">
                     <div class="form-grid">
                         <div class="form-group full-width">
-                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer name <span class="required">*</span></label>
-                            <input type="text" id="verifBuyerName" name="buyer_name" placeholder="Importer/buyer name" maxlength="255" required>
+                            <label
+                                style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer
+                                name <span class="required">*</span></label>
+                            <input type="text" id="verifBuyerName" name="buyer_name" placeholder="Importer/buyer name"
+                                maxlength="255" required>
                         </div>
                         <div class="form-group full-width">
-                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Type of goods <span class="required">*</span></label>
+                            <label
+                                style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Type
+                                of goods <span class="required">*</span></label>
                             <select id="verifTypeOfGoods" name="type_of_goods" required>
                                 <option value="">Select</option>
                                 <option value="GOODS">GOODS</option>
@@ -49,43 +55,64 @@
                             </select>
                         </div>
                         <div class="form-group full-width">
-                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Product description <span class="required">*</span></label>
-                            <textarea id="verifProductDescription" name="product_description" placeholder="Description of the product/goods" required></textarea>
+                            <label
+                                style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Product
+                                description <span class="required">*</span></label>
+                            <textarea id="verifProductDescription" name="product_description"
+                                placeholder="Description of the product/goods" required></textarea>
                         </div>
                         <div class="form-group full-width">
-                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer address <span class="required">*</span></label>
-                            <input type="text" id="verifBuyerAddress" name="buyer_address" placeholder="Importer/buyer address" required>
+                            <label
+                                style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer
+                                address <span class="required">*</span></label>
+                            <input type="text" id="verifBuyerAddress" name="buyer_address"
+                                placeholder="Importer/buyer address" required>
                         </div>
                         <div class="form-group">
-                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Invoice number <span class="required">*</span></label>
-                            <input type="text" id="verifInvoiceNumber" name="invoice_number" placeholder="Invoice number" maxlength="255" required>
+                            <label
+                                style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Invoice
+                                number <span class="required">*</span></label>
+                            <input type="text" id="verifInvoiceNumber" name="invoice_number"
+                                placeholder="Invoice number" maxlength="255" required>
                         </div>
                         <div class="form-group">
-                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer postal code <span class="required">*</span></label>
-                            <input type="text" id="verifBuyerPostalCode" name="buyer_postal_code" placeholder="e.g. SW1A 1AA" maxlength="10" required>
+                            <label
+                                style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Buyer
+                                postal code <span class="required">*</span></label>
+                            <input type="text" id="verifBuyerPostalCode" name="buyer_postal_code"
+                                placeholder="e.g. SW1A 1AA" maxlength="10" required>
                         </div>
                         <div class="form-group full-width" id="verifHsCodeGroup">
-                            <label style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">HS code <span id="verifHsCodeRequired" class="required">*</span></label>
-                            <input type="text" id="verifHsCode" name="hs_code" placeholder="Required for GOODS / PHYSICAL_GOODS / DIGITAL_GOODS" maxlength="30">
-                            <div class="helper-text" id="verifHsCodeHelp">Required when type of goods is GOODS, PHYSICAL_GOODS, or DIGITAL_GOODS.</div>
+                            <label
+                                style="display:block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">HS
+                                code <span id="verifHsCodeRequired" class="required">*</span></label>
+                            <input type="text" id="verifHsCode" name="hs_code"
+                                placeholder="Required for GOODS / PHYSICAL_GOODS / DIGITAL_GOODS" maxlength="30">
+                            <div class="helper-text" id="verifHsCodeHelp">Required when type of goods is GOODS,
+                                PHYSICAL_GOODS, or DIGITAL_GOODS.</div>
                         </div>
                     </div>
                 </div>
                 <div style="display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap;">
-                    <button type="button" id="verificationModalAutoFillBtn" class="secondary-btn" style="max-width: 160px;">
+                    <button type="button" id="verificationModalAutoFillBtn" class="secondary-btn"
+                        style="max-width: 160px;">
                         <i class="fas fa-magic"></i>
                         <span>Auto fill</span>
                     </button>
                     <div style="display: flex; gap: 12px;">
-                        <button type="button" id="verificationModalCancelBtn" class="secondary-btn" style="max-width: 120px;">Cancel</button>
-                        <button type="submit" id="verificationModalSubmitBtn" class="main-action-btn" style="max-width: 200px; margin-top: 0;">
+                        <button type="button" id="verificationModalCancelBtn" class="secondary-btn"
+                            style="max-width: 120px;">Cancel</button>
+                        <button type="submit" id="verificationModalSubmitBtn" class="main-action-btn"
+                            style="max-width: 200px; margin-top: 0;">
                             <i class="fas fa-upload"></i>
                             <span>Upload</span>
                         </button>
                     </div>
                 </div>
             </form>
-            <div id="verificationModalResponse" style="margin-top: 20px; padding: 16px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; display: none;"></div>
+            <div id="verificationModalResponse"
+                style="margin-top: 20px; padding: 16px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; display: none;">
+            </div>
         </div>
     </div>
 
@@ -160,15 +187,18 @@
             </div>
             <div id="vbaResultContent"></div>
             <div style="margin-top: 16px; text-align: right;">
-                <button type="button" id="vbaPaymentsButton" class="secondary-btn" style="max-width: 220px; margin-right: 8px;">
+                <button type="button" id="vbaPaymentsButton" class="secondary-btn"
+                    style="max-width: 220px; margin-right: 8px;">
                     <i class="fas fa-list"></i>
                     <span>View Payments</span>
                 </button>
-                <button type="button" id="vbaPaymentUtrToggleButton" class="secondary-btn" style="max-width: 240px; margin-right: 8px;">
+                <button type="button" id="vbaPaymentUtrToggleButton" class="secondary-btn"
+                    style="max-width: 240px; margin-right: 8px;">
                     <i class="fas fa-search"></i>
                     <span>Search Payment by UTR</span>
                 </button>
-                <button type="button" id="vbaStatusToggleButton" class="secondary-btn" style="max-width: 220px; margin-right: 8px;">
+                <button type="button" id="vbaStatusToggleButton" class="secondary-btn"
+                    style="max-width: 220px; margin-right: 8px;">
                     <i class="fas fa-power-off"></i>
                     <span>Toggle Status</span>
                 </button>
@@ -253,18 +283,17 @@
 
     <!-- Common utilities -->
     <!-- Trusted Types Policy (must load first) -->
-    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.10"></script>
-    <script src="../assets/js/common-utils.js?v=1.0.9.10"></script>
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.11"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.9.11"></script>
     <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
     <!-- Page-specific logic -->
-    <script src="../assets/js/vba.js?v=1.0.9.10"></script>
+    <script src="../assets/js/vba.js?v=1.0.9.11"></script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
 
 </body>
 
 </html>
-

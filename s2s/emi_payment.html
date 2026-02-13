@@ -7,10 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Create Payment Session</title>
+    <title>Create S2S EMI Payment</title>
     <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.11">
-    <link rel="stylesheet" href="../assets/css/checkout_create_session.css?v=1.0.9.11">
-
+    <link rel="stylesheet" href="../assets/css/upi_intent.css?v=1.0.9.11">
 </head>
 
 <body>
@@ -18,11 +17,11 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modalBox">
             <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
-            <div class="modal-icon" id="modalIcon"></div>
             <div class="modal-title" id="modalTitle"></div>
             <div class="modal-message" id="modalMessage"></div>
         </div>
     </div>
+
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,10 +30,10 @@
                     fill="white" />
             </svg>
         </div>
-        <h1 style="color: rgb(38, 168, 135);">Create Payment Checkout</h1>
+        <h1 style="color: rgb(38, 168, 135);">Create S2S EMI Payment</h1>
         <div class="subtitle" style="text-wrap: balanced;">
-            This checkout page demonstrates a hosted payment flow, mimicking an SDK call from your backend. Fill in the
-            details to generate a payment session and experience the integration as your customers would.
+            This page demonstrates Server-to-Server (S2S) EMI payment integration for both cardless EMI and card EMI (PayU).
+            For cardless EMI: select provider and tenure; you will be redirected to the lender’s page. For card EMI (PayU): use bank code and card details.
         </div>
 
         <div class="header-actions">
@@ -42,7 +41,7 @@
 
         <form id="sessionForm" autocomplete="off">
             <div class="form-section">
-                <div class="section-title"><i class="fas fa-credit-card"></i> Order Details</div>
+                <div class="section-title"><i class="fas fa-receipt"></i> Order Details</div>
                 <div class="form-grid">
                     <div class="form-group tooltip">
                         <input type="text" id="amount" name="amount" placeholder="Amount" inputmode="decimal">
@@ -63,17 +62,6 @@
                             Defaults to INR if not specified
                         </span>
                     </div>
-                    <div class="form-group full-width tooltip">
-                        <input type="text" id="returnUrl" name="return_url" placeholder=" Return URL">
-                        <span class="tooltiptext">
-                            <strong>Return URL</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            URL where customer will be redirected after payment<br>
-                            Must be a valid HTTPS URL for production
-                        </span>
-                        <div class="helper-text">Where the customer will be redirected after payment. <span
-                                class="required">*</span></div>
-                    </div>
                     <div class="form-group tooltip">
                         <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number"
                             autocomplete="off">
@@ -86,23 +74,113 @@
                         <div class="helper-text">Merchant's Unique identifier for the order <span
                                 class="required">*</span></div>
                     </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-percentage"></i> EMI Details</div>
+                <div class="form-grid">
                     <div class="form-group tooltip">
-                        <select id="mopType" name="mop_type" placeholder="Mode of Payment">
-                            <option value="">Select Mode of Payment</option>
-                            <option value="UPI">UPI</option>
-                            <option value="NET_BANKING">Net Banking</option>
-                            <option value="DEBIT_CARD">Debit Card</option>
-                            <option value="CREDIT_CARD">Credit Card</option>
-                            <option value="QR">QR</option>
-                            <option value="WALLET">Wallet</option>
+                        <select id="emiMode" name="emi_mode">
+                            <option value="cardless">Cardless EMI</option>
+                            <option value="card">Card EMI (PayU bank code)</option>
                         </select>
                         <span class="tooltiptext">
-                            <strong>Mode of Payment</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
-                            Restrict payment to specific method<br>
-                            Leave empty to allow all payment methods
+                            <strong>EMI Mode</strong><br>
+                            Cardless: provider + tenure (PayU/Cashfree). Card EMI: PayU bank code (e.g. EMIA3, HDFCCL03) with optional card details.
                         </span>
-                        <div class="helper-text">Restict the payment to a selected Mode</div>
+                        <div class="helper-text">Payment mode</div>
+                    </div>
+                    <div class="form-group tooltip" id="emiProviderGroup">
+                        <select id="emiProvider" name="emi_provider">
+                            <option value="">Select EMI Provider</option>
+                            <option value="flexmoney">Flexmoney</option>
+                            <option value="zestmoney">ZestMoney</option>
+                            <option value="hdfc">HDFC Cardless</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="icici">ICICI</option>
+                            <option value="cashe">CASHe</option>
+                            <option value="idfc">IDFC</option>
+                            <option value="kotak">Kotak</option>
+                            <option value="snapmint">Snapmint</option>
+                            <option value="bharatx">BharatX</option>
+                            <option value="axio">Axio</option>
+                            <option value="home_credit">Home Credit</option>
+                            <option value="lazypay">LazyPay</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>EMI Provider</strong><br>
+                            <span class="tooltip-required">Required for cardless</span><br>
+                            Cardless EMI provider. PayU: hdfc, axio, home_credit, lazypay, zestmoney. Cashfree: flexmoney, zestmoney, hdfc, icici, cashe, idfc, kotak, snapmint, bharatx.
+                        </span>
+                        <div class="helper-text">Cardless EMI Provider <span class="required" id="emiProviderRequired">*</span></div>
+                    </div>
+                    <div class="form-group tooltip" id="emiBankNameGroup" style="display: none;">
+                        <select id="emiBankName" name="emi_bank_name">
+                            <option value="">Select Bank</option>
+                            <option value="Axis Bank">Axis Bank</option>
+                            <option value="HDFC Bank">HDFC Bank</option>
+                            <option value="ICICI Bank">ICICI Bank</option>
+                            <option value="State Bank of India">State Bank of India</option>
+                            <option value="AU Small Finance Bank">AU Small Finance Bank</option>
+                            <option value="DBS Bank">DBS Bank</option>
+                            <option value="Equitas Small Finance Bank">Equitas Small Finance Bank</option>
+                            <option value="Federal Bank">Federal Bank</option>
+                            <option value="IDBI Bank">IDBI Bank</option>
+                            <option value="IDFC FIRST Bank">IDFC FIRST Bank</option>
+                            <option value="IndusInd Bank">IndusInd Bank</option>
+                            <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+                            <option value="OneCard">OneCard</option>
+                            <option value="RBL Bank">RBL Bank</option>
+                            <option value="Standard Chartered Bank">Standard Chartered Bank</option>
+                            <option value="Yes Bank">Yes Bank</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>Bank Name (PayU EMI)</strong><br>
+                            <span class="tooltip-required">Required for card EMI</span><br>
+                            Choose the bank whose card EMI will be used. Tenure is selected separately.
+                        </span>
+                        <div class="helper-text">Bank name for EMI <span class="required" id="emiBankNameRequired">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <select id="emiTenure" name="emi_tenure">
+                            <option value="">Select tenure</option>
+                            <option value="3">3 months</option>
+                            <option value="6">6 months</option>
+                            <option value="9">9 months</option>
+                            <option value="12">12 months</option>
+                            <option value="18">18 months</option>
+                            <option value="24">24 months</option>
+                            <option value="36">36 months</option>
+                        </select>
+                        <span class="tooltiptext">
+                            <strong>EMI Tenure</strong><br>
+                            <span class="tooltip-required">Required for cardless</span><br>
+                            Tenure in months (e.g. 3, 6, 9, 12). Must match the selected provider’s available tenures.
+                        </span>
+                        <div class="helper-text">EMI Tenure (months)</div>
+                    </div>
+                </div>
+                <div id="cardEmiDetailsSection" class="form-grid" style="display: none; margin-top: 12px;">
+                    <div class="form-group tooltip">
+                        <input type="text" id="cardNumber" name="card_number" placeholder="Card number" autocomplete="off" maxlength="19">
+                        <div class="helper-text">Card number (PayU card EMI)</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="cardholderName" name="cardholder_name" placeholder="Name on card">
+                        <div class="helper-text">Name on card</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="cardExpiryMonth" name="card_expiry_month" placeholder="MM" maxlength="2">
+                        <div class="helper-text">Expiry month (MM)</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="cardExpiryYear" name="card_expiry_year" placeholder="YYYY" maxlength="4">
+                        <div class="helper-text">Expiry year (YYYY)</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="cardCvv" name="card_cvv" placeholder="CVV" autocomplete="off" maxlength="4">
+                        <div class="helper-text">CVV</div>
                     </div>
                 </div>
             </div>
@@ -141,6 +219,27 @@
                             Used for payment notifications and support
                         </span>
                         <div class="helper-text">Buyer Phone <span class="required">*</span></div>
+                    </div>
+
+                    <div class="form-group tooltip">
+                        <input type="text" id="userIp" name="user_ip" placeholder="User IP Address">
+                        <span class="tooltiptext">
+                            <strong>User IP Address</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            IP address of the end user making the payment<br>
+                            Used for fraud detection and compliance (e.g., 192.168.1.1)
+                        </span>
+                        <div class="helper-text">End user's IP address for S2S transactions</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="userAgent" name="user_agent" placeholder="User Agent">
+                        <span class="tooltiptext">
+                            <strong>User Agent</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Browser/device information of the end user<br>
+                            Used for fraud detection and analytics
+                        </span>
+                        <div class="helper-text">End user's browser/device information</div>
                     </div>
                     <div class="form-group full-width tooltip">
                         <input type="text" id="buyerAddressLine1" name="buyer_address_line_1"
@@ -223,7 +322,8 @@
                             Classify as physical goods, digital goods or services<br>
                             Required for tax and compliance purposes
                         </span>
-                        <div class="helper-text">Specify whether this is physical goods, digital goods or service<span class="required">*</span>
+                        <div class="helper-text">Specify whether this is physical goods, digital goods or service<span
+                                class="required">*</span>
                         </div>
                     </div>
                     <div class="form-group full-width tooltip">
@@ -265,11 +365,11 @@
                         <input type="text" id="invoiceNumber" name="invoice_number" placeholder="Invoice Number">
                         <span class="tooltiptext">
                             <strong>Invoice Number</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
+                            <span class="tooltip-required">Required</span><br>
                             Unique invoice identifier<br>
                             Used for accounting and record keeping
                         </span>
-                        <div class="helper-text">Unique identifier</div>
+                        <div class="helper-text">Unique identifier <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
                         <input type="date" id="invoiceDate" name="invoice_date" placeholder="Invoice Date">
@@ -285,27 +385,21 @@
             </div>
 
             <button type="submit" id="createButton" class="main-action-btn">
-                <i class="fas fa-lock"></i>
-                <span id="btnText">Initiate Checkout</span>
+                <i class="fas fa-percentage"></i>
+                <span id="btnText">Initiate EMI Payment</span>
             </button>
         </form>
     </div>
 
     <!-- Common utilities -->
-    <!-- Trusted Types Policy (must load first) -->
     <script src="../assets/js/trusted-types-policy.js?v=1.0.9.11"></script>
     <script src="../assets/js/common-utils.js?v=1.0.9.11"></script>
-
-    <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
-
     <!-- Page-specific logic -->
-    <script src="../assets/js/create_session.js?v=1.0.9.11"></script>
-
-    <!-- Credential injection handled centrally by common-utils.js -->
-
+    <script src="../assets/js/emi_payment.js?v=1.0.9.11"></script>
 </body>
 
 </html>
+

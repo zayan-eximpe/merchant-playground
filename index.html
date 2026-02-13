@@ -2,16 +2,16 @@
 <html lang="en">
 
 <head>
-    <script src="assets/js/config.js?v=1.0.9.10"></script>
+    <script src="assets/js/config.js?v=1.0.9.11"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <title>EximPe Integrations</title>
 
-    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=1.0.9.10">
-    <link rel="stylesheet" href="assets/css/index.css?v=1.0.9.10">
-    <link rel="stylesheet" href="assets/css/mobile-nav.css?v=1.0.9.10">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=1.0.9.11">
+    <link rel="stylesheet" href="assets/css/index.css?v=1.0.9.11">
+    <link rel="stylesheet" href="assets/css/mobile-nav.css?v=1.0.9.11">
 </head>
 
 <body>
@@ -208,6 +208,26 @@
                         <a href="s2s/qr_payment.html" class="integration-card">
                             <div class="card-title"><i class="fas fa-qrcode"></i> QR Payment</div>
                             <div class="card-desc">Generate QR codes for instant scanning.</div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="s2s/wallet_payment.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-wallet"></i> Wallet Payment</div>
+                            <div class="card-desc">Process payments via digital wallets like Paytm, PhonePe, and more.</div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="s2s/netbanking_payment.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-university"></i> Net Banking</div>
+                            <div class="card-desc">Accept payments directly from customer bank accounts.</div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="s2s/emi_payment.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-percentage"></i> EMI</div>
+                            <div class="card-desc">Offer EMI plans via S2S integration.</div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="s2s/payment_methods_eligibility.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-balance-scale"></i> Payment Methods Eligibility</div>
+                            <div class="card-desc">Check which payment methods (cards, netbanking, wallets, EMI, BNPL) are eligible for a given amount and customer.</div>
                             <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
                         </a>
                     </div>
@@ -547,6 +567,36 @@
                 try { JSON.parse(val); return false; } catch (_) { return true; }
             }
 
+            function toggleVersionSpecificIntegrations() {
+                const apiVerEl = document.getElementById('apiVersion');
+                const version = apiVerEl ? apiVerEl.value : '';
+                const isV1 = version === '1.0.0';
+
+                // EMI should be available for API versions other than 1.0.0
+                const emiCard = document.querySelector('.integration-card[href="s2s/emi_payment.html"]');
+                if (emiCard) {
+                    emiCard.style.display = isV1 ? 'none' : '';
+                }
+
+                // Payment Links - Share Link card only for 1.0.0
+                const shareLinkCard = document.querySelector('.integration-card[href="payment_link/share_payment_link.html"]');
+                if (shareLinkCard) {
+                    shareLinkCard.style.display = isV1 ? '' : 'none';
+                }
+
+                // Payment Links - Extend Expiry card only for 1.0.0
+                const extendExpiryCard = document.querySelector('.integration-card[href="payment_link/extend_payment_link_expiry.html"]');
+                if (extendExpiryCard) {
+                    extendExpiryCard.style.display = isV1 ? '' : 'none';
+                }
+
+                // Subscriptions section only for 1.0.0
+                const subsSection = document.getElementById('subscription-management');
+                if (subsSection) {
+                    subsSection.style.display = isV1 ? '' : 'none';
+                }
+            }
+
             function loadCredentials() {
                 const env = getSelectedEnv();
                 if (envSwitcher) envSwitcher.value = env;
@@ -560,9 +610,10 @@
                     document.getElementById('isPspCheckbox').checked = false;
                     const _cbEl = document.getElementById('cred-callback-url');
                     if (_cbEl) _cbEl.value = (window.Config && window.Config.CALLBACK_URL) || '';
-                        const _apiVerEl = document.getElementById('apiVersion');
-                        if (_apiVerEl) _apiVerEl.value = (window.Config && window.Config.API_VERSION) || '2.0.0';
+                    const _apiVerEl = document.getElementById('apiVersion');
+                    if (_apiVerEl) _apiVerEl.value = (window.Config && window.Config.API_VERSION) || '2.0.0';
                     statusEl.textContent = 'No credentials for ' + env;
+                    toggleVersionSpecificIntegrations();
                     return;
                 }
 
@@ -594,6 +645,7 @@
                 // toggle merchant id visibility like other pages expect
                 const merchantGroup = document.getElementById('merchantIdGroup');
                 if (merchantGroup) merchantGroup.style.display = document.getElementById('isPspCheckbox').checked ? 'block' : 'none';
+                toggleVersionSpecificIntegrations();
             }
 
             async function saveCredentials() {
@@ -696,6 +748,13 @@
                 });
             }
 
+            const apiVerEl = document.getElementById('apiVersion');
+            if (apiVerEl) {
+                apiVerEl.addEventListener('change', () => {
+                    toggleVersionSpecificIntegrations();
+                });
+            }
+
             encryptToggle.addEventListener('change', () => {
                 passInput.style.display = encryptToggle.checked ? 'inline-block' : 'none';
             });
@@ -709,7 +768,10 @@
                 });
             }
 
-            document.getElementById('cred-save').addEventListener('click', saveCredentials);
+            document.getElementById('cred-save').addEventListener('click', async () => {
+                await saveCredentials();
+                closeCredModal();
+            });
             document.getElementById('cred-clear').addEventListener('click', clearCredentials);
             document.getElementById('cred-export').addEventListener('click', exportCredentials);
             document.getElementById('cred-import-btn').addEventListener('click', () => importFile.click());

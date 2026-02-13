@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Create Payment Session</title>
+    <title>Create S2S Wallet Payment</title>
     <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.11">
-    <link rel="stylesheet" href="../assets/css/checkout_create_session.css?v=1.0.9.11">
+    <link rel="stylesheet" href="../assets/css/upi_intent.css?v=1.0.9.11">
 
 </head>
 
@@ -18,11 +18,12 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modalBox">
             <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
-            <div class="modal-icon" id="modalIcon"></div>
             <div class="modal-title" id="modalTitle"></div>
             <div class="modal-message" id="modalMessage"></div>
         </div>
     </div>
+
+    <!-- Mobile Quick Actions -->
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,10 +32,11 @@
                     fill="white" />
             </svg>
         </div>
-        <h1 style="color: rgb(38, 168, 135);">Create Payment Checkout</h1>
+        <h1 style="color: rgb(38, 168, 135);">Create S2S Wallet Payment</h1>
         <div class="subtitle" style="text-wrap: balanced;">
-            This checkout page demonstrates a hosted payment flow, mimicking an SDK call from your backend. Fill in the
-            details to generate a payment session and experience the integration as your customers would.
+            This page demonstrates Server-to-Server (S2S) wallet payment integration. Create wallet payment requests from your
+            backend and get an ACS template that redirects customers to complete payment via digital wallets like Paytm, PhonePe, 
+            and more. Features enhanced security with user IP tracking and device information.
         </div>
 
         <div class="header-actions">
@@ -42,7 +44,7 @@
 
         <form id="sessionForm" autocomplete="off">
             <div class="form-section">
-                <div class="section-title"><i class="fas fa-credit-card"></i> Order Details</div>
+                <div class="section-title"><i class="fas fa-wallet"></i> Order Details</div>
                 <div class="form-grid">
                     <div class="form-group tooltip">
                         <input type="text" id="amount" name="amount" placeholder="Amount" inputmode="decimal">
@@ -63,17 +65,6 @@
                             Defaults to INR if not specified
                         </span>
                     </div>
-                    <div class="form-group full-width tooltip">
-                        <input type="text" id="returnUrl" name="return_url" placeholder=" Return URL">
-                        <span class="tooltiptext">
-                            <strong>Return URL</strong><br>
-                            <span class="tooltip-required">Required</span><br>
-                            URL where customer will be redirected after payment<br>
-                            Must be a valid HTTPS URL for production
-                        </span>
-                        <div class="helper-text">Where the customer will be redirected after payment. <span
-                                class="required">*</span></div>
-                    </div>
                     <div class="form-group tooltip">
                         <input type="text" id="ReferenceID" name="reference_id" placeholder="Customer Reference Number"
                             autocomplete="off">
@@ -87,22 +78,25 @@
                                 class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
-                        <select id="mopType" name="mop_type" placeholder="Mode of Payment">
-                            <option value="">Select Mode of Payment</option>
-                            <option value="UPI">UPI</option>
-                            <option value="NET_BANKING">Net Banking</option>
-                            <option value="DEBIT_CARD">Debit Card</option>
-                            <option value="CREDIT_CARD">Credit Card</option>
-                            <option value="QR">QR</option>
-                            <option value="WALLET">Wallet</option>
+                        <select id="walletProvider" name="wallet_provider">
+                            <option value="">Select Wallet Provider</option>
+                            <option value="gpay">Google Pay</option>
+                            <option value="phonepe">PhonePe</option>
+                            <option value="ola">Ola Money</option>
+                            <option value="paytm">Paytm</option>
+                            <option value="amazon">Amazon Pay</option>
+                            <option value="airtel">Airtel Money</option>
+                            <option value="freecharge">Freecharge</option>
+                            <option value="mobikwik">Mobikwik</option>
+                            <option value="jio">JioMoney</option>
                         </select>
                         <span class="tooltiptext">
-                            <strong>Mode of Payment</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
-                            Restrict payment to specific method<br>
-                            Leave empty to allow all payment methods
+                            <strong>Wallet Provider</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Specific wallet provider to use for payment<br>
+                            If not specified, customer can choose from available wallets
                         </span>
-                        <div class="helper-text">Restict the payment to a selected Mode</div>
+                        <div class="helper-text">Preferred wallet provider <span class="required">*</span></div>
                     </div>
                 </div>
             </div>
@@ -141,6 +135,27 @@
                             Used for payment notifications and support
                         </span>
                         <div class="helper-text">Buyer Phone <span class="required">*</span></div>
+                    </div>
+
+                    <div class="form-group tooltip">
+                        <input type="text" id="userIp" name="user_ip" placeholder="User IP Address">
+                        <span class="tooltiptext">
+                            <strong>User IP Address</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            IP address of the end user making the payment<br>
+                            Used for fraud detection and compliance (e.g., 192.168.1.1)
+                        </span>
+                        <div class="helper-text">End user's IP address for S2S transactions</div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="userAgent" name="user_agent" placeholder="User Agent">
+                        <span class="tooltiptext">
+                            <strong>User Agent</strong><br>
+                            <span class="tooltip-optional">Optional</span><br>
+                            Browser/device information of the end user<br>
+                            Used for fraud detection and analytics
+                        </span>
+                        <div class="helper-text">End user's browser/device information</div>
                     </div>
                     <div class="form-group full-width tooltip">
                         <input type="text" id="buyerAddressLine1" name="buyer_address_line_1"
@@ -265,11 +280,11 @@
                         <input type="text" id="invoiceNumber" name="invoice_number" placeholder="Invoice Number">
                         <span class="tooltiptext">
                             <strong>Invoice Number</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
+                            <span class="tooltip-required">Required</span><br>
                             Unique invoice identifier<br>
                             Used for accounting and record keeping
                         </span>
-                        <div class="helper-text">Unique identifier</div>
+                        <div class="helper-text">Unique identifier <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
                         <input type="date" id="invoiceDate" name="invoice_date" placeholder="Invoice Date">
@@ -285,8 +300,8 @@
             </div>
 
             <button type="submit" id="createButton" class="main-action-btn">
-                <i class="fas fa-lock"></i>
-                <span id="btnText">Initiate Checkout</span>
+                <i class="fas fa-wallet"></i>
+                <span id="btnText">Initiate Wallet Payment</span>
             </button>
         </form>
     </div>
@@ -295,14 +310,12 @@
     <!-- Trusted Types Policy (must load first) -->
     <script src="../assets/js/trusted-types-policy.js?v=1.0.9.11"></script>
     <script src="../assets/js/common-utils.js?v=1.0.9.11"></script>
-
     <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
-
     <!-- Page-specific logic -->
-    <script src="../assets/js/create_session.js?v=1.0.9.11"></script>
+    <script src="../assets/js/wallet_payment.js?v=1.0.9.11"></script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
 

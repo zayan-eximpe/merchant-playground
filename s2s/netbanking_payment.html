@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Create UPI Collection Request</title>
+    <title>Create S2S Net Banking Payment</title>
     <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.11">
-    <link rel="stylesheet" href="../assets/css/upi_collection.css?v=1.0.9.11">
+    <link rel="stylesheet" href="../assets/css/upi_intent.css?v=1.0.9.11">
 
 </head>
 
@@ -18,11 +18,12 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modalBox">
             <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
-            <div class="modal-icon" id="modalIcon"></div>
             <div class="modal-title" id="modalTitle"></div>
             <div class="modal-message" id="modalMessage"></div>
         </div>
     </div>
+
+    <!-- Mobile Quick Actions -->
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,12 +32,11 @@
                     fill="white" />
             </svg>
         </div>
-        <h1 style="color: rgb(38, 168, 135);">Create S2S UPI Collection Request</h1>
+        <h1 style="color: rgb(38, 168, 135);">Create S2S Net Banking Payment</h1>
         <div class="subtitle" style="text-wrap: balanced;">
-            This page demonstrates Server-to-Server (S2S) payment integration. Create UPI collection requests from your
-            backend and get the UPI collection request that can be used to initiate payments. Features enhanced security
-            with user IP tracking and device information. Perfect for applications where payment intent URIs are
-            generated server-side.
+            This page demonstrates Server-to-Server (S2S) net banking payment integration. Create net banking payment requests 
+            from your backend and get an ACS template that redirects customers to complete payment directly from their bank accounts. 
+            Features enhanced security with user IP tracking and device information.
         </div>
 
         <div class="header-actions">
@@ -44,7 +44,7 @@
 
         <form id="sessionForm" autocomplete="off">
             <div class="form-section">
-                <div class="section-title"><i class="fas fa-credit-card"></i> Order Details</div>
+                <div class="section-title"><i class="fas fa-university"></i> Order Details</div>
                 <div class="form-grid">
                     <div class="form-group tooltip">
                         <input type="text" id="amount" name="amount" placeholder="Amount" inputmode="decimal">
@@ -78,33 +78,144 @@
                                 class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
-                        <input type="text" id="upiId" name="vpa" placeholder="UPI ID" autocomplete="off">
+                        <!-- Hidden input that holds the selected bank code for the API -->
+                        <input type="hidden" id="bankCode" name="bank_code">
+
+                        <!-- Custom bank selector with inline logos -->
+                        <button type="button" id="bankSelectButton" class="bank-select-button"
+                            style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-radius:10px; border:1px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-size:14px; color:#0f172a; line-height:1;">
+                            <span class="bank-select-main"
+                                style="display:flex; align-items:center; gap:8px; min-height:24px;">
+                                <span class="bank-select-logo-wrapper"
+                                    style="display:flex; align-items:center; justify-content:center; width:24px; height:24px;">
+                                    <img id="bankSelectLogo" src="" alt="" width="24" height="24"
+                                        style="display:none; border-radius:4px; background:#ffffff; box-shadow:0 0 0 1px rgba(148,163,184,0.4);" />
+                                </span>
+                                <span id="bankSelectLabel" style="display:inline-block;">Select Bank</span>
+                            </span>
+                            <i class="fas fa-chevron-down bank-select-chevron"
+                                style="font-size:12px; color:#64748b; margin-left:8px;"></i>
+                        </button>
+
+                        <div id="bankSelectDropdown" class="bank-select-dropdown"
+                            style="display:none; position:absolute; z-index:20; margin-top:4px; width:100%; max-height:260px; overflow:auto; background:#ffffff; border-radius:12px; box-shadow:0 18px 45px rgba(15,23,42,0.18); padding:6px 0;">
+                            <button type="button" class="bank-option" data-code="3044"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/sbi.png" alt="State Bank Of India"
+                                    width="24" height="24">
+                                <span>State Bank Of India</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3022"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/icici.png" alt="ICICI Bank"
+                                    width="24" height="24">
+                                <span>ICICI Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3021"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/hdfc.png" alt="HDFC Bank"
+                                    width="24" height="24">
+                                <span>HDFC Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3032"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/paylater/32/kotak.png"
+                                    alt="Kotak Mahindra Bank" width="24" height="24">
+                                <span>Kotak Mahindra Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3003"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/axis.png" alt="Axis Bank"
+                                    width="24" height="24">
+                                <span>Axis Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3006"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/boi.png" alt="Bank of India"
+                                    width="24" height="24">
+                                <span>Bank of India</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3123"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/wallet/32/airtel.png"
+                                    alt="Airtel Payments Bank" width="24" height="24">
+                                <span>Airtel Payments Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3058"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/yes.png" alt="Yes Bank Ltd"
+                                    width="24" height="24">
+                                <span>Yes Bank Ltd</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3005"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/bobc.png" alt="Bank of Baroda"
+                                    width="24" height="24">
+                                <span>Bank of Baroda</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3028"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/indusind.png"
+                                    alt="IndusInd Bank" width="24" height="24">
+                                <span>IndusInd Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3009"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/canara.png" alt="Canara Bank"
+                                    width="24" height="24">
+                                <span>Canara Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3055"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/union.png"
+                                    alt="Union Bank of India" width="24" height="24">
+                                <span>Union Bank of India</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3020"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/federal.png"
+                                    alt="Federal Bank" width="24" height="24">
+                                <span>Federal Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3039"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/rbl.png" alt="RBL Bank"
+                                    width="24" height="24">
+                                <span>RBL Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3038"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/pnbc.png"
+                                    alt="Punjab National Bank" width="24" height="24">
+                                <span>Punjab National Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3054"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/uco.png" alt="UCO Bank"
+                                    width="24" height="24">
+                                <span>UCO Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3042"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/sib.png"
+                                    alt="South Indian Bank" width="24" height="24">
+                                <span>South Indian Bank</span>
+                            </button>
+                            <button type="button" class="bank-option" data-code="3030"
+                                style="width:100%; border:none; background:transparent; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:#0f172a; text-align:left;">
+                                <img src="https://cashfreelogo.cashfree.com/assets_images/pg/nb/32/karnatka.png"
+                                    alt="Karnataka Bank Ltd" width="24" height="24">
+                                <span>Karnataka Bank Ltd</span>
+                            </button>
+                        </div>
                         <span class="tooltiptext">
-                            <strong>UPI ID</strong><br>
+                            <strong>Bank Code</strong><br>
                             <span class="tooltip-required">Required</span><br>
-                            Customer's UPI ID (e.g., anything@payu)<br>
+                            Select a specific bank code<br>
+                            Use "3333" for testing in sandbox mode<br>
+                            If not specified, customer can choose from available banks
                         </span>
-                        <div class="helper-text">Customer's UPI ID for direct payment</div>
-                    </div>
-                    <div class="form-group tooltip">
-                        <select id="upiAppName" name="upi_app_name" placeholder="UPI App">
-                            <option value="">Select UPI App</option>
-                            <option value="bhim">BHIM</option>
-                            <option value="paytm">Paytm</option>
-                            <option value="google_pay">Google Pay</option>
-                            <option value="phonepe">PhonePe</option>
-                            <option value="cred">CRED</option>
-                            <option value="amazon_pay">Amazon Pay</option>
-                            <option value="whatsapp">WhatsApp</option>
-                            <option value="others">Others</option>
-                        </select>
-                        <span class="tooltiptext">
-                            <strong>UPI App Name</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
-                            Select the UPI app to be used for payment<br>
-                            This helps in directing payment to specific UPI app
-                        </span>
-                        <div class="helper-text">Preferred UPI app for payment</div>
+                        <div class="helper-text">Issuing Bank <span class="required">*</span></div>
                     </div>
                 </div>
             </div>
@@ -288,11 +399,11 @@
                         <input type="text" id="invoiceNumber" name="invoice_number" placeholder="Invoice Number">
                         <span class="tooltiptext">
                             <strong>Invoice Number</strong><br>
-                            <span class="tooltip-optional">Optional</span><br>
+                            <span class="tooltip-required">Required</span><br>
                             Unique invoice identifier<br>
                             Used for accounting and record keeping
                         </span>
-                        <div class="helper-text">Unique identifier</div>
+                        <div class="helper-text">Unique identifier <span class="required">*</span></div>
                     </div>
                     <div class="form-group tooltip">
                         <input type="date" id="invoiceDate" name="invoice_date" placeholder="Invoice Date">
@@ -307,11 +418,9 @@
                 </div>
             </div>
 
-            <!-- API configuration UI consolidated in the playground index; per-page inputs removed. -->
-
             <button type="submit" id="createButton" class="main-action-btn">
-                <i class="fas fa-lock"></i>
-                <span id="btnText">Initiate UPI Collection</span>
+                <i class="fas fa-university"></i>
+                <span id="btnText">Initiate Net Banking Payment</span>
             </button>
         </form>
     </div>
@@ -325,7 +434,7 @@
         window.API_URL = window.Config.API_URL;
     </script>
     <!-- Page-specific logic -->
-    <script src="../assets/js/upi_collection.js?v=1.0.9.11"></script>
+    <script src="../assets/js/netbanking_payment.js?v=1.0.9.11"></script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
 

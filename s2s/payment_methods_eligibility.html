@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../assets/js/config.js?v=1.0.9.11"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Payment Methods Eligibility</title>
+    <link rel="stylesheet" href="../assets/css/inter-font.css?v=1.0.9.11">
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.11">
+    <link rel="stylesheet" href="../assets/css/s2s_payment_methods_eligibility.css?v=1.0.9.11">
+</head>
+
+<body>
+    <!-- Modal for error/success (common-utils can also initialize if missing) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <h1>Payment Methods Eligibility</h1>
+        <div class="subtitle">
+            Check which payment methods (cards, netbanking, wallets, EMI, BNPL, etc.) are eligible for a given amount
+            and customer, based on your merchant's configured payment gateway (PayU or Cashfree).
+        </div>
+
+        <form id="eligibilityForm" autocomplete="off">
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-receipt"></i> Eligibility Inputs</div>
+                <div class="form-grid">
+                    <div class="form-group tooltip">
+                        <input type="text" id="amount" name="amount" placeholder="Amount (INR)" inputmode="decimal">
+                        <span class="tooltiptext">
+                            <strong>Amount</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Order amount in major units (e.g., 1000.00).<br>
+                            Must be a positive decimal number.
+                        </span>
+                        <div class="helper-text">Order amount in INR <span class="required">*</span></div>
+                    </div>
+                    <div class="form-group tooltip">
+                        <span class="phone-prefix">+91</span>
+                        <input type="tel" id="customerMobile" name="customer_mobile" class="phone-input"
+                            placeholder="Customer Mobile (PayU only)">
+                        <span class="tooltiptext">
+                            <strong>Customer Mobile</strong><br>
+                            <span class="tooltip-optional">Optional / Required for PayU</span><br>
+                            10-digit mobile number without country code (e.g., 9876543210).<br>
+                            Required when your merchant uses PayU; optional for Cashfree.
+                        </span>
+                        <div class="helper-text">Customer mobile (required for PayU)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-list"></i> Result Preview</div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="helper-text" for="eligibilityResult">Normalized Eligibility Response</label>
+                        <div id="eligibilityResult"></div>
+                        <button type="button" id="copyResultBtn" class="secondary-action-btn">
+                            <i class="fas fa-copy"></i> Copy JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="checkEligibilityButton" class="main-action-btn">
+                <i class="fas fa-balance-scale"></i>
+                <span id="btnText">Check Eligibility</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Common utilities -->
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.11"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.9.11"></script>
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <!-- Page-specific logic -->
+    <script src="../assets/js/payment_methods_eligibility.js?v=1.0.9.11"></script>
+</body>
+
+</html>

@@ -13,7 +13,7 @@ function createSampleData() {
         vpa: 'anything@payu',
         upi_app_name: 'others',
         return_url: `${window.location.origin}/checkout/payment_callback.html`,
-        type_of_goods: 'physical_goods',
+        type_of_goods: 'digital_goods',
         buyer_name: 'John Doe',
         buyer_email: 'john.doe@example.com',
         buyer_phone: '9876543210',

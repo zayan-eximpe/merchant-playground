@@ -408,6 +408,16 @@ function setupEventHandlers() {
         });
     });
 
+    // Handle buttons with ID setSampleDataBtn
+    const setSampleDataBtn = document.getElementById('setSampleDataBtn');
+    if (setSampleDataBtn) {
+        setSampleDataBtn.addEventListener('click', function () {
+            if (typeof createSampleData === 'function') {
+                createSampleData();
+            }
+        });
+    }
+
     // Handle cache clearing (if function exists on page)
     document.querySelectorAll('[data-action="clear-cache"]').forEach(el => {
         el.addEventListener('click', (e) => {
@@ -474,6 +484,17 @@ function setupEventHandlers() {
     }
 }
 
+// Detect if user is on Mac
+function isMac() {
+    return /Mac|iPhone|iPad|iPod/.test(navigator.platform) || 
+           /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
+}
+
+// Get keyboard shortcut text based on platform
+function getShortcutText() {
+    return isMac() ? '⌘⇧S' : 'Ctrl+Shift+S';
+}
+
 // Inject Quick Actions FAB if not present
 function injectQuickActions() {
     if (document.getElementById('mobileFab')) return;
@@ -498,6 +519,7 @@ function injectQuickActions() {
 
     const homePath = isSubfolder ? '../index.html' : 'index.html';
     const checkoutPath = isSubfolder ? '../checkout/create_session.html' : 'checkout/create_session.html';
+    const shortcutText = getShortcutText();
 
     container.innerHTML = `
         <button class="mobile-fab" id="mobileFab">
@@ -514,7 +536,7 @@ function injectQuickActions() {
             </button>
             <button type="button" data-action="create-sample-data" class="mobile-action-item">
                 <i class="fas fa-magic"></i>
-                <span>Auto-fill Demo Data</span>
+                <span>Auto-fill Demo Data <span style="opacity: 0.6; font-size: 0.85em; margin-left: 4px;">${shortcutText}</span></span>
             </button>
             <button type="button" data-action="clear-cache" class="mobile-action-item">
                 <i class="fas fa-undo"></i>
@@ -556,6 +578,75 @@ function injectCommonStyles() {
     }
 }
 
+// Keyboard shortcut handler for Set Sample Data
+function setupKeyboardShortcuts() {
+    // Use both capture and bubble phases to ensure we catch the event
+    const handleKeyDown = function (e) {
+        // Command+Shift+S (Mac) or Ctrl+Shift+S (Windows/Linux)
+        // Check for key code 83 (S) to handle different keyboard layouts and case sensitivity
+        const isModifierPressed = (e.metaKey || e.ctrlKey) && e.shiftKey;
+        const isSKey = e.key === 'S' || e.key === 's' || e.keyCode === 83 || e.which === 83 || e.code === 'KeyS';
+        
+        if (isModifierPressed && isSKey) {
+            // Prevent browser's default save dialog
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Don't trigger if user is typing in an input, textarea, or contenteditable
+            const activeElement = document.activeElement;
+            const isInputFocused = activeElement && (
+                activeElement.tagName === 'INPUT' ||
+                activeElement.tagName === 'TEXTAREA' ||
+                activeElement.isContentEditable
+            );
+            
+            if (!isInputFocused) {
+                // Try to trigger sample data creation
+                // Check multiple ways the function might be available
+                let sampleDataFunc = null;
+                
+                // Check global scope
+                if (typeof window.createSampleData === 'function') {
+                    sampleDataFunc = window.createSampleData;
+                } else if (typeof createSampleData === 'function') {
+                    sampleDataFunc = createSampleData;
+                }
+                
+                if (sampleDataFunc) {
+                    try {
+                        sampleDataFunc();
+                        return;
+                    } catch (err) {
+                        console.error('Error calling createSampleData:', err);
+                    }
+                }
+                
+                // Fallback: Try clicking the button
+                const sampleDataBtn = document.querySelector('[data-action="create-sample-data"]') || 
+                                     document.getElementById('setSampleDataBtn') ||
+                                     document.querySelector('button[onclick*="createSampleData"]') ||
+                                     document.querySelector('a[onclick*="createSampleData"]');
+                if (sampleDataBtn) {
+                    sampleDataBtn.click();
+                }
+            }
+        }
+    };
+    
+    // Add listener in capture phase (runs first) - this should catch it before browser handles it
+    window.addEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('keydown', handleKeyDown, true);
+    // Also add in bubble phase as backup
+    window.addEventListener('keydown', handleKeyDown, false);
+    document.addEventListener('keydown', handleKeyDown, false);
+    
+    // Debug: Log that shortcut handler is set up
+    if (window.location.search.includes('debug=shortcuts')) {
+        console.log('Keyboard shortcut handler initialized. Press Command+Shift+S (Mac) or Ctrl+Shift+S (Windows/Linux) to set sample data.');
+    }
+}
+
 // Initialize modal utilities and event handlers on page load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
@@ -563,12 +654,14 @@ if (document.readyState === 'loading') {
         injectCommonStyles();
         injectQuickActions();
         setupEventHandlers();
+        setupKeyboardShortcuts();
     });
 } else {
     ModalUtils.init();
     injectCommonStyles();
     injectQuickActions();
     setupEventHandlers();
+    setupKeyboardShortcuts();
 }
 
 // --- Credential injection (per-environment) ---
