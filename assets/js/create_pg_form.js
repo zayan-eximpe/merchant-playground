@@ -105,7 +105,6 @@ function savePgFormCreateData() {
         is_fixed_amount: document.getElementById('isFixedAmount')?.checked ?? true,
         amount: document.getElementById('amount')?.value || '',
         currency: document.getElementById('currency')?.value || 'INR',
-        amount_title: document.getElementById('amountTitle')?.value || '',
         gst_percentage: document.getElementById('gstPercentage')?.value || '',
         service_charge_percentage:
             document.getElementById('serviceChargePercentage')?.value || '',
@@ -144,7 +143,6 @@ const PG_FORM_KEY_TO_ID = {
     payment_for: 'paymentFor',
     amount: 'amount',
     currency: 'currency',
-    amount_title: 'amountTitle',
     gst_percentage: 'gstPercentage',
     service_charge_percentage: 'serviceChargePercentage',
     type_of_goods: 'typeOfGoods',
@@ -216,7 +214,6 @@ function createPgFormSampleData() {
     set('isFixedAmount', true);
     set('amount', '449.00');
     set('currency', 'INR');
-    set('amountTitle', 'Order Total');
     set('gstPercentage', '5');
     set('serviceChargePercentage', '0');
 
@@ -394,7 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
     [
         'urlSlug',
         'currency',
-        'amountTitle',
         'gstPercentage',
         'serviceChargePercentage',
         'typeOfGoods',
@@ -550,8 +546,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const currencyValue =
                     document.getElementById('currency')?.value || 'INR';
-                const amountTitleValue =
-                    document.getElementById('amountTitle')?.value || undefined;
                 const gstPercentageValue =
                     document.getElementById('gstPercentage')?.value || undefined;
                 const serviceChargePercentageValue =
@@ -590,7 +584,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? Math.round(amountValue * 100)
                         : undefined,
                     currency: currencyValue,
-                    amount_title: amountTitleValue,
                     gst_percentage: gstPercentageValue
                         ? parseInt(gstPercentageValue, 10)
                         : undefined,

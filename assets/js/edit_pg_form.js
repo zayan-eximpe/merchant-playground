@@ -115,7 +115,6 @@ const PG_FORM_KEY_TO_ID = {
     payment_for: 'paymentFor',
     amount: 'amount',
     currency: 'currency',
-    amount_title: 'amountTitle',
     gst_percentage: 'gstPercentage',
     service_charge_percentage: 'serviceChargePercentage',
     type_of_goods: 'typeOfGoods',
@@ -433,8 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const currencyValue =
                     document.getElementById('currency')?.value || 'INR';
-                const amountTitleValue =
-                    document.getElementById('amountTitle')?.value || undefined;
                 const gstPercentageValue =
                     document.getElementById('gstPercentage')?.value || undefined;
                 const serviceChargePercentageValue =
@@ -474,7 +471,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? Math.round(amountValue * 100)
                         : undefined,
                     currency: currencyValue,
-                    amount_title: amountTitleValue,
                     gst_percentage: gstPercentageValue
                         ? parseInt(gstPercentageValue, 10)
                         : undefined,
