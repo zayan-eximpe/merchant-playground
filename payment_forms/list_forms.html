@@ -7,11 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Transaction History - EximPe Integrations</title>
+    <title>List Payment Forms - EximPe Integrations</title>
     <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.12">
     <link rel="stylesheet" href="../assets/css/order_order_details.css?v=1.0.9.12">
     <link rel="stylesheet" href="../assets/css/payment_link_shared.css?v=1.0.9.12">
-
 </head>
 
 <body>
@@ -24,6 +23,7 @@
             <div class="modal-message" id="modalMessage"></div>
         </div>
     </div>
+
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,62 +32,81 @@
                     fill="white" />
             </svg>
         </div>
-        <h1>Payment Link Transaction History</h1>
+        <h1>List Payment Forms</h1>
         <div class="subtitle">
-            View complete transaction history for a payment link.<br>
-            Track all payment attempts, status changes, and customer interactions.
+            View all hosted payment forms configured for your merchant account.<br>
+            Use pagination controls to navigate through your forms.
         </div>
-        <div class="form-container">
-            <form id="transactionHistoryForm">
 
+        <div class="form-container">
+            <form id="listPgFormsForm">
                 <div class="form-section">
-                    <div class="section-title"><i class="fas fa-history"></i> Payment Link History</div>
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <input type="text" id="paymentLinkId" name="payment_link_id"
-                            placeholder="Enter Payment Link ID (e.g., PR2073314211)"
-                            style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                    <div class="section-title"><i class="fas fa-list"></i> Fetch Forms</div>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <input type="number" id="pageNumber" name="page" placeholder="Page (default: 1)" min="1"
+                            style="flex: 1; min-width: 150px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                        <input type="number" id="pageSize" name="page_size" placeholder="Page Size (default: 10)"
+                            min="1" max="100"
+                            style="flex: 1; min-width: 150px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
                         <button type="submit" class="header-button" style="margin: 0;">
-                            <i class="fas fa-search"></i>
-                            Fetch History
+                            <i class="fas fa-list"></i>
+                            Fetch Forms
                         </button>
                     </div>
-                    <div class="helper-text">Enter the Payment Link ID to view transaction history</div>
+                    <div class="helper-text">Optional: Specify page number and page size for pagination</div>
                 </div>
             </form>
         </div>
+
         <div class="result-container" id="resultContainer">
             <div class="result-card"
                 style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);">
                 <div class="result-header"
                     style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 12px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <i class="fas fa-history" style="color: rgb(38, 168, 135);"></i>
+                        <i class="fas fa-file-invoice" style="color: rgb(38, 168, 135);"></i>
                         <h2 class="result-title" style="font-size: 18px; font-weight: 600; color: #2d3748; margin: 0;">
-                            Transaction
-                            History</h2>
+                            Payment Forms</h2>
                     </div>
-                    <div id="historyCount" style="font-size: 14px; color: #718096;"></div>
+                    <div id="paginationInfo" style="font-size: 14px; color: #718096;"></div>
                 </div>
                 <div class="result-content" id="resultContent">
                     <!-- Results will be populated here -->
                 </div>
+                <div id="paginationControls"
+                    style="display: none; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <button id="prevPageBtn" class="header-button" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span id="pageIndicator" style="font-size: 14px; color: #4a5568;"></span>
+                    <button id="nextPageBtn" class="header-button" disabled>
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="refreshBtn" class="header-button" type="button">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+            <button id="clearResultsBtn" class="header-button" type="button"
+                style="background-color: #edf2f7; color: #2d3748; border-color: #e2e8f0;">
+                <i class="fas fa-times-circle"></i>
+                Clear
+            </button>
         </div>
     </div>
 
     <!-- Common utilities -->
-    <!-- Trusted Types Policy (must load first) -->
     <script src="../assets/js/trusted-types-policy.js?v=1.0.9.12"></script>
     <script src="../assets/js/common-utils.js?v=1.0.9.12"></script>
-    <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
-    <!-- Page-specific logic -->
-    <script src="../assets/js/transaction_history.js?v=1.0.9.12"></script>
-
-    <!-- Credential injection handled centrally by common-utils.js -->
-
+    <script src="../assets/js/list_pg_forms.js?v=1.0.9.12"></script>
 </body>
 
 </html>
+

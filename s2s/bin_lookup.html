@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Refund Details API</title>
+    <title>BIN Lookup</title>
     <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.12">
-    <link rel="stylesheet" href="../assets/css/refund_refund_details.css?v=1.0.9.12">
+    <link rel="stylesheet" href="../assets/css/s2s_bin_lookup.css?v=1.0.9.12">
 
 </head>
 
@@ -32,46 +32,46 @@
                     fill="white" />
             </svg>
         </div>
-        <h1 style="color: rgb(38, 168, 135);">Refund Details API</h1>
-        <div class="subtitle">Get detailed information about a specific refund including status, amount, and transaction
-            history.</div>
+        <h1 style="color: rgb(38, 168, 135);">BIN Lookup</h1>
+        <div class="subtitle" style="text-wrap: balanced;">
+            Lookup card network and type information from BIN (Bank Identification Number).
+            BIN is typically the first 8 digits of a card number.
+        </div>
 
-        <form id="refundDetailsForm" autocomplete="off">
-
+        <form id="binForm" autocomplete="off">
+            <!-- BIN Lookup Section -->
             <div class="form-section">
-                <div class="section-title"><i class="fas fa-search"></i> Refund Information</div>
+                <div class="section-title"><i class="fas fa-search"></i> BIN Details</div>
                 <div class="form-grid">
-                    <div class="form-group full-width">
-                        <input type="text" id="refundId" name="refund_id" placeholder="Refund ID" required>
-                        <div class="helper-text">Enter the refund ID to get details for</div>
+                    <div class="form-group tooltip">
+                        <input type="text" id="bin" name="bin" placeholder="Enter BIN (8 digits)" required
+                            maxlength="8">
+                        <span class="tooltiptext">
+                            <strong>Bank Identification Number</strong><br>
+                            <span class="tooltip-required">Required</span><br>
+                            Enter the first 8 digits of the card number.<br>
+                        </span>
+                        <div class="helper-text">Enter the first 8 digits of the card number <span
+                                class="required">*</span></div>
                     </div>
                 </div>
             </div>
 
-            <button type="submit" id="getDetailsButton" class="main-action-btn">
-                <i class="fas fa-search"></i>
-                <span id="btnText">Get Refund Details</span>
+            <!-- Submit Button and Loading Spinner at the bottom -->
+            <button type="submit" id="lookupButton" class="main-action-btn" style="margin-top: 28px;">
+                <i class="fas fa-check"></i>
+                <span id="btnText">Lookup BIN</span>
             </button>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Looking up BIN...
+            </div>
         </form>
 
-        <!-- Refund Details Display -->
-        <div class="refund-details-display" id="refundDetailsDisplay">
-            <div class="response-title">
-                <i class="fas fa-info-circle"></i>
-                Refund Information
-            </div>
-            <div class="details-grid" id="detailsGrid">
-                <!-- Details will be populated here -->
-            </div>
-        </div>
-
-        <!-- Response Area -->
-        <div class="response-area" id="responseArea">
-            <div class="response-title">
-                <i class="fas fa-code"></i>
-                API Response
-            </div>
-            <div class="response-content" id="responseContent"></div>
+        <div class="result-section" id="resultSection">
+            <div class="result-title" id="resultTitle"></div>
+            <div class="result-content" id="resultContent"></div>
+            <div class="api-response" id="apiResponse" style="display: none;"></div>
         </div>
     </div>
 
@@ -80,12 +80,13 @@
     <!-- Trusted Types Policy (must load first) -->
     <script src="../assets/js/trusted-types-policy.js?v=1.0.9.12"></script>
     <script src="../assets/js/common-utils.js?v=1.0.9.12"></script>
+
     <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
     <!-- Page-specific logic -->
-    <script src="../assets/js/refund_details.js?v=1.0.9.12"></script>
+    <script src="../assets/js/bin_lookup.js?v=1.0.9.12"></script>
 
     <!-- Credential injection handled centrally by common-utils.js -->
 

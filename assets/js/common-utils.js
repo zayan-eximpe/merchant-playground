@@ -511,6 +511,7 @@ function injectQuickActions() {
     const isSubfolder = window.location.pathname.includes('/s2s/') ||
         window.location.pathname.includes('/checkout/') ||
         window.location.pathname.includes('/payment_link/') ||
+        window.location.pathname.includes('/payment_forms/') ||
         window.location.pathname.includes('/order/') ||
         window.location.pathname.includes('/subscription/') ||
         window.location.pathname.includes('/refund/') ||
@@ -554,6 +555,7 @@ function injectCommonStyles() {
     const isSubfolder = window.location.pathname.includes('/s2s/') ||
         window.location.pathname.includes('/checkout/') ||
         window.location.pathname.includes('/payment_link/') ||
+        window.location.pathname.includes('/payment_forms/') ||
         window.location.pathname.includes('/order/') ||
         window.location.pathname.includes('/subscription/') ||
         window.location.pathname.includes('/refund/') ||

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../assets/js/config.js?v=1.0.9.12"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://eximpe.com/EximPe.webp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Submit Payment Form (Public) - EximPe Integrations</title>
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.12">
+    <link rel="stylesheet" href="../assets/css/order_order_details.css?v=1.0.9.12">
+    <link rel="stylesheet" href="../assets/css/payment_link_shared.css?v=1.0.9.12">
+</head>
+
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <h1>Submit Payment Form (Public API)</h1>
+        <div class="subtitle">
+            Simulate a buyer submitting a hosted payment form using the public API.<br>
+            This creates a PGOrder and returns a checkout URL for the customer.
+        </div>
+
+        <div class="form-container">
+            <form id="submitPgFormPublicForm">
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-link"></i> Public Form</div>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <input type="text" id="urlSlug" name="url_slug"
+                            placeholder="Enter Form URL Slug (e.g., webinar-jan-2026)"
+                            style="flex: 1; min-width: 180px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
+                        <button type="button" class="header-button" id="loadFormBtn" style="margin: 0;">
+                            <i class="fas fa-search"></i>
+                            Load Form
+                        </button>
+                    </div>
+                    <div class="helper-text">Loads the public form configuration from
+                        <code>/import/payment/forms/public/{url_slug}/</code>.
+                    </div>
+                </div>
+
+                <div id="formInfo" style="display:none; margin-top: 12px;">
+                    <div class="form-section">
+                        <div class="section-title"><i class="fas fa-info-circle"></i> Loaded Form Details</div>
+                        <div id="formInfoContent" class="helper-text">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-user"></i> Buyer Information</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="buyerName">Name</label>
+                            <input type="text" id="buyerName" name="buyer_name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerEmail">Email</label>
+                            <input type="email" id="buyerEmail" name="buyer_email" placeholder="john.doe@example.com"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerPhone">Phone</label>
+                            <div class="input-wrapper">
+                                <span class="input-prefix">+91</span>
+                                <input type="tel" id="buyerPhone" name="buyer_phone" class="phone-input"
+                                    placeholder="9876543210" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerAddressLine1">Address Line 1</label>
+                            <input type="text" id="buyerAddressLine1" name="buyer_address_line_1"
+                                placeholder="Street, building, apartment">
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerAddressLine2">Address Line 2</label>
+                            <input type="text" id="buyerAddressLine2" name="buyer_address_line_2"
+                                placeholder="Suite, floor, landmark (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerCity">City</label>
+                            <input type="text" id="buyerCity" name="buyer_city" placeholder="Mumbai">
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerState">State</label>
+                            <input type="text" id="buyerState" name="buyer_state" placeholder="MH">
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerPostalCode">Postal Code</label>
+                            <input type="text" id="buyerPostalCode" name="buyer_postal_code" placeholder="400001">
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerPan">PAN (optional)</label>
+                            <input type="text" id="buyerPan" name="buyer_pan" placeholder="ABCDE1234F">
+                        </div>
+                        <div class="form-group">
+                            <label for="buyerDob">Date of Birth (optional)</label>
+                            <input type="date" id="buyerDob" name="buyer_dob">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-rupee-sign"></i> Amount (for variable forms)</div>
+                    <div class="form-grid single-column">
+                        <div class="form-group">
+                            <label for="variableAmount">Amount (INR)</label>
+                            <div class="input-wrapper">
+                                <span class="input-prefix">₹</span>
+                                <input type="number" id="variableAmount" name="amount" placeholder="0.00" min="1"
+                                    step="0.01" inputmode="decimal">
+                            </div>
+                            <div class="helper-text">
+                                Required only when the form is configured as variable amount.<br>
+                                For fixed amount forms, leave this empty.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitButton" class="main-action-btn">
+                    <i class="fas fa-paper-plane"></i>
+                    <span id="btnText">Submit Form</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="result-container" id="resultContainer" style="display:none;">
+            <div class="result-card"
+                style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);">
+                <div class="result-header"
+                    style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+                    <i class="fas fa-check-circle" style="color: rgb(38, 168, 135);"></i>
+                    <h2 class="result-title" style="font-size: 18px; font-weight: 600; color: #2d3748; margin: 0;">
+                        Order Created</h2>
+                </div>
+                <div class="result-content" id="resultContent">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay for SDK / checkout -->
+    <div id="checkoutLoading" class="checkout-loading" style="position: fixed; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 9999; display: none;">
+        <div style="text-align: center;">
+            <div class="checkout-spinner" style="width: 48px; height: 48px; border: 4px solid #e2e8f0; border-top-color: #26A887; border-radius: 50%; animation: submitFormSpin 0.8s linear infinite; margin: 0 auto 16px;"></div>
+            <div id="checkoutLoadingText" style="color: #64748b; font-weight: 500;">Loading checkout…</div>
+        </div>
+    </div>
+    <style>
+        @keyframes submitFormSpin { to { transform: rotate(360deg); } }
+    </style>
+
+    <!-- Common utilities -->
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.12"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.9.12"></script>
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <script src="../assets/js/submit_pg_form_public.js?v=1.0.9.12"></script>
+</body>
+
+</html>
+

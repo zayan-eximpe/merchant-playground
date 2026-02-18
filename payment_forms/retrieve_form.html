@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Order Details - EximPe Integrations</title>
+    <title>Retrieve Payment Form - EximPe Integrations</title>
     <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.12">
     <link rel="stylesheet" href="../assets/css/order_order_details.css?v=1.0.9.12">
-
+    <link rel="stylesheet" href="../assets/css/payment_link_shared.css?v=1.0.9.12">
 </head>
 
 <body>
@@ -23,6 +23,7 @@
             <div class="modal-message" id="modalMessage"></div>
         </div>
     </div>
+
     <div class="container">
         <div class="logo-circle">
             <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,57 +32,66 @@
                     fill="white" />
             </svg>
         </div>
-        <h1>Order Details</h1>
+        <h1>Retrieve Payment Form</h1>
         <div class="subtitle">
-            Enter an Order ID to fetch and view all details for that order.<br>
-            Use the magic wand in Quick Actions for a sample Order ID.
+            Enter a Form ID (or internal UID) to fetch and view all configuration details for that PG Form.
         </div>
-        <div class="form-container">
-            <form id="orderDetailsForm">
 
+        <div class="form-container">
+            <form id="retrievePgFormForm">
                 <div class="form-section">
-                    <div class="section-title"><i class="fas fa-search"></i> Order Details</div>
+                    <div class="section-title"><i class="fas fa-search"></i> Form Details</div>
                     <div style="display: flex; gap: 12px; align-items: center;">
-                        <input type="text" id="orderId" name="order_id" placeholder="Enter Order ID"
+                        <input type="text" id="formId" name="form_id"
+                            placeholder="Enter Form ID (e.g., PF123..., or internal UID)"
                             style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px;">
                         <button type="submit" class="header-button" style="margin: 0;">
                             <i class="fas fa-search"></i>
                             Search
                         </button>
                     </div>
-                    <div class="helper-text">Enter the Order ID to fetch details</div>
+                    <div class="helper-text">Use the <strong>form_id</strong> from the list API, or the internal UID if you
+                        know it.</div>
                 </div>
             </form>
         </div>
+
         <div class="result-container" id="resultContainer">
             <div class="result-card"
                 style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);">
                 <div class="result-header"
                     style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
-                    <i class="fas fa-info-circle" style="color: rgb(38, 168, 135);"></i>
-                    <h2 class="result-title" style="font-size: 18px; font-weight: 600; color: #2d3748; margin: 0;">Order
-                        Information</h2>
+                    <i class="fas fa-file-invoice" style="color: rgb(38, 168, 135);"></i>
+                    <h2 class="result-title" style="font-size: 18px; font-weight: 600; color: #2d3748; margin: 0;">
+                        Form Configuration</h2>
                 </div>
                 <div class="result-content" id="resultContent">
                     <!-- Results will be populated here -->
                 </div>
             </div>
         </div>
+
+        <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="setSampleDataBtn" class="header-button" type="button">
+                <i class="fas fa-magic"></i>
+                Sample ID
+            </button>
+            <button id="clearResultsBtn" class="header-button" type="button"
+                style="background-color: #edf2f7; color: #2d3748; border-color: #e2e8f0;">
+                <i class="fas fa-times-circle"></i>
+                Clear
+            </button>
+        </div>
     </div>
 
     <!-- Common utilities -->
-    <!-- Trusted Types Policy (must load first) -->
     <script src="../assets/js/trusted-types-policy.js?v=1.0.9.12"></script>
     <script src="../assets/js/common-utils.js?v=1.0.9.12"></script>
-    <!-- Pass Django variables to JavaScript -->
     <script>
         window.API_URL = window.Config.API_URL;
     </script>
-    <!-- Page-specific logic -->
-    <script src="../assets/js/order_details.js?v=1.0.9.12"></script>
-
-    <!-- Credential injection handled centrally by common-utils.js -->
-
+    <script src="../assets/js/retrieve_pg_form.js?v=1.0.9.12"></script>
 </body>
 
 </html>
+

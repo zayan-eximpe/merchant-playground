@@ -143,6 +143,10 @@ h1 {
     grid-template-columns: 1fr;
 }
 
+.form-grid .form-group.full {
+    grid-column: 1 / -1;
+}
+
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;

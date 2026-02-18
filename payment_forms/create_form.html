@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../assets/js/config.js?v=1.0.9.12"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Create Payment Form</title>
+    <link rel="stylesheet" href="../assets/css/inter-font.css?v=1.0.9.12">
+    <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css?v=1.0.9.12">
+    <link rel="stylesheet" href="../assets/css/create_payment_link.css?v=1.0.9.12">
+</head>
+
+<body>
+    <!-- Modal for error/success -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalBox">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo-circle">
+            <svg width="38" height="38" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.9766 0.193437L17.3616 11.8518L11.7609 6.4086H3.9584L13.6276 15.9528L13.3281 16.2817L13.3304 16.2842L3.90483 25.5879H11.7073L17.1227 20.3249L27.9225 31.8322C27.6855 31.94 27.4222 32 27.1448 32H1.88167C0.84245 32 0 31.1572 0 30.1176V1.88235C0 0.84276 0.842452 0 1.88167 0H27.1448C27.4434 0 27.7258 0.0695875 27.9766 0.193437Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <h1>Create a Payment Form</h1>
+        <div class="subtitle">
+            Configure a hosted payment form (similar to Cashfree Payment Forms) that you can share with customers.
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-header">
+                <span><i class="fas fa-file-invoice"></i> Form Summary</span>
+                <button type="button" class="summary-action" data-action="create-sample-data" id="setSampleDataBtn">
+                    <i class="fas fa-magic"></i>
+                    Quick Fill
+                </button>
+            </div>
+            <div class="summary-amount" id="summaryAmount">₹0.00</div>
+            <div class="summary-description" id="summaryDescription">
+                Configure title, amount and behavior for your payment form.
+            </div>
+        </div>
+
+        <form id="pgFormCreateForm" autocomplete="off">
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-tag"></i>
+                    Form Identification
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="urlSlug">URL Slug</label>
+                        <input type="text" id="urlSlug" name="url_slug" placeholder="e.g. webinar-jan-2026" required>
+                        <div class="helper-text">Used in the public URL, must be unique<span class="required">*</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentFor">Payment For</label>
+                        <input type="text" id="paymentFor" name="payment_for" placeholder="e.g. Webinar Registration"
+                            required>
+                        <div class="helper-text">Short description of what this payment is for<span
+                                class="required">*</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-credit-card"></i>
+                    Payment Configuration
+                </div>
+                <div class="form-grid single-column">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isFixedAmount" name="is_fixed_amount" checked>
+                            Fixed Amount Form
+                        </label>
+                        <div class="helper-text">If unchecked, buyers can enter any amount.</div>
+                    </div>
+                    <div class="form-group" id="fixedAmountGroup">
+                        <label for="amount">Amount (INR)</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">₹</span>
+                            <input type="number" id="amount" name="amount" placeholder="0.00" min="1" step="0.01"
+                                inputmode="decimal">
+                        </div>
+                        <div class="helper-text">Required for fixed amount forms.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select id="currency" name="currency" required>
+                            <option value="INR">INR</option>
+                        </select>
+                        <div class="helper-text">Currently only INR is supported<span class="required">*</span></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="amountTitle">Amount Title</label>
+                        <input type="text" id="amountTitle" name="amount_title" placeholder="Final Amount"
+                            value="Amount">
+                        <div class="helper-text">Label shown above the amount field on the form.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="gstPercentage">GST % (optional)</label>
+                        <input type="number" id="gstPercentage" name="gst_percentage" min="0" max="100"
+                            placeholder="e.g. 18">
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceChargePercentage">Service Charge % (optional)</label>
+                        <input type="number" id="serviceChargePercentage" name="service_charge_percentage" min="0"
+                            max="100" placeholder="e.g. 2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-box"></i>
+                    Product / Service Details
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="typeOfGoods">Type of Goods</label>
+                        <select id="typeOfGoods" name="type_of_goods">
+                            <option value="">Select Type of Goods</option>
+                            <option value="physical_goods">Physical Goods</option>
+                            <option value="digital_goods">Digital Goods</option>
+                            <option value="service">Service</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="hsCodeGroup">
+                        <label for="hsCode">HS Code</label>
+                        <input type="text" id="hsCode" name="hs_code" placeholder="e.g. 01012890">
+                        <div class="helper-text">Required when Type of Goods is Physical Goods. Use a valid HS code.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferredMopType">Preferred Payment Method (optional)</label>
+                        <select id="preferredMopType" name="preferred_mop_type">
+                            <option value="">-- Select --</option>
+                            <option value="card">Card</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="debit_card">Debit Card</option>
+                            <option value="upi">UPI</option>
+                            <option value="net_banking">Net Banking</option>
+                            <option value="wallet">Wallet</option>
+                            <option value="qr">QR</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-cog"></i>
+                    Form Settings
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="redirectUrl">Redirect URL</label>
+                        <input type="url" id="redirectUrl" name="redirect_url"
+                            placeholder="https://your-website.com/thank-you">
+                        <div class="helper-text">Where to redirect the customer after payment completion.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="thankYouMessage">Thank You Message</label>
+                        <input type="text" id="thankYouMessage" name="thank_you_message"
+                            placeholder="Shown after successful payment">
+                    </div>
+                    <div class="form-group">
+                        <label for="validFrom">Valid From</label>
+                        <input type="datetime-local" id="validFrom" name="valid_from">
+                    </div>
+                    <div class="form-group">
+                        <label for="validUntil">Valid Until</label>
+                        <input type="datetime-local" id="validUntil" name="valid_until">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-user-check"></i>
+                    Customer Data Collection
+                </div>
+                <div class="form-grid single-column">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="collectName" name="collect_name" checked>
+                            Collect Name
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="collectEmail" name="collect_email" checked>
+                            Collect Email
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="collectPhone" name="collect_phone" checked>
+                            Collect Phone
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="collectAddress" name="collect_address">
+                            Collect Address
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="collectPan" name="collect_pan">
+                            Collect PAN
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="collectDob" name="collect_dob">
+                            Collect Date of Birth
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-palette"></i>
+                    Branding &amp; Appearance
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="logoFile">Logo (image file)</label>
+                        <input type="file" id="logoFile" name="logo" accept="image/*">
+                        <div class="helper-text">
+                            Custom logo shown on the payment form (optional). Upload an image file.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="primaryColor">Primary Color (hex)</label>
+                        <div class="input-wrapper" style="display: flex; align-items: center; gap: 8px;">
+                            <input type="color" id="primaryColorPicker" value="#22c55e" title="Pick color"
+                                style="width: 40px; height: 38px; padding: 2px; cursor: pointer; border-radius: 8px;">
+                            <input type="text" id="primaryColor" name="primary_color" placeholder="#22c55e"
+                                maxlength="7" pattern="^#[0-9A-Fa-f]{6}$">
+                        </div>
+                        <div class="helper-text">Brand color for buttons and accents (e.g. #22c55e).</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-file-contract"></i>
+                    Terms &amp; Contact
+                </div>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="termsAndConditions">Terms and Conditions</label>
+                        <textarea id="termsAndConditions" name="terms_and_conditions" rows="3"
+                            placeholder="Customers must accept these terms before paying"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Contact Email</label>
+                        <input type="email" id="contactEmail" name="contact_email"
+                            placeholder="support@your-business.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactPhone">Contact Phone</label>
+                        <input type="text" id="contactPhone" name="contact_phone" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactWhatsapp">WhatsApp Number</label>
+                        <input type="text" id="contactWhatsapp" name="contact_whatsapp"
+                            placeholder="+91 98765 43210">
+                        <div class="helper-text">Business WhatsApp for support (optional).</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="websiteUrl">Website URL</label>
+                        <input type="url" id="websiteUrl" name="website_url"
+                            placeholder="https://your-business.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="supportUrl">Support URL</label>
+                        <input type="url" id="supportUrl" name="support_url"
+                            placeholder="https://your-business.com/support">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-share-alt"></i>
+                    Social Media Links
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="twitterUrl">Twitter / X URL</label>
+                        <input type="url" id="twitterUrl" name="twitter_url"
+                            placeholder="https://twitter.com/yourhandle">
+                    </div>
+                    <div class="form-group">
+                        <label for="instagramUrl">Instagram URL</label>
+                        <input type="url" id="instagramUrl" name="instagram_url"
+                            placeholder="https://instagram.com/yourhandle">
+                    </div>
+                    <div class="form-group">
+                        <label for="facebookUrl">Facebook URL</label>
+                        <input type="url" id="facebookUrl" name="facebook_url"
+                            placeholder="https://facebook.com/yourpage">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedinUrl">LinkedIn URL</label>
+                        <input type="url" id="linkedinUrl" name="linkedin_url"
+                            placeholder="https://linkedin.com/company/yourcompany">
+                    </div>
+                </div>
+                <div class="helper-text" style="margin-top: 4px;">Optional. Shown on the payment form for trust/branding.</div>
+            </div>
+
+            <button type="submit" id="createButton" class="main-action-btn">
+                <i class="fas fa-file-invoice"></i>
+                <span id="btnText">Create Payment Form</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Common utilities -->
+    <script src="../assets/js/trusted-types-policy.js?v=1.0.9.12"></script>
+    <script src="../assets/js/common-utils.js?v=1.0.9.12"></script>
+    <script>
+        window.API_URL = window.Config.API_URL;
+    </script>
+    <script src="../assets/js/create_pg_form.js?v=1.0.9.12"></script>
+</body>
+
+</html>
+

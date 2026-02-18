@@ -2,16 +2,16 @@
 <html lang="en">
 
 <head>
-    <script src="assets/js/config.js?v=1.0.9.11"></script>
+    <script src="assets/js/config.js?v=1.0.9.12"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" href="https://eximpe.com/EximPe.webp">
     <title>EximPe Integrations</title>
 
-    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=1.0.9.11">
-    <link rel="stylesheet" href="assets/css/index.css?v=1.0.9.11">
-    <link rel="stylesheet" href="assets/css/mobile-nav.css?v=1.0.9.11">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=1.0.9.12">
+    <link rel="stylesheet" href="assets/css/index.css?v=1.0.9.12">
+    <link rel="stylesheet" href="assets/css/mobile-nav.css?v=1.0.9.12">
 </head>
 
 <body>
@@ -66,6 +66,7 @@
                     <li><a href="#hosted-payment" class="nav-link active"><i class="fas fa-shield-alt"></i> Hosted
                             Checkout</a></li>
                     <li><a href="#payment-links" class="nav-link"><i class="fas fa-link"></i> Payment Links</a></li>
+                    <li><a href="#payment-forms" class="nav-link"><i class="fas fa-file-invoice"></i> Payment Forms</a></li>
                     <li><a href="#s2s-payment" class="nav-link"><i class="fas fa-server"></i> S2S Payments</a></li>
                 </ul>
 
@@ -173,6 +174,56 @@
                     </div>
                 </div>
 
+                <!-- Payment Forms Section -->
+                <div class="api-section" id="payment-forms">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div>
+                            <h2 class="section-title">Payment Forms</h2>
+                            <p class="section-desc">Create and manage hosted payment forms (PG Forms), similar to Cashfree Payment Forms.</p>
+                        </div>
+                    </div>
+                    <div class="integrations-grid">
+                        <a href="payment_forms/create_form.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-plus-circle"></i> Create Form</div>
+                            <div class="card-desc">
+                                Configure a new hosted payment form with title, amount, customer fields, and logo upload.
+                            </div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="payment_forms/edit_form.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-edit"></i> Edit Form</div>
+                            <div class="card-desc">
+                                Load a form by ID and update its configuration. Replace logo by uploading a new image file.
+                            </div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="payment_forms/retrieve_form.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-search"></i> Retrieve Form</div>
+                            <div class="card-desc">
+                                Fetch full configuration for a specific form using its ID.
+                            </div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="payment_forms/list_forms.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-list"></i> List Forms</div>
+                            <div class="card-desc">
+                                View all configured payment forms with pagination and public URLs.
+                            </div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="payment_forms/submit_form.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-file-signature"></i> Submit Public Form</div>
+                            <div class="card-desc">
+                                Simulate a buyer submitting a public form and obtain the hosted checkout URL.
+                            </div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- S2S Section -->
                 <div class="api-section" id="s2s-payment">
                     <div class="section-header">
@@ -212,7 +263,8 @@
                         </a>
                         <a href="s2s/wallet_payment.html" class="integration-card">
                             <div class="card-title"><i class="fas fa-wallet"></i> Wallet Payment</div>
-                            <div class="card-desc">Process payments via digital wallets like Paytm, PhonePe, and more.</div>
+                            <div class="card-desc">Process payments via digital wallets like Paytm, PhonePe, and more.
+                            </div>
                             <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
                         </a>
                         <a href="s2s/netbanking_payment.html" class="integration-card">
@@ -226,8 +278,16 @@
                             <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
                         </a>
                         <a href="s2s/payment_methods_eligibility.html" class="integration-card">
-                            <div class="card-title"><i class="fas fa-balance-scale"></i> Payment Methods Eligibility</div>
-                            <div class="card-desc">Check which payment methods (cards, netbanking, wallets, EMI, BNPL) are eligible for a given amount and customer.</div>
+                            <div class="card-title"><i class="fas fa-balance-scale"></i> Payment Methods Eligibility
+                            </div>
+                            <div class="card-desc">Check which payment methods (cards, netbanking, wallets, EMI, BNPL)
+                                are eligible for a given amount and customer.</div>
+                            <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
+                        </a>
+                        <a href="s2s/bin_lookup.html" class="integration-card">
+                            <div class="card-title"><i class="fas fa-credit-card"></i> BIN Lookup</div>
+                            <div class="card-desc">Lookup card network and type information from BIN (Bank
+                                Identification Number).</div>
                             <div class="card-footer">Try Now <i class="fas fa-arrow-right"></i></div>
                         </a>
                     </div>
@@ -656,8 +716,8 @@
                     AUTH_KEY: document.getElementById('authKey').value || '',
                     IS_PSP: document.getElementById('isPspCheckbox').checked ? true : false,
                     MERCHANT_ID: document.getElementById('merchantId').value || '',
-                        CALLBACK_URL: (document.getElementById('cred-callback-url') ? document.getElementById('cred-callback-url').value : '') || '',
-                        API_VERSION: (document.getElementById('apiVersion') ? document.getElementById('apiVersion').value : '') || ''
+                    CALLBACK_URL: (document.getElementById('cred-callback-url') ? document.getElementById('cred-callback-url').value : '') || '',
+                    API_VERSION: (document.getElementById('apiVersion') ? document.getElementById('apiVersion').value : '') || ''
                 };
 
                 if (encryptToggle.checked) {
