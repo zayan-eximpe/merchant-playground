@@ -110,6 +110,7 @@ function savePgFormCreateData() {
             document.getElementById('serviceChargePercentage')?.value || '',
         type_of_goods: document.getElementById('typeOfGoods')?.value || '',
         hs_code: document.getElementById('hsCode')?.value || '',
+        description: document.getElementById('productDescription')?.value || '',
         preferred_mop_type: document.getElementById('preferredMopType')?.value || '',
         redirect_url: document.getElementById('redirectUrl')?.value || '',
         thank_you_message: document.getElementById('thankYouMessage')?.value || '',
@@ -129,6 +130,7 @@ function savePgFormCreateData() {
         website_url: document.getElementById('websiteUrl')?.value || '',
         support_url: document.getElementById('supportUrl')?.value || '',
         primary_color: document.getElementById('primaryColor')?.value || '',
+        template_style: document.getElementById('templateStyle')?.value || 'template1',
         twitter_url: document.getElementById('twitterUrl')?.value || '',
         instagram_url: document.getElementById('instagramUrl')?.value || '',
         facebook_url: document.getElementById('facebookUrl')?.value || '',
@@ -147,6 +149,7 @@ const PG_FORM_KEY_TO_ID = {
     service_charge_percentage: 'serviceChargePercentage',
     type_of_goods: 'typeOfGoods',
     hs_code: 'hsCode',
+    description: 'productDescription',
     preferred_mop_type: 'preferredMopType',
     redirect_url: 'redirectUrl',
     thank_you_message: 'thankYouMessage',
@@ -165,6 +168,7 @@ const PG_FORM_KEY_TO_ID = {
     website_url: 'websiteUrl',
     support_url: 'supportUrl',
     primary_color: 'primaryColor',
+    template_style: 'templateStyle',
     twitter_url: 'twitterUrl',
     instagram_url: 'instagramUrl',
     facebook_url: 'facebookUrl',
@@ -208,7 +212,7 @@ function createPgFormSampleData() {
 
     // Form Identification
     set('urlSlug', `order-bake-brew-${rand}`);
-    set('paymentFor', 'Bake & Brew Café — Order Payment');
+    set('paymentFor', 'Online order payment for Bake and Brew Cafe');
 
     // Payment Configuration
     set('isFixedAmount', true);
@@ -592,6 +596,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         : undefined,
                     hs_code: hsCodeValue,
                     type_of_goods: typeOfGoodsValue,
+                    description:
+                        document.getElementById('productDescription')?.value ||
+                        undefined,
                     redirect_url: redirectUrlValue,
                     thank_you_message: thankYouMessageValue,
                     valid_from: pgFormDatetimeLocalToIsoWithOffset(validFromValue),
@@ -623,6 +630,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('supportUrl')?.value || undefined,
                     primary_color:
                         document.getElementById('primaryColor')?.value || undefined,
+                    template_style:
+                        document.getElementById('templateStyle')?.value || 'template1',
                     twitter_url:
                         document.getElementById('twitterUrl')?.value || undefined,
                     instagram_url:
@@ -661,29 +670,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 const data = await response.json();
+                const resData = (data && typeof data.data !== 'undefined') ? data.data : data;
 
                 if (response.ok) {
-                    const formId = data.form_id || data.uid || 'N/A';
+                    const formId = resData.form_id || resData.uid || 'N/A';
                     const formUrl =
-                        data.form_url ||
-                        (data.url_slug
-                            ? `${window.API_URL}/pg/forms/${data.url_slug}/`
+                        resData.form_url ||
+                        (resData.url_slug
+                            ? `${window.API_URL}/pg/forms/${resData.url_slug}/`
                             : '');
+                    const successMessage = (data && typeof data.message === 'string' && data.message.trim())
+                        ? data.message + '\n\nForm ID: ' + formId
+                        : `Payment form created successfully.\n\nForm ID: ${formId}`;
 
                     pgFormShowModal(
                         'success',
                         'Form Created',
-                        `Payment form created successfully.\n\nForm ID: ${formId}`,
+                        successMessage,
                         formUrl
                     );
                     return;
                 }
 
-                // Handle validation errors (standard DRF error format)
+                // Handle validation errors (APIResponseUtil error or DRF format)
                 let errorMsg = 'Failed to create payment form';
-                if (data && typeof data === 'object') {
-                    errorMsg = '<ul class="error-list">';
-                    Object.entries(data).forEach(([field, fieldErrors]) => {
+                const errDetail = (data && data.error && typeof data.error === 'object') ? data.error : data;
+                if (errDetail && typeof errDetail === 'object') {
+                    if (typeof errDetail.message === 'string' && errDetail.message) {
+                        errorMsg = errDetail.message;
+                    } else {
+                        const details = (errDetail.details && typeof errDetail.details === 'object') ? errDetail.details : errDetail;
+                        errorMsg = '<ul class="error-list">';
+                        Object.entries(details).forEach(([field, fieldErrors]) => {
                         const fieldName = pgFormToTitleCaseField(
                             field.replace(/\./g, ' ')
                         );
@@ -700,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     });
                     errorMsg += '</ul>';
+                    }
                 }
                 pgFormShowModal('error', 'Validation Error', errorMsg);
             } catch (error) {

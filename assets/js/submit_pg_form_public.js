@@ -183,6 +183,7 @@ async function loadPublicForm() {
             }
         );
         const data = await response.json();
+        const payload = (data && typeof data.data !== 'undefined') ? data.data : data;
 
         if (!response.ok) {
             let message = 'Failed to load form';
@@ -198,36 +199,36 @@ async function loadPublicForm() {
             return;
         }
 
-        // data is PGFormDetailSerializer (public)
-        pgFormLoadedState.isFixedAmount = data.is_fixed_amount;
-        pgFormLoadedState.currency = data.currency || 'INR';
+        // payload is PGFormDetailSerializer (public)
+        pgFormLoadedState.isFixedAmount = payload.is_fixed_amount;
+        pgFormLoadedState.currency = payload.currency || 'INR';
 
         const lines = [];
         lines.push(
             `<strong>Payment For:</strong> ${pgFormSubmitEscapeHtml(
-                data.payment_for || ''
+                payload.payment_for || ''
             )}`
         );
-        if (data.is_fixed_amount && data.amount != null) {
+        if (payload.is_fixed_amount && payload.amount != null) {
             lines.push(
                 `<strong>Amount:</strong> ${pgFormSubmitEscapeHtml(
-                    data.amount.toString()
-                )} ${pgFormSubmitEscapeHtml(data.currency || 'INR')}`
+                    payload.amount.toString()
+                )} ${pgFormSubmitEscapeHtml(payload.currency || 'INR')}`
             );
         } else {
             lines.push('<strong>Amount:</strong> Variable (buyer decides)');
         }
-        if (data.description) {
+        if (payload.description) {
             lines.push(
                 `<strong>Description:</strong> ${pgFormSubmitEscapeHtml(
-                    data.description
+                    payload.description
                 )}`
             );
         }
-        if (data.valid_until) {
+        if (payload.valid_until) {
             lines.push(
                 `<strong>Valid Until:</strong> ${pgFormSubmitEscapeHtml(
-                    pgFormSubmitFormatDate(data.valid_until)
+                    pgFormSubmitFormatDate(payload.valid_until)
                 )}`
             );
         }

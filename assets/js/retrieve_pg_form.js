@@ -90,74 +90,84 @@ document
                 },
             });
             const data = await response.json();
+            const payload = (data && typeof data.data !== 'undefined') ? data.data : data;
 
             if (!response.ok) {
                 let errorMessage = 'Failed to fetch form details';
                 if (data && typeof data === 'object') {
-                    if (data.detail) {
-                        errorMessage = data.detail;
-                    } else if (data.error?.message) {
+                    if (data.error?.message) {
                         errorMessage = data.error.message;
+                    } else if (data.detail) {
+                        errorMessage = data.detail;
                     }
                 }
                 pgFormRetrieveShowModal('error', 'Error', errorMessage);
                 return;
             }
 
-            // data is PGFormDetailSerializer payload
+            // payload is PGFormDetailSerializer payload
             resultContent.textContent = '';
+
+            if (data.message && typeof data.message === 'string' && data.message.trim()) {
+                const msgEl = document.createElement('p');
+                msgEl.className = 'result-message';
+                msgEl.style.marginBottom = '12px';
+                msgEl.style.color = 'var(--success-color, #26a887)';
+                msgEl.textContent = data.message;
+                resultContent.appendChild(msgEl);
+            }
 
             const mainTable = document.createElement('table');
             mainTable.className = 'result-table';
             mainTable.style.marginBottom = '20px';
 
             const basicInfo = [
-                { label: 'Form ID', value: data.form_id || 'N/A' },
-                { label: 'URL Slug', value: data.url_slug || 'N/A' },
-                { label: 'Form URL', value: data.form_url || null, isLink: true },
-                { label: 'Payment For', value: data.payment_for || 'N/A' },
+                { label: 'Form ID', value: payload.form_id || 'N/A' },
+                { label: 'URL Slug', value: payload.url_slug || 'N/A' },
+                { label: 'Form URL', value: payload.form_url || null, isLink: true },
+                { label: 'Payment For', value: payload.payment_for || 'N/A' },
                 {
                     label: 'Amount',
                     value:
-                        data.is_fixed_amount && data.amount != null
-                            ? pgFormRetrieveFormatCurrency(data.amount)
+                        payload.is_fixed_amount && payload.amount != null
+                            ? pgFormRetrieveFormatCurrency(payload.amount)
                             : 'Variable',
                 },
-                { label: 'Currency', value: data.currency || 'N/A' },
-                { label: 'Amount Title', value: data.amount_title || 'N/A' },
+                { label: 'Currency', value: payload.currency || 'N/A' },
+                { label: 'Amount Title', value: payload.amount_title || 'N/A' },
                 {
                     label: 'GST %',
                     value:
-                        data.gst_percentage != null
-                            ? `${data.gst_percentage}%`
+                        payload.gst_percentage != null
+                            ? `${payload.gst_percentage}%`
                             : 'N/A',
                 },
                 {
                     label: 'Service Charge %',
                     value:
-                        data.service_charge_percentage != null
-                            ? `${data.service_charge_percentage}%`
+                        payload.service_charge_percentage != null
+                            ? `${payload.service_charge_percentage}%`
                             : 'N/A',
                 },
                 {
                     label: 'Fixed Amount',
-                    value: data.is_fixed_amount ? 'Yes' : 'No',
+                    value: payload.is_fixed_amount ? 'Yes' : 'No',
                 },
                 {
                     label: 'Active',
-                    value: data.is_active ? 'Yes' : 'No',
+                    value: payload.is_active ? 'Yes' : 'No',
                 },
                 {
                     label: 'Valid Now',
-                    value: data.is_valid ? 'Yes' : 'No',
+                    value: payload.is_valid ? 'Yes' : 'No',
                 },
                 {
                     label: 'Created At',
-                    value: pgFormRetrieveFormatDate(data.created_at),
+                    value: pgFormRetrieveFormatDate(payload.created_at),
                 },
                 {
                     label: 'Last Updated',
-                    value: pgFormRetrieveFormatDate(data.last_updated_at),
+                    value: pgFormRetrieveFormatDate(payload.last_updated_at),
                 },
             ];
 
@@ -195,32 +205,32 @@ document
 
             // Product / Service
             const productData = {
-                Description: data.description,
-                'Type of Goods': pgFormRetrieveFormatText(data.type_of_goods),
+                Description: payload.description,
+                'Type of Goods': pgFormRetrieveFormatText(payload.type_of_goods),
                 'Preferred Payment Method': pgFormRetrieveFormatText(
-                    data.preferred_mop_type
+                    payload.preferred_mop_type
                 ),
             };
             sections.push({ title: 'Product / Service', data: productData });
 
             // Form Settings
             const settingsData = {
-                'Redirect URL': data.redirect_url,
-                'Thank You Message': data.thank_you_message,
-                'Valid From': pgFormRetrieveFormatDate(data.valid_from),
-                'Valid Until': pgFormRetrieveFormatDate(data.valid_until),
+                'Redirect URL': payload.redirect_url,
+                'Thank You Message': payload.thank_you_message,
+                'Valid From': pgFormRetrieveFormatDate(payload.valid_from),
+                'Valid Until': pgFormRetrieveFormatDate(payload.valid_until),
             };
             sections.push({ title: 'Form Settings', data: settingsData });
 
             // Customer Data Collection
             const customerData = {
-                'Collect Name': data.collect_name ? 'Yes' : 'No',
-                'Collect Email': data.collect_email ? 'Yes' : 'No',
-                'Collect Phone': data.collect_phone ? 'Yes' : 'No',
-                'Collect Address': data.collect_address ? 'Yes' : 'No',
-                'Collect PAN': data.collect_pan ? 'Yes' : 'No',
-                'Collect DOB': data.collect_dob ? 'Yes' : 'No',
-                'Auto-generate Invoice': data.auto_generate_invoice
+                'Collect Name': payload.collect_name ? 'Yes' : 'No',
+                'Collect Email': payload.collect_email ? 'Yes' : 'No',
+                'Collect Phone': payload.collect_phone ? 'Yes' : 'No',
+                'Collect Address': payload.collect_address ? 'Yes' : 'No',
+                'Collect PAN': payload.collect_pan ? 'Yes' : 'No',
+                'Collect DOB': payload.collect_dob ? 'Yes' : 'No',
+                'Auto-generate Invoice': payload.auto_generate_invoice
                     ? 'Yes'
                     : 'No',
             };
@@ -231,22 +241,22 @@ document
 
             // Terms & Contact
             const termsData = {
-                'Terms & Conditions': data.terms_and_conditions,
-                'Contact Email': data.contact_email,
-                'Contact Phone': data.contact_phone,
-                'Website URL': data.website_url,
-                'Support URL': data.support_url,
+                'Terms & Conditions': payload.terms_and_conditions,
+                'Contact Email': payload.contact_email,
+                'Contact Phone': payload.contact_phone,
+                'Website URL': payload.website_url,
+                'Support URL': payload.support_url,
             };
             sections.push({ title: 'Terms & Contact', data: termsData });
 
             // Social & Branding
             const brandingData = {
-                'Twitter URL': data.twitter_url,
-                'Instagram URL': data.instagram_url,
-                'Facebook URL': data.facebook_url,
-                'LinkedIn URL': data.linkedin_url,
-                'Logo URL': data.logo_url,
-                'Primary Color': data.primary_color,
+                'Twitter URL': payload.twitter_url,
+                'Instagram URL': payload.instagram_url,
+                'Facebook URL': payload.facebook_url,
+                'LinkedIn URL': payload.linkedin_url,
+                'Logo URL': payload.logo_url,
+                'Primary Color': payload.primary_color,
             };
             sections.push({ title: 'Branding & Social', data: brandingData });
 

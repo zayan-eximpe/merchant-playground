@@ -89,18 +89,21 @@ async function fetchPgForms(page = 1, pageSize = 10) {
         if (!response.ok) {
             let message = 'Failed to fetch forms';
             if (data && typeof data === 'object') {
-                if (data.detail) {
-                    message = data.detail;
-                } else if (data.error?.message) {
+                if (data.error?.message) {
                     message = data.error.message;
+                } else if (data.detail) {
+                    message = data.detail;
                 }
             }
             pgFormListShowModal('error', 'Error', message);
             return;
         }
 
-        // DRF pagination format: {count, next, previous, results}
-        if (!data || !Array.isArray(data.results)) {
+        // New format: { success, message, data: [...] } or legacy DRF: { count, results }
+        const rawList = (data && Array.isArray(data.data))
+            ? data.data
+            : (data && Array.isArray(data.results) ? data.results : null);
+        if (!rawList) {
             pgFormListShowModal(
                 'error',
                 'Error',
@@ -112,9 +115,11 @@ async function fetchPgForms(page = 1, pageSize = 10) {
         pgFormCurrentPage = page;
         pgFormCurrentPageSize = pageSize;
 
-        const totalCount = data.count || 0;
-        const startIndex = (page - 1) * pageSize + 1;
-        const endIndex = Math.min(page * pageSize, totalCount);
+        const totalCount = rawList.length;
+        const startIndex = (page - 1) * pageSize;
+        const forms = rawList.slice(startIndex, startIndex + pageSize);
+        const displayStart = totalCount === 0 ? 0 : startIndex + 1;
+        const displayEnd = Math.min(startIndex + pageSize, totalCount);
 
         resultContent.textContent = '';
 
@@ -126,9 +131,9 @@ async function fetchPgForms(page = 1, pageSize = 10) {
             emptyMessage.textContent = 'No payment forms found';
             resultContent.appendChild(emptyMessage);
         } else {
-            paginationInfo.textContent = `Showing ${startIndex}-${endIndex} of ${totalCount} forms`;
+            paginationInfo.textContent = `Showing ${displayStart}-${displayEnd} of ${totalCount} forms`;
 
-            data.results.forEach((form) => {
+            forms.forEach((form) => {
                 const card = document.createElement('div');
                 card.className = 'result-card';
                 card.style.marginTop = '0';
@@ -238,7 +243,7 @@ async function fetchPgForms(page = 1, pageSize = 10) {
         const pageIndicator = document.getElementById('pageIndicator');
 
         prevBtn.disabled = page <= 1;
-        nextBtn.disabled = endIndex >= totalCount;
+        nextBtn.disabled = displayEnd >= totalCount;
         pageIndicator.textContent = `Page ${page}`;
 
         paginationControls.className = 'pagination-controls';

@@ -119,6 +119,7 @@ const PG_FORM_KEY_TO_ID = {
     service_charge_percentage: 'serviceChargePercentage',
     type_of_goods: 'typeOfGoods',
     hs_code: 'hsCode',
+    description: 'productDescription',
     preferred_mop_type: 'preferredMopType',
     redirect_url: 'redirectUrl',
     thank_you_message: 'thankYouMessage',
@@ -138,6 +139,7 @@ const PG_FORM_KEY_TO_ID = {
     support_url: 'supportUrl',
     logo_url: 'logoPreview',
     primary_color: 'primaryColor',
+    template_style: 'templateStyle',
     twitter_url: 'twitterUrl',
     instagram_url: 'instagramUrl',
     facebook_url: 'facebookUrl',
@@ -218,6 +220,12 @@ function fillEditFormFromData(data) {
         }
     });
 
+    const primaryColorInput = document.getElementById('primaryColor');
+    const primaryColorPicker = document.getElementById('primaryColorPicker');
+    if (primaryColorPicker && primaryColorInput && /^#[0-9A-Fa-f]{6}$/.test(String(primaryColorInput.value))) {
+        primaryColorPicker.value = primaryColorInput.value;
+    }
+
     updatePgFormSummaryCard();
 }
 
@@ -250,6 +258,18 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         isFixedAmountCheckbox.addEventListener('change', toggleFixed);
         toggleFixed();
+    }
+
+    const primaryColorPicker = document.getElementById('primaryColorPicker');
+    const primaryColorInput = document.getElementById('primaryColor');
+    if (primaryColorPicker && primaryColorInput) {
+        primaryColorPicker.addEventListener('input', () => {
+            primaryColorInput.value = primaryColorPicker.value;
+        });
+        primaryColorInput.addEventListener('input', () => {
+            const v = primaryColorInput.value.trim();
+            if (/^#[0-9A-Fa-f]{6}$/.test(v)) primaryColorPicker.value = v;
+        });
     }
 
     modalCloseBtn?.addEventListener('click', pgFormHideModal);
@@ -300,14 +320,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 );
                 const data = await response.json();
+                const payload = (data && typeof data.data !== 'undefined') ? data.data : data;
 
                 if (response.ok) {
-                    fillEditFormFromData(data);
+                    fillEditFormFromData(payload);
                 } else {
                     let errorMsg = 'Failed to load payment form';
-                    if (data && typeof data === 'object') {
+                    const errDetail = (data && data.error && typeof data.error === 'object') ? data.error : data;
+                    if (errDetail && typeof errDetail.message === 'string' && errDetail.message) {
+                        errorMsg = errDetail.message;
+                    } else if (errDetail && typeof errDetail === 'object') {
                         errorMsg = '<ul class="error-list">';
-                        Object.entries(data).forEach(([field, fieldErrors]) => {
+                        const details = (errDetail.details && typeof errDetail.details === 'object') ? errDetail.details : errDetail;
+                        Object.entries(details).forEach(([field, fieldErrors]) => {
                             const fieldName = pgFormToTitleCaseField(
                                 field.replace(/\./g, ' ')
                             );
@@ -479,6 +504,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         : undefined,
                     hs_code: hsCodeValue,
                     type_of_goods: typeOfGoodsValue,
+                    description:
+                        document.getElementById('productDescription')?.value ||
+                        undefined,
                     redirect_url: redirectUrlValue,
                     thank_you_message: thankYouMessageValue,
                     valid_from: pgFormDatetimeLocalToIsoWithOffset(validFromValue),
@@ -518,6 +546,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     primary_color:
                         document.getElementById('primaryColor')?.value ||
                         undefined,
+                    template_style:
+                        document.getElementById('templateStyle')?.value || 'template1',
                     twitter_url:
                         document.getElementById('twitterUrl')?.value ||
                         undefined,
@@ -563,28 +593,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
 
                 const data = await response.json();
+                const resData = (data && typeof data.data !== 'undefined') ? data.data : data;
 
                 if (response.ok) {
                     const formUrl =
-                        data.form_url ||
-                        (data.url_slug
-                            ? `${window.API_URL}/pg/forms/${data.url_slug}/`
+                        resData.form_url ||
+                        (resData.url_slug
+                            ? `${window.API_URL}/pg/forms/${resData.url_slug}/`
                             : '');
+                    const successMessage = (data && typeof data.message === 'string' && data.message.trim())
+                        ? data.message + '\n\nForm ID: ' + (resData.form_id || formId)
+                        : `Payment form updated successfully.\n\nForm ID: ${resData.form_id || formId}`;
 
                     pgFormShowModal(
                         'success',
                         'Form Updated',
-                        `Payment form updated successfully.\n\nForm ID: ${
-                            data.form_id || formId
-                        }`
+                        successMessage
                     );
                     return;
                 }
 
                 let errorMsg = 'Failed to update payment form';
-                if (data && typeof data === 'object') {
+                const errDetail = (data && data.error && typeof data.error === 'object') ? data.error : data;
+                if (errDetail && typeof errDetail.message === 'string' && errDetail.message) {
+                    errorMsg = errDetail.message;
+                } else if (errDetail && typeof errDetail === 'object') {
                     errorMsg = '<ul class="error-list">';
-                    Object.entries(data).forEach(([field, fieldErrors]) => {
+                    const details = (errDetail.details && typeof errDetail.details === 'object') ? errDetail.details : errDetail;
+                    Object.entries(details).forEach(([field, fieldErrors]) => {
                         const fieldName = pgFormToTitleCaseField(
                             field.replace(/\./g, ' ')
                         );
