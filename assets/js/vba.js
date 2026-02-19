@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 results.forEach((payment) => {
                     const amountCents = payment.amount ?? payment.amount_cents ?? 0;
-                    const amount = (amountCents / 100).toFixed(2);
+                    const amount = amountCents;
                     const paymentUid = escapeHtml(payment.payment_id || '');
                     html += `
                         <tr>
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const p = payment;
                 const amountCents = p.amount ?? p.amount_cents ?? 0;
-                const amount = (amountCents / 100).toFixed(2);
+                const amount = amountCents;
                 const paymentUidSingle = escapeHtml(p.payment_id || '');
                 html += `
                         <tr>
@@ -472,13 +472,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Sample data matching payment creation forms (create_session / upi_collection / etc.)
     function fillVerificationFormWithSampleData() {
+        const currentEnv = getSelectedEnv();
+        const isProduction = currentEnv === 'production';
+        
         const sampleData = {
-            buyer_name: 'John Doe',
+            buyer_name: isProduction ? 'John Doe' : 'John',
             type_of_goods: 'PHYSICAL_GOODS',
-            product_description: 'This is a sample product description',
+            product_description: isProduction ? 'This is a sample product description' : 'This is a test product for test purpose',
             buyer_address: '123 Main Street, Apt 4B, City, State',
             invoice_number: 'INV' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-            buyer_postal_code: '123456',
+            buyer_postal_code: isProduction ? '123456' : '560034',
             hs_code: '98051000'
         };
         const buyerNameEl = document.getElementById('verifBuyerName');
@@ -503,7 +506,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateVerificationHsCodeVisibility() {
         const type = verifTypeOfGoods ? verifTypeOfGoods.value : '';
-        const needsHsCode = type === 'GOODS' || type === 'PHYSICAL_GOODS' || type === 'DIGITAL_GOODS';
+        const needsHsCode = type === 'PHYSICAL_GOODS';
         if (verifHsCode) verifHsCode.required = needsHsCode;
         if (verifHsCodeRequired) verifHsCodeRequired.style.visibility = needsHsCode ? 'visible' : 'hidden';
     }
@@ -523,25 +526,25 @@ document.addEventListener('DOMContentLoaded', function () {
         const buyerPostalCode = document.getElementById('verifBuyerPostalCode') && document.getElementById('verifBuyerPostalCode').value.trim();
         const hsCode = verifHsCode && verifHsCode.value.trim();
 
-        if (!buyerName || !typeOfGoods || !productDescription || !buyerAddress || !invoiceNumber || !buyerPostalCode) {
+        if (!typeOfGoods || !productDescription || !buyerAddress || !invoiceNumber || !buyerPostalCode) {
             showVerificationResponse(false, 'Please fill all required fields.', null);
             return;
         }
 
-        const needsHsCode = typeOfGoods === 'GOODS' || typeOfGoods === 'PHYSICAL_GOODS' || typeOfGoods === 'DIGITAL_GOODS';
+        const needsHsCode = typeOfGoods === 'PHYSICAL_GOODS';
         if (needsHsCode && !hsCode) {
-            showVerificationResponse(false, 'HS code is required when type of goods is GOODS, PHYSICAL_GOODS, or DIGITAL_GOODS.', null);
+            showVerificationResponse(false, 'HS code is required when type of goods is PHYSICAL_GOODS.', null);
             return;
         }
 
         const payload = {
-            buyer_name: buyerName,
             type_of_goods: typeOfGoods,
             product_description: productDescription,
             buyer_address: buyerAddress,
             invoice_number: invoiceNumber,
             buyer_postal_code: buyerPostalCode
         };
+        if (buyerName) payload.buyer_name = buyerName;
         if (hsCode) payload.hs_code = hsCode;
 
         if (verificationModalSubmitBtn) {
