@@ -112,7 +112,8 @@ function savePgFormCreateData() {
         hs_code: document.getElementById('hsCode')?.value || '',
         description: document.getElementById('productDescription')?.value || '',
         preferred_mop_type: document.getElementById('preferredMopType')?.value || '',
-        redirect_url: document.getElementById('redirectUrl')?.value || '',
+        success_url: document.getElementById('successUrl')?.value || '',
+        fail_url: document.getElementById('failUrl')?.value || '',
         thank_you_message: document.getElementById('thankYouMessage')?.value || '',
         valid_from: document.getElementById('validFrom')?.value || '',
         valid_until: document.getElementById('validUntil')?.value || '',
@@ -151,7 +152,8 @@ const PG_FORM_KEY_TO_ID = {
     hs_code: 'hsCode',
     description: 'productDescription',
     preferred_mop_type: 'preferredMopType',
-    redirect_url: 'redirectUrl',
+    success_url: 'successUrl',
+    fail_url: 'failUrl',
     thank_you_message: 'thankYouMessage',
     valid_from: 'validFrom',
     valid_until: 'validUntil',
@@ -211,7 +213,8 @@ function createPgFormSampleData() {
     };
 
     // Form Identification
-    set('urlSlug', `order-bake-brew-${rand}`);
+    const slug = `order-bake-brew-${rand}`;
+    set('urlSlug', slug);
     set('paymentFor', 'Online order payment for Bake and Brew Cafe');
 
     // Payment Configuration
@@ -226,7 +229,10 @@ function createPgFormSampleData() {
     set('preferredMopType', '');
 
     // Form Settings
-    set('redirectUrl', 'https://bakeandbrew.example.com/order-confirmed');
+
+    const formBaseUrl = `${window.API_URL}/pay/${slug}`;
+    set('successUrl', 'https://bakeandbrew.example.com/order-confirmed');
+    set('failUrl', formBaseUrl);
     set('thankYouMessage', 'Thank you for your order! We\'ll send a confirmation to your email and notify you when it\'s ready for pickup or delivery.');
     const now = new Date();
     const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -400,7 +406,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'typeOfGoods',
         'hsCode',
         'preferredMopType',
-        'redirectUrl',
+        'successUrl',
+        'failUrl',
         'thankYouMessage',
         'validFrom',
         'validUntil',
@@ -560,8 +567,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const preferredMopTypeValue =
                     document.getElementById('preferredMopType')?.value ||
                     undefined;
-                const redirectUrlValue =
-                    document.getElementById('redirectUrl')?.value || undefined;
+                const successUrlValue =
+                    document.getElementById('successUrl')?.value || undefined;
+                const failUrlValue =
+                    document.getElementById('failUrl')?.value || undefined;
                 const thankYouMessageValue =
                     document.getElementById('thankYouMessage')?.value || undefined;
                 const validFromValue =
@@ -599,7 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     description:
                         document.getElementById('productDescription')?.value ||
                         undefined,
-                    redirect_url: redirectUrlValue,
+                    success_url: successUrlValue,
+                    fail_url: failUrlValue,
                     thank_you_message: thankYouMessageValue,
                     valid_from: pgFormDatetimeLocalToIsoWithOffset(validFromValue),
                     valid_until: pgFormDatetimeLocalToIsoWithOffset(validUntilValue),
@@ -702,22 +712,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         const details = (errDetail.details && typeof errDetail.details === 'object') ? errDetail.details : errDetail;
                         errorMsg = '<ul class="error-list">';
                         Object.entries(details).forEach(([field, fieldErrors]) => {
-                        const fieldName = pgFormToTitleCaseField(
-                            field.replace(/\./g, ' ')
-                        );
-                        const errorsArray = Array.isArray(fieldErrors)
-                            ? fieldErrors
-                            : [fieldErrors];
-                        errorsArray.forEach((err) => {
-                            errorMsg += `
+                            const fieldName = pgFormToTitleCaseField(
+                                field.replace(/\./g, ' ')
+                            );
+                            const errorsArray = Array.isArray(fieldErrors)
+                                ? fieldErrors
+                                : [fieldErrors];
+                            errorsArray.forEach((err) => {
+                                errorMsg += `
                                 <li>
                                     <i class="fas fa-exclamation-circle"></i>
                                     <span><strong>${fieldName}:</strong> ${err}</span>
                                 </li>
                             `;
+                            });
                         });
-                    });
-                    errorMsg += '</ul>';
+                        errorMsg += '</ul>';
                     }
                 }
                 pgFormShowModal('error', 'Validation Error', errorMsg);

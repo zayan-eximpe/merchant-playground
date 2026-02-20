@@ -34,7 +34,8 @@
         </div>
         <h1>Edit Payment Form</h1>
         <div class="subtitle">
-            Load a form by Form ID (or UID), then update its configuration. Use the logo file input to replace the current logo.
+            Load a form by Form ID (or UID), then update its configuration. Use the logo file input to replace the
+            current logo.
         </div>
 
         <div class="form-container" style="margin-bottom: 24px;">
@@ -47,7 +48,8 @@
                         <i class="fas fa-download"></i> Load Form
                     </button>
                 </div>
-                <div class="helper-text">Enter the form_id or internal UID from List/Retrieve Forms, then click Load Form.</div>
+                <div class="helper-text">Enter the form_id or internal UID from List/Retrieve Forms, then click Load
+                    Form.</div>
             </div>
         </div>
 
@@ -71,12 +73,15 @@
                     <div class="form-group">
                         <label for="urlSlug">URL Slug</label>
                         <input type="text" id="urlSlug" name="url_slug" placeholder="e.g. webinar-jan-2026" required>
-                        <div class="helper-text">Used in the public URL, must be unique<span class="required">*</span></div>
+                        <div class="helper-text">Used in the public URL, must be unique<span class="required">*</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="paymentFor">Payment For</label>
-                        <input type="text" id="paymentFor" name="payment_for" placeholder="e.g. Webinar Registration" required>
-                        <div class="helper-text">Short description of what this payment is for<span class="required">*</span></div>
+                        <input type="text" id="paymentFor" name="payment_for" placeholder="e.g. Webinar Registration"
+                            required>
+                        <div class="helper-text">Short description of what this payment is for<span
+                                class="required">*</span></div>
                     </div>
                 </div>
             </div>
@@ -98,7 +103,8 @@
                         <label for="amount">Amount (INR)</label>
                         <div class="input-wrapper">
                             <span class="input-prefix">₹</span>
-                            <input type="number" id="amount" name="amount" placeholder="0.00" min="1" step="0.01" inputmode="decimal">
+                            <input type="number" id="amount" name="amount" placeholder="0.00" min="1" step="0.01"
+                                inputmode="decimal">
                         </div>
                         <div class="helper-text">Required for fixed amount forms.</div>
                     </div>
@@ -111,11 +117,13 @@
                     </div>
                     <div class="form-group">
                         <label for="gstPercentage">GST % (optional)</label>
-                        <input type="number" id="gstPercentage" name="gst_percentage" min="0" max="100" placeholder="e.g. 18">
+                        <input type="number" id="gstPercentage" name="gst_percentage" min="0" max="100"
+                            placeholder="e.g. 18">
                     </div>
                     <div class="form-group">
                         <label for="serviceChargePercentage">Service Charge % (optional)</label>
-                        <input type="number" id="serviceChargePercentage" name="service_charge_percentage" min="0" max="100" placeholder="e.g. 2">
+                        <input type="number" id="serviceChargePercentage" name="service_charge_percentage" min="0"
+                            max="100" placeholder="e.g. 2">
                     </div>
                 </div>
             </div>
@@ -169,13 +177,22 @@
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="redirectUrl">Redirect URL</label>
-                        <input type="url" id="redirectUrl" name="redirect_url" placeholder="https://your-website.com/thank-you">
-                        <div class="helper-text">Where to redirect the customer after payment completion.</div>
+                        <label for="successUrl">Success Redirect URL</label>
+                        <input type="url" id="successUrl" name="success_url"
+                            placeholder="https://your-website.com/thank-you">
+                        <div class="helper-text">Where to redirect the customer after successful payment completion.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="failUrl">Failure Redirect URL</label>
+                        <input type="url" id="failUrl" name="fail_url"
+                            placeholder="https://your-website.com/payment-failed">
+                        <div class="helper-text">Where to redirect the customer after payment failure.</div>
                     </div>
                     <div class="form-group">
                         <label for="thankYouMessage">Thank You Message</label>
-                        <input type="text" id="thankYouMessage" name="thank_you_message" placeholder="Shown after successful payment">
+                        <input type="text" id="thankYouMessage" name="thank_you_message"
+                            placeholder="Shown after successful payment">
                     </div>
                     <div class="form-group">
                         <label for="validFrom">Valid From</label>
@@ -256,7 +273,8 @@
                         <div class="input-wrapper" style="display: flex; align-items: center; gap: 8px;">
                             <input type="color" id="primaryColorPicker" value="#22c55e" title="Pick color"
                                 style="width: 40px; height: 38px; padding: 2px; cursor: pointer; border-radius: 8px;">
-                            <input type="text" id="primaryColor" name="primary_color" placeholder="#22c55e" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$">
+                            <input type="text" id="primaryColor" name="primary_color" placeholder="#22c55e"
+                                maxlength="7" pattern="^#[0-9A-Fa-f]{6}$">
                         </div>
                         <div class="helper-text">Brand color for buttons and accents (e.g. #22c55e).</div>
                     </div>
@@ -279,11 +297,13 @@
                 <div class="form-grid">
                     <div class="form-group full">
                         <label for="termsAndConditions">Terms and Conditions</label>
-                        <textarea id="termsAndConditions" name="terms_and_conditions" rows="3" placeholder="Customers must accept these terms before paying"></textarea>
+                        <textarea id="termsAndConditions" name="terms_and_conditions" rows="3"
+                            placeholder="Customers must accept these terms before paying"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="contactEmail">Contact Email</label>
-                        <input type="email" id="contactEmail" name="contact_email" placeholder="support@your-business.com">
+                        <input type="email" id="contactEmail" name="contact_email"
+                            placeholder="support@your-business.com">
                     </div>
                     <div class="form-group">
                         <label for="contactPhone">Contact Phone</label>
@@ -300,7 +320,8 @@
                     </div>
                     <div class="form-group">
                         <label for="supportUrl">Support URL</label>
-                        <input type="url" id="supportUrl" name="support_url" placeholder="https://your-business.com/support">
+                        <input type="url" id="supportUrl" name="support_url"
+                            placeholder="https://your-business.com/support">
                     </div>
                 </div>
             </div>
@@ -313,22 +334,27 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="twitterUrl">Twitter / X URL</label>
-                        <input type="url" id="twitterUrl" name="twitter_url" placeholder="https://twitter.com/yourhandle">
+                        <input type="url" id="twitterUrl" name="twitter_url"
+                            placeholder="https://twitter.com/yourhandle">
                     </div>
                     <div class="form-group">
                         <label for="instagramUrl">Instagram URL</label>
-                        <input type="url" id="instagramUrl" name="instagram_url" placeholder="https://instagram.com/yourhandle">
+                        <input type="url" id="instagramUrl" name="instagram_url"
+                            placeholder="https://instagram.com/yourhandle">
                     </div>
                     <div class="form-group">
                         <label for="facebookUrl">Facebook URL</label>
-                        <input type="url" id="facebookUrl" name="facebook_url" placeholder="https://facebook.com/yourpage">
+                        <input type="url" id="facebookUrl" name="facebook_url"
+                            placeholder="https://facebook.com/yourpage">
                     </div>
                     <div class="form-group">
                         <label for="linkedinUrl">LinkedIn URL</label>
-                        <input type="url" id="linkedinUrl" name="linkedin_url" placeholder="https://linkedin.com/company/yourcompany">
+                        <input type="url" id="linkedinUrl" name="linkedin_url"
+                            placeholder="https://linkedin.com/company/yourcompany">
                     </div>
                 </div>
-                <div class="helper-text" style="margin-top: 4px;">Optional. Shown on the payment form for trust/branding.</div>
+                <div class="helper-text" style="margin-top: 4px;">Optional. Shown on the payment form for
+                    trust/branding.</div>
             </div>
 
             <button type="submit" id="updateButton" class="main-action-btn">

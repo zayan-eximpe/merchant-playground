@@ -121,7 +121,8 @@ const PG_FORM_KEY_TO_ID = {
     hs_code: 'hsCode',
     description: 'productDescription',
     preferred_mop_type: 'preferredMopType',
-    redirect_url: 'redirectUrl',
+    success_url: 'successUrl',
+    fail_url: 'failUrl',
     thank_you_message: 'thankYouMessage',
     valid_from: 'validFrom',
     valid_until: 'validUntil',
@@ -467,8 +468,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const preferredMopTypeValue =
                     document.getElementById('preferredMopType')?.value ||
                     undefined;
-                const redirectUrlValue =
-                    document.getElementById('redirectUrl')?.value || undefined;
+                const successUrlValue =
+                    document.getElementById('successUrl')?.value || undefined;
+                const failUrlValue =
+                    document.getElementById('failUrl')?.value || undefined;
                 const thankYouMessageValue =
                     document.getElementById('thankYouMessage')?.value ||
                     undefined;
@@ -507,7 +510,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     description:
                         document.getElementById('productDescription')?.value ||
                         undefined,
-                    redirect_url: redirectUrlValue,
+                    success_url: successUrlValue,
+                    fail_url: failUrlValue,
                     thank_you_message: thankYouMessageValue,
                     valid_from: pgFormDatetimeLocalToIsoWithOffset(validFromValue),
                     valid_until:

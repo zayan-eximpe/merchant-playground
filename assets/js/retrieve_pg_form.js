@@ -215,7 +215,8 @@ document
 
             // Form Settings
             const settingsData = {
-                'Redirect URL': payload.redirect_url,
+                'Success URL': payload.success_url,
+                'Fail URL': payload.fail_url,
                 'Thank You Message': payload.thank_you_message,
                 'Valid From': pgFormRetrieveFormatDate(payload.valid_from),
                 'Valid Until': pgFormRetrieveFormatDate(payload.valid_until),

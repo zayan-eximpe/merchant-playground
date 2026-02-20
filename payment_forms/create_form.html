@@ -164,10 +164,16 @@
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="redirectUrl">Redirect URL</label>
-                        <input type="url" id="redirectUrl" name="redirect_url"
+                        <label for="successUrl">Success Redirect URL</label>
+                        <input type="url" id="successUrl" name="success_url"
                             placeholder="https://your-website.com/thank-you">
-                        <div class="helper-text">Where to redirect the customer after payment completion.</div>
+                        <div class="helper-text">Where to redirect the customer after successful payment completion.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="failUrl">Failure Redirect URL</label>
+                        <input type="url" id="failUrl" name="fail_url"
+                            placeholder="https://your-website.com/payment-failed">
+                        <div class="helper-text">Where to redirect the customer after payment failure.</div>
                     </div>
                     <div class="form-group">
                         <label for="thankYouMessage">Thank You Message</label>
